@@ -69,6 +69,26 @@ public sealed class PotPlayerController : IPlayerController
         SendWmCommand(PotPlayerCommandIds.CmdShuffleToggleCandidate);
     }
 
+    public void SeekForward(int seconds = 5) => SeekBy(seconds);
+
+    public void SeekBackward(int seconds = 5) => SeekBy(-seconds);
+
+    private void SeekBy(int seconds)
+    {
+        var h = GetWindowHandle();
+        if (h == nint.Zero) return;
+        try
+        {
+            long cur = NativeMethods.SendMessage(h, PotPlayerCommandIds.PotCommand, PotPlayerCommandIds.PotGetCurrentTime, 0).ToInt64();
+            long total = NativeMethods.SendMessage(h, PotPlayerCommandIds.PotCommand, PotPlayerCommandIds.PotGetTotalTime, 0).ToInt64();
+            long target = cur + (long)seconds * 1000;
+            if (target < 0) target = 0;
+            if (total > 0 && target > total) target = total;
+            NativeMethods.SendMessage(h, PotPlayerCommandIds.PotCommand, PotPlayerCommandIds.PotSetCurrentTime, (nint)target);
+        }
+        catch { }
+    }
+
     public void EnsureOnMonitor(int monitorIndex)
     {
         // Fase 5: MonitorService + SetWindowPos.

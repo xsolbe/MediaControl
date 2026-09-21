@@ -35,6 +35,16 @@ public sealed class DashboardViewModel : ObservableObject
             _player.Previous();
             RefreshStatus("Previous enviado via APPCOMMAND PREV (igual ao AHK)");
         });
+        SeekBackCommand = new RelayCommand(() =>
+        {
+            _player.SeekBackward();
+            RefreshStatus("Voltou -5s via SET_CURRENT_TIME");
+        });
+        SeekForwardCommand = new RelayCommand(() =>
+        {
+            _player.SeekForward();
+            RefreshStatus("Avançou +5s via SET_CURRENT_TIME");
+        });
         RefreshCommand = new RelayCommand(() => RefreshStatus("Refresh manual"));
 
         // Volume inicial vem do player (POT_GET_VOLUME). Shuffle vem do config (sem GET_SHUFFLE oficial).
@@ -84,6 +94,8 @@ public sealed class DashboardViewModel : ObservableObject
     public RelayCommand PlayPauseCommand { get; }
     public RelayCommand NextCommand { get; }
     public RelayCommand PreviousCommand { get; }
+    public RelayCommand SeekBackCommand { get; }
+    public RelayCommand SeekForwardCommand { get; }
     public RelayCommand RefreshCommand { get; }
 
     private void RefreshStatus(string action, bool skipVolumeRead = false)

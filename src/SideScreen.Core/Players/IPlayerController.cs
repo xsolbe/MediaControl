@@ -25,6 +25,10 @@ public interface IPlayerController
     void VolumeDown(int step = 2);
     void SetVolume(int volume);
 
+    /// <summary>Avança/retrocede N segundos no vídeo atual (padrão 5s, pedido do usuário).</summary>
+    void SeekForward(int seconds = 5);
+    void SeekBackward(int seconds = 5);
+
     /// <summary>
     /// Liga/desliga modo aleatório nativo do player.
     /// Fase 1: não implementado. Fase 3: PotPlayer via WM_COMMAND.

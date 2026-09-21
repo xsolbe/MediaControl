@@ -39,6 +39,16 @@ public sealed class JsonSettingsStore
                     cfg.GuardMode = d.GuardMode;
                 cfg.Version = 3;
             }
+            // Migração v3 → v4: novos comandos seek ±5s (setas). Só adiciona o que falta.
+            if (cfg.Version < 4)
+            {
+                var d = AppConfig.Default();
+                if (!cfg.Shortcuts.ContainsKey("seekForward"))
+                    cfg.Shortcuts["seekForward"] = d.Shortcuts["seekForward"];
+                if (!cfg.Shortcuts.ContainsKey("seekBackward"))
+                    cfg.Shortcuts["seekBackward"] = d.Shortcuts["seekBackward"];
+                cfg.Version = 4;
+            }
             return cfg;
         }
         catch { return AppConfig.Default(); }

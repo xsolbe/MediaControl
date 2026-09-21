@@ -23,6 +23,8 @@ public class Fase1Tests
         player.SetVolume(50);
         player.VolumeUp();
         player.VolumeDown();
+        player.SeekForward();
+        player.SeekBackward();
     }
 
     [Fact]
@@ -37,6 +39,8 @@ public class Fase1Tests
         Assert.Equal("F2", config.Shortcuts["playPause"]);
         Assert.Equal("F1", config.Shortcuts["next"]);
         Assert.Equal("F1", config.Shortcuts["previous"]);
+        Assert.Equal("Right", config.Shortcuts["seekForward"]);
+        Assert.Equal("Left", config.Shortcuts["seekBackward"]);
         Assert.True(config.DoublePressEnabled); // F1 x2 = anterior
         Assert.Equal("Always", config.GuardMode); // uso real é com jogo fullscreen (BNSR)
         Assert.Equal("potplayer", config.SelectedPlayerId);

@@ -19,6 +19,10 @@
                     <Button Content="Next ▶|" Command="{Binding NextCommand}" Width="90" Height="32" Margin="0,0,8,0"/>
                     <Button Content="↻ Refresh" Command="{Binding RefreshCommand}" Width="90" Height="32"/>
                 </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                    <Button Content="◀◀ -5s" Command="{Binding SeekBackCommand}" Width="90" Height="32" Margin="0,0,8,0"/>
+                    <Button Content="+5s ▶▶" Command="{Binding SeekForwardCommand}" Width="90" Height="32"/>
+                </StackPanel>
             </StackPanel>
         </Border>
 

@@ -50,6 +50,8 @@ public sealed class ShortcutsViewModel : ObservableObject
         ("playPause", "Play / Pause", "Pausa ou retoma o vídeo (F2 — mostra aviso gamer; guard pausa em fullscreen)"),
         ("next", "Próximo vídeo", "Avança para o próximo vídeo da playlist/pasta (F1)"),
         ("previous", "Vídeo anterior", "Volta ao vídeo anterior (F1 pressionado 2x — double-press)"),
+        ("seekForward", "Avançar 5 segundos", "Pula +5s no vídeo atual (seta →)"),
+        ("seekBackward", "Voltar 5 segundos", "Volta -5s no vídeo atual (seta ←)"),
     ];
 
     private readonly JsonSettingsStore _store = new();

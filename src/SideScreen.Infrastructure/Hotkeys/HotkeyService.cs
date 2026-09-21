@@ -146,6 +146,8 @@ public sealed class HotkeyService : IDisposable
                 case "previous": _player.Previous(); break;
                 case "volumeUp": _player.VolumeUp(); break;
                 case "volumeDown": _player.VolumeDown(); break;
+                case "seekForward": _player.SeekForward(); break;
+                case "seekBackward": _player.SeekBackward(); break;
                 default: return;
             }
             Triggered?.Invoke($"[{DateTime.Now:HH:mm:ss}] {action} → {_player.DisplayName}");

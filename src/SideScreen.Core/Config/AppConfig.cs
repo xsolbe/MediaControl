@@ -6,7 +6,7 @@ namespace SideScreen.Core.Config;
 /// </summary>
 public sealed class AppConfig
 {
-    public int Version { get; set; } = 3;
+    public int Version { get; set; } = 4;
 
     public string SelectedPlayerId { get; set; } = "potplayer";
 
@@ -18,8 +18,9 @@ public sealed class AppConfig
 
     /// <summary>
     /// Comandos do usuário (script MusicControl/AutoHotkey, confirmado via strings do .exe):
-    /// NumpadAdd/NumpadSub = volume, F2 = Play/Pause, F1 = próximo, F1 x2 = anterior.
-    /// F1/F2 exibem aviso gamer na UI e respeitam o guard.
+    /// NumpadAdd/NumpadSub = volume, F2 = Play/Pause, F1 = próximo, F1 x2 = anterior,
+    /// seta → = +5s, seta ← = -5s.
+    /// F1/F2/setas sozinhas exibem aviso gamer na UI e respeitam o guard.
     /// </summary>
     public Dictionary<string, string> Shortcuts { get; set; } = new()
     {
@@ -28,6 +29,8 @@ public sealed class AppConfig
         ["playPause"] = "F2",
         ["next"] = "F1",
         ["previous"] = "F1",
+        ["seekForward"] = "Right",
+        ["seekBackward"] = "Left",
     };
 
     /// <summary>Globais desligadas por padrão — usuário opt-in (requisito: não interferir em jogos).</summary>

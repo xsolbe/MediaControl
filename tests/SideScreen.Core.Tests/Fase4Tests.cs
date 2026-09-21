@@ -13,6 +13,8 @@ public class Fase4Tests
     [InlineData("NumpadAdd", false, false, false, "NumpadAdd")]
     [InlineData("+", false, false, false, "NumpadAdd")]
     [InlineData("-", false, false, false, "NumpadSub")]
+    [InlineData("Right", false, false, false, "Right")]
+    [InlineData("Left", false, false, false, "Left")]
     public void Parse_NormalizesModifiersAndKeys(string text, bool ctrl, bool alt, bool shift, string key)
     {
         Assert.True(HotkeyGesture.TryParse(text, out var g));

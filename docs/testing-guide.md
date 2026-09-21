@@ -36,8 +36,8 @@ Ações (teste você, pois mudam reprodução — faça com playlist de 3 vídeo
 Pré-requisito: PotPlayer aberto + SideScreen aberto.
 
 1. Shortcuts → **Restaurar padrões** → marque `Enable global hotkeys` → Guard = `Always` → **Apply**.
-   Status esperado: `Registrados 4 hotkeys (guard=Always, double-press=ON 350ms).` (previous compartilha o F1)
-2. Fora do jogo (Bloco de Notas pequeno focado): `Numpad+`/`Numpad-` → volume muda; `F2` → pausa/retoma; `F1` → próximo (após ~350ms); `F1 F1` rápido → anterior.
+   Status esperado: `Registrados 6 hotkeys (guard=Always, double-press=ON 350ms).` (previous compartilha o F1)
+2. Fora do jogo (Bloco de Notas pequeno focado): `Numpad+`/`Numpad-` → volume muda; `F2` → pausa/retoma; `F1` → próximo (após ~350ms); `F1 F1` rápido → anterior; `→`/`←` → ±5s.
 3. No BNSR fullscreen: mesmos testes — agora funcionam (guard `Always`).
    ⚠️ O jogo TAMBÉM recebe as teclas (diferente do AHK que suprimia). Confira os binds de F1/F2 no BNSR.
 4. Se nada disparar: confira se o SideScreen continua aberto (só 1 instância registra) e o Status da tela.

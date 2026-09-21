@@ -26,3 +26,15 @@
 3. Abra um jogo/programa fullscreen → `Ctrl+Alt+P` deve ser **ignorado** (Status mostra `ignorado pelo guard`).
 4. Tente cadastrar `F1` sozinho → warning amarelo. Duplicar um gesto → `Conflito` bloqueia o Apply.
 5. Double-press: ative, Apply, pressione `Ctrl+Alt+Right` 1x (aguarda ~350ms → Next) e 2x rápido (→ Previous). Note o delay — por isso é experimental e desligado por padrão.
+
+## ⚠ Disclaimer — uso em jogos (pedido do usuário)
+
+Atalhos globais disparam mesmo com o jogo em foco (guard=`Always`) e **podem suprimir ou duplicar a tecla dentro do jogo** — ex: F1/F2 também chegam ao BNSR, podendo acionar algo lá. Efeitos por tecla:
+
+| Tecla | Risco em jogo |
+|---|---|
+| Numpad + / - | Baixo — jogos raramente usam; seguro na prática |
+| F1 / F2 | Alto — confira os binds do jogo antes; teste fora de ranked |
+| Setas ← → | Médio — podem mover personagem/menus se o jogo receber junto |
+
+Recomendação: confira os atalhos do jogo, teste em área segura e, se F1/F2 causarem ação dupla, troque para combos com modificador (`Ctrl+F1`) ou volte o guard para `PauseWhenFullscreen`.
