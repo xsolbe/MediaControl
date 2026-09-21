@@ -38,8 +38,8 @@ public sealed class ShortcutEdit : ObservableObject
 }
 
 /// <summary>
-/// Shortcuts — Fase 4: captura, conflitos, warnings gamer, Apply/Restaurar, guard + double-press.
-/// O HWND é anexado pela View (code-behind) para RegisterHotKey + hook WM_HOTKEY.
+/// Shortcuts — captura, conflitos, warnings gamer, Apply/Restaurar, guard + double-press.
+/// Usa o HotkeyService COMPARTILHADO (dono: MainViewModel) — o registro acontece no startup do app.
 /// </summary>
 public sealed class ShortcutsViewModel : ObservableObject
 {
@@ -54,20 +54,20 @@ public sealed class ShortcutsViewModel : ObservableObject
         ("seekBackward", "Voltar 5 segundos", "Volta -5s no vídeo atual (seta ←)"),
     ];
 
-    private readonly JsonSettingsStore _store = new();
+    private readonly JsonSettingsStore _store;
     private readonly HotkeyService _service;
-    private nint _hWnd;
+    private readonly Action _onConfigSaved;
     private bool _enableGlobal;
     private string _guardMode = Core.Hotkeys.GuardModes.Always;
     private bool _doublePress;
     private int _doubleWindow = 350;
     private string _status = "";
 
-    public ShortcutsViewModel() : this(new HotkeyService(new PotPlayerController())) { }
-
-    internal ShortcutsViewModel(HotkeyService service)
+    public ShortcutsViewModel(HotkeyService service, JsonSettingsStore store, Action onConfigSaved)
     {
         _service = service;
+        _store = store;
+        _onConfigSaved = onConfigSaved;
         _service.Triggered += msg => Status = msg;
 
         var cfg = _store.Load();
@@ -75,7 +75,7 @@ public sealed class ShortcutsViewModel : ObservableObject
             new ShortcutEdit(o.Key, o.Label, o.Description, cfg.Shortcuts.TryGetValue(o.Key, out var g) ? g : AppConfig.Default().Shortcuts[o.Key])));
 
         _enableGlobal = cfg.EnableGlobalHotkeys;
-        _guardMode = Core.Hotkeys.GuardModes.All.Contains(cfg.GuardMode) ? cfg.GuardMode : Core.Hotkeys.GuardModes.PauseWhenFullscreen;
+        _guardMode = Core.Hotkeys.GuardModes.All.Contains(cfg.GuardMode) ? cfg.GuardMode : Core.Hotkeys.GuardModes.Always;
         _doublePress = cfg.DoublePressEnabled;
         _doubleWindow = Math.Clamp(cfg.DoublePressWindowMs, 200, 500);
 
@@ -87,8 +87,23 @@ public sealed class ShortcutsViewModel : ObservableObject
 
         Validate();
         Status = cfg.EnableGlobalHotkeys
-            ? "Globais ATIVADAS no config — Apply para registrar nesta janela."
-            : "Globais DESLIGADAS por padrão (seguro para jogos). Edite, marque a caixa e clique Apply.";
+            ? "Globais ATIVADAS — registradas ao abrir o app (ver rodapé: Hotkeys ON)."
+            : "Globais DESLIGADAS. Marque a caixa e clique Apply.";
+        Status += ConflictNote();
+    }
+
+    private static string ConflictNote()
+    {
+        var notes = new List<string>();
+        try
+        {
+            if (System.Diagnostics.Process.GetProcessesByName("MusicControl").Length > 0)
+                notes.Add("MusicControl.exe rodando: o AHK engole F1/F2/Numpad antes do SideScreen — feche-o para testar.");
+            if (System.Diagnostics.Process.GetProcessesByName("SideScreen.UI").Length > 1)
+                notes.Add("outra instância do SideScreen aberta: só uma registra os hotkeys.");
+        }
+        catch { }
+        return notes.Count == 0 ? "" : " Atenção: " + string.Join(" ", notes);
     }
 
     public ObservableCollection<ShortcutEdit> Rows { get; }
@@ -129,18 +144,6 @@ public sealed class ShortcutsViewModel : ObservableObject
     public RelayCommand ApplyCommand { get; }
     public RelayCommand RestoreDefaultsCommand { get; }
 
-    /// <summary>Chamado pela View quando o HWND da janela principal existe.</summary>
-    public void AttachHwnd(nint hWnd)
-    {
-        _hWnd = hWnd;
-        if (_enableGlobal)
-            Apply();
-    }
-
-    public bool HandleHotkey(int id) => _service.HandleHotkeyMessage(id);
-
-    public void Detach() => _service.Stop();
-
     private void Apply()
     {
         Validate();
@@ -165,28 +168,15 @@ public sealed class ShortcutsViewModel : ObservableObject
             return;
         }
 
-        if (!_enableGlobal)
-        {
-            _service.Stop();
-            Status = $"Salvo em config.json. Globais DESLIGADAS — controle pelos botões do Dashboard.";
-            return;
-        }
-
-        if (_hWnd == nint.Zero)
-        {
-            Status = "Salvo. HWND ainda indisponível — será registrado ao abrir a janela.";
-            return;
-        }
-
-        _service.GuardMode = _guardMode;
-        _service.DoublePressEnabled = _doublePress;
-        _service.DoublePressWindowMs = _doubleWindow;
-        var dict = Rows.ToDictionary(r => r.ActionKey, r => r.Gesture);
-        bool ok = _service.Start(_hWnd, dict);
-        Status = ok
-            ? $"Registrados {_service.Registered.Count} hotkeys (guard={_guardMode}, double-press={(_doublePress ? $"ON {_doubleWindow}ms" : "OFF")})."
-            : $"Parcial: {string.Join("; ", _service.Errors)}";
+        _onConfigSaved(); // MainViewModel relê o config e (re)liga o serviço
+        Status = !_enableGlobal
+            ? "Salvo em config.json. Globais DESLIGADAS — controle pelos botões do Dashboard."
+            : $"Salvo e aplicado (ver rodapé: Hotkeys ON).{_serviceErrors()}";
+        Status += ConflictNote();
     }
+
+    private string _serviceErrors() =>
+        _service.Errors.Count == 0 ? "" : $" Parcial: {string.Join("; ", _service.Errors)}";
 
     private void RestoreDefaults()
     {
@@ -194,7 +184,7 @@ public sealed class ShortcutsViewModel : ObservableObject
         foreach (var r in Rows)
             r.Gesture = d.Shortcuts[r.ActionKey];
         EnableGlobal = false;
-        SelectedGuardMode = Core.Hotkeys.GuardModes.PauseWhenFullscreen;
+        SelectedGuardMode = Core.Hotkeys.GuardModes.Always;
         DoublePressEnabled = true;
         DoublePressWindowMs = 350;
         Validate();

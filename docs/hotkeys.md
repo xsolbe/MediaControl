@@ -19,7 +19,12 @@
 - Persistência em `%AppData%\SideScreen\config.json` via `JsonSettingsStore` (criado no 1º Apply).
 - Sem `WH_KEYBOARD_LL` — só `RegisterHotKey` no HWND da janela + hook `WM_HOTKEY` na View.
 
-## Como testar (sem se expor em jogo)
+## Diagnóstico remoto — `hotkeys.log` (2026-09-21)
+
+`%AppData%\SideScreen\hotkeys.log` registra attach/start/WM_HOTKEY/executed (só nossos hotkeys — não é keylogger).
+Cadeia provada ao vivo: tecla sintética NumpadAdd → `WM_HOTKEY volumeUp` → `executed` → volume 16→21; NumpadSub → 21→16.
+
+## Como testar (roteiro BNSR)
 
 1. Com PotPlayer aberto, abra Shortcuts → marque `Enable global hotkeys` → Apply (guard default `PauseWhenFullscreen`).
 2. Com SideScreen focado ou Bloco de Notas focado (janela pequena): `Ctrl+Alt+P` → pausa/retoma o vídeo sem focar o player.

@@ -1,53 +1,17 @@
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Interop;
 using SideScreen.UI.ViewModels;
 
 namespace SideScreen.UI.Views;
 
 public partial class ShortcutsView : UserControl
 {
-    private HwndSource? _source;
-    private const int WmHotkey = 0x0312;
-
     public ShortcutsView()
     {
         InitializeComponent();
-        Loaded += OnLoaded;
-        Unloaded += OnUnloaded;
     }
 
-    private ShortcutsViewModel Vm => (ShortcutsViewModel)DataContext;
-
-    private void OnLoaded(object sender, RoutedEventArgs e)
-    {
-        var window = Window.GetWindow(this);
-        if (window == null) return;
-        var hWnd = new WindowInteropHelper(window).Handle;
-        if (hWnd == nint.Zero) return;
-
-        Vm.AttachHwnd(hWnd);
-        _source = HwndSource.FromHwnd(hWnd);
-        _source?.AddHook(WndProc);
-    }
-
-    private void OnUnloaded(object sender, RoutedEventArgs e)
-    {
-        _source?.RemoveHook(WndProc);
-        _source = null;
-    }
-
-    private IntPtr WndProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-    {
-        if (msg == WmHotkey)
-        {
-            handled = Vm.HandleHotkey(wParam.ToInt32());
-        }
-        return IntPtr.Zero;
-    }
-
-    /// <summary>Captura o combo pressionado e escreve o gesto canônico na linha (ex: Ctrl+Alt+P).</summary>
+    /// <summary>Captura o combo pressionado e escreve o gesto canônico na linha (ex: F2, NumpadAdd).</summary>
     private void GestureBox_PreviewKeyDown(object sender, KeyEventArgs e)
     {
         if (sender is not TextBox box || box.DataContext is not ShortcutEdit row)

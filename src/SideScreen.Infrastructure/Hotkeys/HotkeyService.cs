@@ -42,6 +42,7 @@ public sealed class HotkeyService : IDisposable
         Stop();
         _hWnd = hWnd;
         Errors.Clear();
+        HotkeyLog.Append($"Start hWnd=0x{hWnd:X} guard={GuardMode} doublePress={DoublePressEnabled} windowMs={DoublePressWindowMs}");
         _doubleTracker.WindowMs = DoublePressWindowMs;
 
         // Double-press (F1 x2 = anterior): next e previous compartilham a tecla por design.
@@ -83,8 +84,12 @@ public sealed class HotkeyService : IDisposable
             {
                 _idToAction[id] = action;
                 _actionToId[action] = id;
+                HotkeyLog.Append($"registered {action} ({g}) id={id}");
             }
         }
+
+        foreach (var e in Errors)
+            HotkeyLog.Append($"ERROR {e}");
 
         _started = true;
         return Errors.Count == 0;
@@ -94,11 +99,16 @@ public sealed class HotkeyService : IDisposable
     public bool HandleHotkeyMessage(int id)
     {
         if (!_started || !_idToAction.TryGetValue(id, out var action))
+        {
+            HotkeyLog.Append($"WM_HOTKEY id={id} desconhecido (started={_started})");
             return false;
+        }
 
+        HotkeyLog.Append($"WM_HOTKEY {action} guard={GuardMode}");
         if (!_guard.ShouldExecute(GuardMode))
         {
             Triggered?.Invoke($"[{DateTime.Now:HH:mm:ss}] {action} ignorado pelo guard ({GuardMode})");
+            HotkeyLog.Append($"{action} ignorado pelo guard ({GuardMode})");
             return true;
         }
 
@@ -150,10 +160,12 @@ public sealed class HotkeyService : IDisposable
                 case "seekBackward": _player.SeekBackward(); break;
                 default: return;
             }
+            HotkeyLog.Append($"executed {action}");
             Triggered?.Invoke($"[{DateTime.Now:HH:mm:ss}] {action} → {_player.DisplayName}");
         }
         catch (Exception ex)
         {
+            HotkeyLog.Append($"ERROR {action}: {ex.Message}");
             Triggered?.Invoke($"[{DateTime.Now:HH:mm:ss}] {action} erro: {ex.Message}");
         }
     }

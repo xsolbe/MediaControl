@@ -27,7 +27,8 @@
                 <Button Content="Display" Style="{StaticResource NavButton}" Command="{Binding NavigateCommand}" CommandParameter="Display"/>
                 <Button Content="Settings" Style="{StaticResource NavButton}" Command="{Binding NavigateCommand}" CommandParameter="Settings"/>
 
-                <TextBlock Text="v0.2.0 · Fase 2" Style="{StaticResource MutedText}" Margin="4,24,0,0"/>
+                <TextBlock Text="SideScreen" Style="{StaticResource MutedText}" Margin="4,24,0,0"/>
+                <TextBlock Text="{Binding HotkeySummary}" Style="{StaticResource MutedText}" Margin="4,4,0,0"/>
             </StackPanel>
         </Border>
 
