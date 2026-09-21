@@ -39,6 +39,32 @@ public class Fase5Tests
     }
 
     [Fact]
+    public void RestorePosition_WithAnchor_ReturnsExactSpot()
+    {
+        // Âncora (200,150) no alvo; janela atual 800x600 fora → volta exatamente para a âncora.
+        var (x, y) = MonitorLayout.RestorePosition(3000, 500, 800, 600, (200, 150), 0, 0, 0, 0, 1920, 1080);
+        Assert.Equal(200, x);
+        Assert.Equal(150, y);
+    }
+
+    [Fact]
+    public void RestorePosition_AnchorClamped_WhenVideoBigger()
+    {
+        // Âncora válida, mas vídeo atual maior que o alvo: encosta no canto em vez de vazar.
+        var (x, y) = MonitorLayout.RestorePosition(0, 0, 2000, 1200, (100, 100), 0, 0, 0, 0, 1920, 1080);
+        Assert.Equal(0, x);
+        Assert.Equal(0, y);
+    }
+
+    [Fact]
+    public void RestorePosition_WithoutAnchor_FallsBackToRelative()
+    {
+        var (x, y) = MonitorLayout.RestorePosition(100, 100, 800, 600, null, 0, 0, 1920, 0, 1920, 1080);
+        Assert.Equal(2020, x);
+        Assert.Equal(100, y);
+    }
+
+    [Fact]
     public void MonitorService_ListsAtLeastOne()
     {
         // Roda na máquina real: sempre há ≥1 monitor. Sem asserts de quantidade exata.

@@ -28,6 +28,35 @@ public static class MonitorLayout
         return (nx, ny);
     }
 
+    /// <summary>
+    /// Posição de restauração do lock: usa a âncora (lugar exato onde o player estava no alvo);
+    /// sem âncora, cai no deslocamento relativo. Sempre preso dentro do alvo para o tamanho atual
+    /// (o PotPlayer muda o tamanho da janela conforme o vídeo — por isso posição da âncora + tamanho atual).
+    /// </summary>
+    public static (int x, int y) RestorePosition(
+        int curX, int curY, int curW, int curH,
+        (int x, int y)? anchor,
+        int fromLeft, int fromTop,
+        int toLeft, int toTop, int toWidth, int toHeight)
+    {
+        int baseX, baseY;
+        if (anchor.HasValue)
+        {
+            baseX = anchor.Value.x;
+            baseY = anchor.Value.y;
+        }
+        else
+        {
+            // Sem âncora (lock ligado com player já fora): offset relativo da posição atual.
+            baseX = toLeft + (curX - fromLeft);
+            baseY = toTop + (curY - fromTop);
+        }
+
+        int nx = curW >= toWidth ? toLeft : Math.Clamp(baseX, toLeft, toLeft + toWidth - curW);
+        int ny = curH >= toHeight ? toTop : Math.Clamp(baseY, toTop, toTop + toHeight - curH);
+        return (nx, ny);
+    }
+
     /// <summary>True se a janela cobre ~todo o monitor (fullscreen/borderless) — nesses casos não movemos.</summary>
     public static bool CoversMonitor(int x, int y, int w, int h, DisplayMonitor m, double tolerance = 0.98) =>
         w >= m.Width * tolerance && h >= m.Height * tolerance

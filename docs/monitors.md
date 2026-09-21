@@ -10,7 +10,7 @@ Interceptar `WM_MOVING`/`WM_WINDOWPOSCHANGING` é intrusivo, quebra fullscreen/m
 
 1. Lista com `EnumDisplayMonitors`/`GetMonitorInfo`; escolha persistida por device key (`\\.\DISPLAY2`).
 2. Vigia a cada 750ms; exige 3 leituras fora do alvo (~2,25s, tolera arrasto em curso).
-3. Devolve com `SetWindowPos(SWP_NOSIZE|SWP_NOZORDER|SWP_NOACTIVATE)` preservando tamanho e offset relativo.
+3. Devolve para a **posição travada (âncora)**: enquanto estável no alvo, memoriza o lugar exato a cada leitura; ao voltar, restaura a âncora com o tamanho atual (o PotPlayer muda o tamanho conforme o vídeo). Sem âncora ainda, usa offset relativo.
 4. Nunca rouba foco; ignora maximizado/fullscreen (só avisa); player fechado = Offline.
 
 ## Teste manual

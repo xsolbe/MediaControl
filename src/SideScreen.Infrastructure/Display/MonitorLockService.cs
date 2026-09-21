@@ -17,6 +17,7 @@ public sealed class MonitorLockService : IDisposable
     private System.Threading.Timer? _timer;
     private string _targetDevice = "";
     private int _offCount;
+    private (int x, int y)? _anchor; // lugar exato no monitor alvo (atualizado enquanto estável por lá)
     private bool _disposed;
 
     public MonitorLockService(IPlayerController player) : this(player, MonitorService.List) { }
@@ -36,6 +37,7 @@ public sealed class MonitorLockService : IDisposable
         Stop();
         _targetDevice = targetDevice ?? "";
         _offCount = 0;
+        _anchor = null; // reaprende a posição quando estabilizar no alvo
         IsRunning = true;
         SetStatus($"Vigiando {targetDevice}.");
         _timer = new System.Threading.Timer(_ => Tick(), null, 0, 750);
@@ -47,6 +49,7 @@ public sealed class MonitorLockService : IDisposable
         _timer = null;
         IsRunning = false;
         _offCount = 0;
+        _anchor = null;
     }
 
     public void Dispose()
@@ -98,7 +101,8 @@ public sealed class MonitorLockService : IDisposable
             if (current is not null && current.DeviceKey == target.DeviceKey)
             {
                 _offCount = 0;
-                SetStatus($"OK no {target.Label.Split('—')[0].Trim()}.");
+                _anchor = (rc.Left, rc.Top); // memoriza o lugar exato enquanto estável no alvo
+                SetStatus($"OK no {target.Label.Split('—')[0].Trim()} (posição travada).");
                 return;
             }
 
@@ -119,10 +123,10 @@ public sealed class MonitorLockService : IDisposable
 
             _offCount = 0;
             var from = current ?? target;
-            var (nx, ny) = MonitorLayout.ClampIntoBounds(rc.Left, rc.Top, w, hgt, from.Left, from.Top, target.Left, target.Top, target.Width, target.Height);
+            var (nx, ny) = MonitorLayout.RestorePosition(rc.Left, rc.Top, w, hgt, _anchor, from.Left, from.Top, target.Left, target.Top, target.Width, target.Height);
             bool ok = NativeMethods.SetWindowPos(h, nint.Zero, nx, ny, 0, 0,
                 NativeMethods.SwpNoSize | NativeMethods.SwpNoZOrder | NativeMethods.SwpNoActivate);
-            SetStatus(ok ? $"Devolvido ao {target.Label.Split('—')[0].Trim()}." : "Falha ao reposicionar (acesso negado?).");
+            SetStatus(ok ? $"Devolvido à posição travada no {target.Label.Split('—')[0].Trim()}." : "Falha ao reposicionar (acesso negado?).");
         }
         catch (Exception ex)
         {
