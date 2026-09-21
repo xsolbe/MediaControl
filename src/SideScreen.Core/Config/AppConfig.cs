@@ -6,7 +6,7 @@ namespace SideScreen.Core.Config;
 /// </summary>
 public sealed class AppConfig
 {
-    public int Version { get; set; } = 1;
+    public int Version { get; set; } = 2;
 
     public string SelectedPlayerId { get; set; } = "potplayer";
 
@@ -16,15 +16,19 @@ public sealed class AppConfig
 
     public bool LockPlayerToMonitor { get; set; } = false;
 
+    /// <summary>
+    /// Comandos padrão do usuário (vindos do script MusicControl/AutoHotkey):
+    /// Volume+ / Volume- (teclas de mídia — seguras, não conflitam com jogos),
+    /// F2 = Play/Pause, F1 = próximo, F1 x2 = anterior (double-press, compartilha o F1).
+    /// F1/F2 sozinhos exibem aviso gamer na UI e respeitam o guard (pausa em fullscreen).
+    /// </summary>
     public Dictionary<string, string> Shortcuts { get; set; } = new()
     {
-        // Valores iniciais SEGUROS: sem hotkeys globais perigosas.
-        // F1/F2 sozinhos são propositalmente evitados por padrão (conflito com jogos).
-        ["volumeUp"] = "Ctrl+Alt+Up",
-        ["volumeDown"] = "Ctrl+Alt+Down",
-        ["playPause"] = "Ctrl+Alt+P",
-        ["next"] = "Ctrl+Alt+Right",
-        ["previous"] = "Ctrl+Alt+Left",
+        ["volumeUp"] = "VolumeUp",
+        ["volumeDown"] = "VolumeDown",
+        ["playPause"] = "F2",
+        ["next"] = "F1",
+        ["previous"] = "F1",
     };
 
     /// <summary>Globais desligadas por padrão — usuário opt-in (requisito: não interferir em jogos).</summary>
@@ -33,8 +37,8 @@ public sealed class AppConfig
     /// <summary>Always | PauseWhenFullscreen (default) | OnlyWhenPlayerFocused</summary>
     public string GuardMode { get; set; } = "PauseWhenFullscreen";
 
-    /// <summary>Experimental, desligado por padrão (introduz delay no Next). Ver docs/hotkeys.md.</summary>
-    public bool DoublePressEnabled { get; set; } = false;
+    /// <summary>F1 x2 = vídeo anterior. Ligado por padrão (pedido do usuário); tem delay de ~350ms no Next.</summary>
+    public bool DoublePressEnabled { get; set; } = true;
 
     public int DoublePressWindowMs { get; set; } = 350;
 

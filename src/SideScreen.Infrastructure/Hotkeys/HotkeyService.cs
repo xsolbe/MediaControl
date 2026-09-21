@@ -31,7 +31,7 @@ public sealed class HotkeyService : IDisposable
 
     public string GuardMode { get; set; } = GuardModes.PauseWhenFullscreen;
     public bool DoublePressEnabled { get; set; }
-    public int DoublePressWindowMs { get; }
+    public int DoublePressWindowMs { get; set; }
     public IReadOnlyDictionary<string, int> Registered => _actionToId;
     public List<string> Errors { get; } = [];
     public event Action<string>? Triggered;
@@ -42,11 +42,24 @@ public sealed class HotkeyService : IDisposable
         Stop();
         _hWnd = hWnd;
         Errors.Clear();
+        _doubleTracker.WindowMs = DoublePressWindowMs;
+
+        // Double-press (F1 x2 = anterior): next e previous compartilham a tecla por design.
+        // Registra o F1 uma única vez (via "next"); o 2º toque vira Previous no HandleHotkeyMessage.
+        bool sharedDoublePress = DoublePressEnabled
+            && actionToGesture.TryGetValue("next", out var nextG)
+            && actionToGesture.TryGetValue("previous", out var prevG)
+            && HotkeyGesture.TryParse(nextG, out var ng)
+            && HotkeyGesture.TryParse(prevG, out var pg)
+            && ng.Canonical() == pg.Canonical();
+
         int i = 0;
 
         foreach (var (action, text) in actionToGesture)
         {
             i++;
+            if (sharedDoublePress && action == "previous")
+                continue; // coberto pelo F1 do "next" + DoublePressTracker
             if (!HotkeyGesture.TryParse(text, out var g))
             {
                 Errors.Add($"{action}: gesto inválido '{text}'");

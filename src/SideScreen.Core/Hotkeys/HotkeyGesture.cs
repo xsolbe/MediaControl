@@ -76,10 +76,13 @@ public sealed record HotkeyGesture(bool Ctrl, bool Alt, bool Shift, bool Win, st
     /// </summary>
     public string? GamerWarning()
     {
+        // Teclas de mídia são tratadas pelo Windows sem roubar foco — seguras como globais.
+        if (Key is "VolumeUp" or "VolumeDown" or "VolumeMute" or "MediaNext" or "MediaPrev" or "MediaPlayPause")
+            return null;
         if (!HasAnyModifier())
         {
             if (Key.Equals("F1", StringComparison.OrdinalIgnoreCase) || Key.Equals("F2", StringComparison.OrdinalIgnoreCase))
-                return "F1/F2 sozinho como global rouba a tecla de jogos — evite.";
+                return "F1/F2 sozinho como global pode pausar o vídeo enquanto você joga — o guard pausa em fullscreen.";
             return $"'{Key}' sozinho como global interfere em jogos/programas — prefira Ctrl+Alt+...";
         }
         return null;
@@ -96,6 +99,12 @@ public sealed record HotkeyGesture(bool Ctrl, bool Alt, bool Shift, bool Win, st
             "right" or "arrowright" => "Right",
             "space" or "spacebar" => "Space",
             "esc" or "escape" => "Esc",
+            "volumeup" or "volup" => "VolumeUp",
+            "volumedown" or "voldown" => "VolumeDown",
+            "volumemute" or "mute" => "VolumeMute",
+            "medianext" or "medianexttrack" => "MediaNext",
+            "mediaprev" or "mediaprevioustrack" => "MediaPrev",
+            "mediaplaypause" => "MediaPlayPause",
             _ when k.Length == 1 => k.ToUpperInvariant(),
             _ when k.StartsWith("F", StringComparison.OrdinalIgnoreCase) && k.Length <= 3 => k.ToUpperInvariant(),
             _ => k,

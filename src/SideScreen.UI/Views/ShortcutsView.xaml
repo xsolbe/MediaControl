@@ -28,12 +28,13 @@
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="170"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Text="{Binding Label}" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding Label}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                                     <TextBox Grid.Column="1" Text="{Binding Gesture, UpdateSourceTrigger=PropertyChanged}"
                                              FontFamily="Consolas" Height="28"
                                              PreviewKeyDown="GestureBox_PreviewKeyDown"
                                              ToolTip="Clique e pressione o combo"/>
                                 </Grid>
+                                <TextBlock Text="{Binding Description}" Style="{StaticResource MutedText}" FontSize="11" TextWrapping="Wrap"/>
                                 <TextBlock Text="{Binding Warning}" Foreground="#E0A500" FontSize="11" TextWrapping="Wrap"
                                            Visibility="{Binding Warning, Converter={StaticResource NullToVisibilityConverter}}"/>
                             </StackPanel>

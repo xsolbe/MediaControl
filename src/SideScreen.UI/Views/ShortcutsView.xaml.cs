@@ -110,6 +110,12 @@ public partial class ShortcutsView : UserControl
             Key.End => "End",
             Key.PageUp => "PageUp",
             Key.PageDown => "PageDown",
+            Key.VolumeUp => "VolumeUp",
+            Key.VolumeDown => "VolumeDown",
+            Key.VolumeMute => "VolumeMute",
+            Key.MediaNextTrack => "MediaNext",
+            Key.MediaPreviousTrack => "MediaPrev",
+            Key.MediaPlayPause => "MediaPlayPause",
             _ => null,
         };
     }

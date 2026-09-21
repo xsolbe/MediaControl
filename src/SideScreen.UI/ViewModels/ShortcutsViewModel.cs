@@ -12,15 +12,17 @@ public sealed class ShortcutEdit : ObservableObject
     private string _gesture;
     private string? _warning;
 
-    public ShortcutEdit(string actionKey, string label, string gesture)
+    public ShortcutEdit(string actionKey, string label, string description, string gesture)
     {
         ActionKey = actionKey;
         Label = label;
+        Description = description;
         _gesture = gesture;
     }
 
     public string ActionKey { get; }
     public string Label { get; }
+    public string Description { get; }
 
     public string Gesture
     {
@@ -41,13 +43,13 @@ public sealed class ShortcutEdit : ObservableObject
 /// </summary>
 public sealed class ShortcutsViewModel : ObservableObject
 {
-    private static readonly (string Key, string Label)[] Order =
+    private static readonly (string Key, string Label, string Description)[] Order =
     [
-        ("volumeUp", "Aumentar volume"),
-        ("volumeDown", "Diminuir volume"),
-        ("playPause", "Play/Pause"),
-        ("next", "Próximo vídeo"),
-        ("previous", "Vídeo anterior"),
+        ("volumeUp", "Aumentar volume", "Sobe o volume do PotPlayer (tecla de mídia — não conflita com jogos)"),
+        ("volumeDown", "Diminuir volume", "Desce o volume do PotPlayer (tecla de mídia)"),
+        ("playPause", "Play / Pause", "Pausa ou retoma o vídeo (F2 — mostra aviso gamer; guard pausa em fullscreen)"),
+        ("next", "Próximo vídeo", "Avança para o próximo vídeo da playlist/pasta (F1)"),
+        ("previous", "Vídeo anterior", "Volta ao vídeo anterior (F1 pressionado 2x — double-press)"),
     ];
 
     private readonly JsonSettingsStore _store = new();
@@ -68,7 +70,7 @@ public sealed class ShortcutsViewModel : ObservableObject
 
         var cfg = _store.Load();
         Rows = new ObservableCollection<ShortcutEdit>(Order.Select(o =>
-            new ShortcutEdit(o.Key, o.Label, cfg.Shortcuts.TryGetValue(o.Key, out var g) ? g : AppConfig.Default().Shortcuts[o.Key])));
+            new ShortcutEdit(o.Key, o.Label, o.Description, cfg.Shortcuts.TryGetValue(o.Key, out var g) ? g : AppConfig.Default().Shortcuts[o.Key])));
 
         _enableGlobal = cfg.EnableGlobalHotkeys;
         _guardMode = Core.Hotkeys.GuardModes.All.Contains(cfg.GuardMode) ? cfg.GuardMode : Core.Hotkeys.GuardModes.PauseWhenFullscreen;
@@ -105,7 +107,7 @@ public sealed class ShortcutsViewModel : ObservableObject
     public bool DoublePressEnabled
     {
         get => _doublePress;
-        set => Set(ref _doublePress, value);
+        set { if (Set(ref _doublePress, value)) Validate(); }
     }
 
     public int DoublePressWindowMs
@@ -176,11 +178,11 @@ public sealed class ShortcutsViewModel : ObservableObject
 
         _service.GuardMode = _guardMode;
         _service.DoublePressEnabled = _doublePress;
+        _service.DoublePressWindowMs = _doubleWindow;
         var dict = Rows.ToDictionary(r => r.ActionKey, r => r.Gesture);
-        // DoublePressWindowMs entra no construtor; recria serviço se mudou? Fase 4: usa valor atual via novo serviço.
         bool ok = _service.Start(_hWnd, dict);
         Status = ok
-            ? $"Registrados {dict.Count} hotkeys (guard={_guardMode}, double-press={(_doublePress ? $"ON {_doubleWindow}ms" : "OFF")})."
+            ? $"Registrados {_service.Registered.Count} hotkeys (guard={_guardMode}, double-press={(_doublePress ? $"ON {_doubleWindow}ms" : "OFF")})."
             : $"Parcial: {string.Join("; ", _service.Errors)}";
     }
 
@@ -191,10 +193,10 @@ public sealed class ShortcutsViewModel : ObservableObject
             r.Gesture = d.Shortcuts[r.ActionKey];
         EnableGlobal = false;
         SelectedGuardMode = Core.Hotkeys.GuardModes.PauseWhenFullscreen;
-        DoublePressEnabled = false;
+        DoublePressEnabled = true;
         DoublePressWindowMs = 350;
         Validate();
-        Status = "Padrões restaurados (Ctrl+Alt...). Clique Apply para salvar.";
+        Status = "Padrões restaurados (Volume+/-, F2, F1, F1 x2). Clique Apply para salvar.";
     }
 
     private void Validate()
@@ -204,11 +206,21 @@ public sealed class ShortcutsViewModel : ObservableObject
             .SelectMany(g => g)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
+        // F1 x2 = anterior por design: next e previous compartilham a tecla quando o double-press está ligado.
+        if (_doublePress
+            && dict.TryGetValue("next", out var ng) && dict.TryGetValue("previous", out var pg)
+            && HotkeyGesture.TryParse(ng, out var n) && HotkeyGesture.TryParse(pg, out var p)
+            && n.Canonical() == p.Canonical())
+        {
+            dups.Remove("next");
+            dups.Remove("previous");
+        }
+
         foreach (var r in Rows)
         {
             if (!HotkeyGesture.TryParse(r.Gesture, out var g))
             {
-                r.Warning = "Gesto inválido (ex: Ctrl+Alt+P).";
+                r.Warning = "Gesto inválido (ex: F2 ou Ctrl+Alt+P).";
                 continue;
             }
             if (dups.Contains(r.ActionKey))

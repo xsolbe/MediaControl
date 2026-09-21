@@ -11,9 +11,10 @@ namespace SideScreen.Infrastructure.Hotkeys;
 public sealed class DoublePressTracker
 {
     private DateTime? _first;
-    private readonly int _windowMs;
 
-    public DoublePressTracker(int windowMs) => _windowMs = Math.Clamp(windowMs, 100, 1000);
+    public DoublePressTracker(int windowMs) => WindowMs = Math.Clamp(windowMs, 100, 1000);
+
+    public int WindowMs { get; set; }
 
     public enum Result { First, Second, SingleExpired, Ignored }
 
@@ -27,13 +28,13 @@ public sealed class DoublePressTracker
 
         var elapsed = (now - _first.Value).TotalMilliseconds;
         _first = null;
-        return elapsed <= _windowMs ? Result.Second : Result.First; // se expirou, trata como novo First
+        return elapsed <= WindowMs ? Result.Second : Result.First; // se expirou, trata como novo First
     }
 
     public Result Expire(DateTime now)
     {
         if (_first is null) return Result.Ignored;
-        if ((now - _first.Value).TotalMilliseconds >= _windowMs)
+        if ((now - _first.Value).TotalMilliseconds >= WindowMs)
         {
             _first = null;
             return Result.SingleExpired;

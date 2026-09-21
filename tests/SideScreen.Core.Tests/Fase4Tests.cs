@@ -31,7 +31,10 @@ public class Fase4Tests
     public void GamerWarning_FlagsBareKeys()
     {
         Assert.True(HotkeyGesture.TryParse("F1", out var f1));
-        Assert.NotNull(f1.GamerWarning());
+        Assert.NotNull(f1.GamerWarning()); // aviso informa, não bloqueia (usuário pediu F1/F2)
+
+        Assert.True(HotkeyGesture.TryParse("VolumeUp", out var media));
+        Assert.Null(media.GamerWarning()); // mídia é segura (Windows lida sem roubar foco)
 
         Assert.True(HotkeyGesture.TryParse("Ctrl+Alt+P", out var safe));
         Assert.Null(safe.GamerWarning());
@@ -58,6 +61,8 @@ public class Fase4Tests
         Assert.True(KeyMapper.TryGetVk("P", out uint p) && p == 0x50);
         Assert.True(KeyMapper.TryGetVk("F1", out uint f1) && f1 == 0x70);
         Assert.True(KeyMapper.TryGetVk("Up", out uint up) && up == 0x26);
+        Assert.True(KeyMapper.TryGetVk("VolumeUp", out uint vu) && vu == 0xAF);
+        Assert.True(KeyMapper.TryGetVk("VolumeDown", out uint vd) && vd == 0xAE);
         Assert.False(KeyMapper.TryGetVk("MediaPlay", out _)); // fora da tabela mínima
     }
 

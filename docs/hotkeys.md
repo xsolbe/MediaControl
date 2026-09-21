@@ -7,12 +7,12 @@
 ## Estratégia SideScreen (Fase 4)
 
 1. **Default: zero hotkey global.** Controle por botão + `SendMessage` sem foco já resolve 80%.
-2. **Opt-in com combos raros:** `Ctrl+Alt+P`, `Ctrl+Alt+Setas`, teclas de mídia (`Media_PlayPause`). Nunca F1/F2 sozinhos.
+2. **Padrões do usuário (script MusicControl):** `VolumeUp`/`VolumeDown` (teclas de mídia — seguras, o Windows lida sem roubar foco), `F2` = Play/Pause, `F1` = próximo, `F1 x2` = anterior (double-press compartilha o F1; `previous` nem é registrado separadamente).
 3. **ForegroundGuard:** antes de executar, `GetForegroundWindow()`. Modos:
    - `Always` — executa sempre (explicitamente escolhido)
    - `PauseWhenFullscreen` (default) — se janela em foco ocupa tela toda, ignora
    - `OnlyWhenPlayerFocused` — mais restritivo
-4. **Double-press (`F1 x2 = anterior`):** possível com timer 300-400ms, mas atrasa o single-press ou causa duplo disparo. Deixar experimental, desligado com Modo Jogo. Recomendado: `F1=Next, Shift+F1=Prev` (sem delay).
+4. **Double-press (`F1 x2 = anterior`):** ligado por padrão a pedido do usuário, janela 350ms. Custo honesto: o `Next` simples atrasa ~350ms (espera o possível 2º toque). Se o delay incomodar, desligue e use `Shift+F1` para anterior (sem delay).
 5. **Implementação:** `RegisterHotKey` (não bloqueia outras teclas) > `WH_KEYBOARD_LL` (só se necessário, com aviso).
 
 ## Tela Shortcuts (Fase 4 — implementado)

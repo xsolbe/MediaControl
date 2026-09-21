@@ -22,7 +22,19 @@ public sealed class JsonSettingsStore
                 return AppConfig.Default();
             var json = File.ReadAllText(ConfigPath);
             var cfg = JsonSerializer.Deserialize<AppConfig>(json, JsonOpts);
-            return cfg ?? AppConfig.Default();
+            if (cfg is null)
+                return AppConfig.Default();
+            // Migração v1 → v2: padrões viraram os comandos do usuário (Volume+/-, F2, F1, F1 x2).
+            // Quem já salvou na v1 recebe os novos padrões; personalizações manuais são refeitas na tela.
+            if (cfg.Version < 2)
+            {
+                var d = AppConfig.Default();
+                cfg.Shortcuts = d.Shortcuts;
+                cfg.DoublePressEnabled = d.DoublePressEnabled;
+                cfg.DoublePressWindowMs = d.DoublePressWindowMs;
+                cfg.Version = 2;
+            }
+            return cfg;
         }
         catch { return AppConfig.Default(); }
     }

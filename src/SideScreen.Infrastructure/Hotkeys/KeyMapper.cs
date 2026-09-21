@@ -42,6 +42,13 @@ public static class KeyMapper
             "end" => 0x23,
             "pageup" or "pgup" => 0x21,
             "pagedown" or "pgdn" => 0x22,
+            // Teclas de mídia — ideais para volume: o Windows as trata sem roubar foco de jogos.
+            "volumeup" or "volup" => 0xAF,
+            "volumedown" or "voldown" => 0xAE,
+            "volumemute" or "mute" => 0xAD,
+            "medianext" or "medianexttrack" => 0xB0,
+            "mediaprev" or "mediaprevioustrack" => 0xB1,
+            "mediaplaypause" => 0xB5,
             _ => 0,
         };
         return vk != 0;

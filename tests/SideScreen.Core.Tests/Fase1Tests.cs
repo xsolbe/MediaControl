@@ -26,13 +26,18 @@ public class Fase1Tests
     }
 
     [Fact]
-    public void AppConfig_Defaults_AreSafeForGamers()
+    public void AppConfig_Defaults_MatchUserCommands()
     {
+        // Padrões do usuário (script MusicControl/AutoHotkey): Volume+/-, F2, F1, F1 x2.
         var config = AppConfig.Default();
 
-        // Defaults nunca devem ser F1/F2 sozinhos (conflito com jogos).
-        Assert.DoesNotContain(config.Shortcuts.Values, s => s == "F1" || s == "F2");
+        Assert.Equal("VolumeUp", config.Shortcuts["volumeUp"]);
+        Assert.Equal("VolumeDown", config.Shortcuts["volumeDown"]);
+        Assert.Equal("F2", config.Shortcuts["playPause"]);
+        Assert.Equal("F1", config.Shortcuts["next"]);
+        Assert.Equal("F1", config.Shortcuts["previous"]);
+        Assert.True(config.DoublePressEnabled); // F1 x2 = anterior
         Assert.Equal("potplayer", config.SelectedPlayerId);
-        Assert.Equal(1, config.Version);
+        Assert.False(config.EnableGlobalHotkeys); // opt-in: não registra nada sozinho
     }
 }
