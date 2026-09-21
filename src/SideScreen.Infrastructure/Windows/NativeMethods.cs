@@ -59,6 +59,65 @@ internal static partial class NativeMethods
     [return: MarshalAs(UnmanagedType.Bool)]
     public static partial bool CloseHandle(nint hObject);
 
+    // ---- Fase 5: monitores e posicionamento ----
+    public const int MonitorDefaultToNearest = 2;
+    public const uint SwpNoSize = 0x0001;
+    public const uint SwpNoMove = 0x0002;
+    public const uint SwpNoZOrder = 0x0004;
+    public const uint SwpNoActivate = 0x0010;
+    public const int SwShowMaximized = 3;
+
+    public delegate bool MonitorEnumProc(nint hMonitor, nint hdcMonitor, ref RECT lprcMonitor, nint dwData);
+
+    // EnumDisplayMonitors/GetMonitorInfo usam DllImport clássico (ByValTStr não é suportado pelo gerador source).
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool EnumDisplayMonitors(nint hdc, nint lprcClip, MonitorEnumProc lpfnEnum, nint dwData);
+
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool GetMonitorInfo(nint hMonitor, ref MONITORINFO lpmi);
+
+    [LibraryImport("user32.dll", EntryPoint = "MonitorFromWindow")]
+    public static partial nint MonitorFromWindow(nint hWnd, int dwFlags);
+
+    [LibraryImport("user32.dll", EntryPoint = "GetWindowPlacement")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool GetWindowPlacement(nint hWnd, ref WINDOWPLACEMENT lpwndpl);
+
+    [LibraryImport("user32.dll", EntryPoint = "SetWindowPos")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool SetWindowPos(nint hWnd, nint hWndInsertAfter, int x, int y, int cx, int cy, uint uFlags);
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    public struct MONITORINFO
+    {
+        public int cbSize;
+        public RECT rcMonitor;
+        public RECT rcWork;
+        public int dwFlags;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string szDevice;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct WINDOWPLACEMENT
+    {
+        public int length;
+        public int flags;
+        public int showCmd;
+        public POINT ptMinPosition;
+        public POINT ptMaxPosition;
+        public RECT rcNormalPosition;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct POINT
+    {
+        public int X;
+        public int Y;
+    }
+
     [StructLayout(LayoutKind.Sequential)]
     public struct RECT
     {

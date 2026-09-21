@@ -16,6 +16,9 @@ public sealed class AppConfig
 
     public bool LockPlayerToMonitor { get; set; } = false;
 
+    /// <summary>Alvo do lock por chave estável (ex: "\\.\DISPLAY2"). Vazio = usa o índice/primário.</summary>
+    public string SelectedMonitorDevice { get; set; } = "";
+
     /// <summary>
     /// Comandos do usuário (script MusicControl/AutoHotkey, confirmado via strings do .exe):
     /// NumpadAdd/NumpadSub = volume, F2 = Play/Pause, F1 = próximo, F1 x2 = anterior,

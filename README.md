@@ -2,7 +2,7 @@
 
 Controle minimalista do player de vídeo no segundo monitor — sem interferir em jogos.
 
-**Stack:** C# + .NET 10 LTS + WPF (MVVM) · **Player v1:** PotPlayer via `SendMessage` (sem simular teclas) · **Status:** Fase 4 — Atalhos contextuais (17 testes)
+**Stack:** C# + .NET 10 LTS + WPF (MVVM) · **Player v1:** PotPlayer via `SendMessage` (sem simular teclas) · **Status:** Fase 5 — Lock de monitor (30 testes)
 
 ## Por que este stack?
 
@@ -53,10 +53,8 @@ Esperado: janela escura `#070707` com sidebar (Dashboard, Players, Shortcuts, Di
 - [x] Fase 1 — Projeto inicial
 - [x] Fase 2 — Interface (Dashboard, Players, Shortcuts, Display, Settings)
 - [x] Fase 3 — PotPlayer (`FindWindow` + `SendMessage`) (leitura validada, ações p/ testar no Dashboard)
-- [x] Fase 4 — Atalhos contextuais + Modo Jogo (esta versão)
-- [ ] Fase 3 — PotPlayer (`FindWindow` + `SendMessage`)
-- [ ] Fase 4 — Atalhos contextuais (Modo Jogo)
-- [ ] Fase 5 — Monitores (auto-reposicionamento)
+- [x] Fase 4 — Atalhos contextuais + Modo Jogo + process scope
+- [x] Fase 5 — Monitores (lista real + lock por reposicionamento) (esta versão)
 - [ ] Fase 6 — Persistência
 - [ ] Fase 7 — Testes
 - [ ] Fase 8 — Build `.exe` + instalador

@@ -1,20 +1,21 @@
-# Monitores — lock via reposicionamento (Fase 5)
+# Monitores — lock via reposicionamento (Fase 5 — implementado e validado)
+
+Mapa real desta máquina (2026-09-21): `DISPLAY1` 1440x2560 portrait em (-1440,-464, não-primário) + `DISPLAY2` 2560x1440 em (0,0, primário).
 
 ## Por que não "travar arrasto" de verdade
 
 Interceptar `WM_MOVING`/`WM_WINDOWPOSCHANGING` é intrusivo, quebra fullscreen/maximizado e pode piscar com aceleração de hardware.
 
-## Abordagem SideScreen
+## Abordagem SideScreen (`MonitorLockService`)
 
-1. Listar com `Screen.AllScreens` / `EnumDisplayMonitors`.
-2. Usuário escolhe `Monitor 2` + `[x] Lock`.
-3. Monitorar via `WinEventHook(EVENT_OBJECT_LOCATIONCHANGE)` + polling fallback 500ms-1s.
-4. Se `MonitorFromWindow(hWnd) != alvo`: `GetWindowPlacement` + `SetWindowPos(SWP_NOZORDER|SWP_NOACTIVATE)` com debounce 800ms.
-5. Nunca roubar foco (`NOACTIVATE`). Se fullscreen: só sinalizar "fora de posição", não mover.
-6. Player fechado: status Offline, sem erro.
+1. Lista com `EnumDisplayMonitors`/`GetMonitorInfo`; escolha persistida por device key (`\\.\DISPLAY2`).
+2. Vigia a cada 750ms; exige 3 leituras fora do alvo (~2,25s, tolera arrasto em curso).
+3. Devolve com `SetWindowPos(SWP_NOSIZE|SWP_NOZORDER|SWP_NOACTIVATE)` preservando tamanho e offset relativo.
+4. Nunca rouba foco; ignora maximizado/fullscreen (só avisa); player fechado = Offline.
 
-## Teste manual (Fase 5)
+## Teste manual
 
-1. Abrir PotPlayer no Monitor 2, ativar Lock.
-2. Arrastar para Monitor 1 → em ~1s deve voltar sozinho, sem foco roubado.
-3. Fechar player → Dashboard mostra Offline.
+1. Display → escolha o monitor do vídeo → marque o lock (Status: `Vigiando ...`).
+2. Arraste o PotPlayer para o outro monitor e segure >3s → ele volta sozinho.
+3. Maximize o player → Status avisa que não move; desmaximize → volta a vigiar.
+4. Feche o player → `Offline — aguardando abrir`; reabra → retoma sozinho.
