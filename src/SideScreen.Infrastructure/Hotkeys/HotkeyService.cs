@@ -32,6 +32,8 @@ public sealed class HotkeyService : IDisposable
     public string GuardMode { get; set; } = GuardModes.PauseWhenFullscreen;
     public bool DoublePressEnabled { get; set; }
     public int DoublePressWindowMs { get; set; }
+    /// <summary>Allowlist de processos (GuardModes.OnlyListed). Ex: ["BNSR"].</summary>
+    public List<string> AllowedProcesses { get; set; } = [];
     public IReadOnlyDictionary<string, int> Registered => _actionToId;
     public List<string> Errors { get; } = [];
     public event Action<string>? Triggered;
@@ -105,7 +107,7 @@ public sealed class HotkeyService : IDisposable
         }
 
         HotkeyLog.Append($"WM_HOTKEY {action} guard={GuardMode}");
-        if (!_guard.ShouldExecute(GuardMode))
+        if (!_guard.ShouldExecute(GuardMode, AllowedProcesses))
         {
             Triggered?.Invoke($"[{DateTime.Now:HH:mm:ss}] {action} ignorado pelo guard ({GuardMode})");
             HotkeyLog.Append($"{action} ignorado pelo guard ({GuardMode})");

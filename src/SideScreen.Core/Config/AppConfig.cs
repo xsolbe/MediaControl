@@ -48,5 +48,8 @@ public sealed class AppConfig
 
     public int DoublePressWindowMs { get; set; } = 350;
 
+    /// <summary>Allowlist de processos para GuardModes.OnlyListed. Ex: ["BNSR"]. Vazia = nada passa.</summary>
+    public List<string> AllowedProcesses { get; set; } = [];
+
     public static AppConfig Default() => new();
 }

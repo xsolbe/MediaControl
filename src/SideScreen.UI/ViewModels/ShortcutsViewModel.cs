@@ -37,6 +37,27 @@ public sealed class ShortcutEdit : ObservableObject
     }
 }
 
+public sealed class ProcessOption : ObservableObject
+{
+    private bool _selected;
+
+    public ProcessOption(string name, string title, bool selected)
+    {
+        Name = name;
+        Title = title;
+        _selected = selected;
+    }
+
+    public string Name { get; }
+    public string Title { get; }
+
+    public bool Selected
+    {
+        get => _selected;
+        set => Set(ref _selected, value);
+    }
+}
+
 /// <summary>
 /// Shortcuts — captura, conflitos, warnings gamer, Apply/Restaurar, guard + double-press.
 /// Usa o HotkeyService COMPARTILHADO (dono: MainViewModel) — o registro acontece no startup do app.
@@ -84,7 +105,9 @@ public sealed class ShortcutsViewModel : ObservableObject
 
         ApplyCommand = new RelayCommand(Apply);
         RestoreDefaultsCommand = new RelayCommand(RestoreDefaults);
+        RefreshProcessesCommand = new RelayCommand(() => RefreshProcesses());
 
+        RefreshProcesses();
         Validate();
         Status = cfg.EnableGlobalHotkeys
             ? "Globais ATIVADAS — registradas ao abrir o app (ver rodapé: Hotkeys ON)."
@@ -143,6 +166,40 @@ public sealed class ShortcutsViewModel : ObservableObject
 
     public RelayCommand ApplyCommand { get; }
     public RelayCommand RestoreDefaultsCommand { get; }
+    public RelayCommand RefreshProcessesCommand { get; }
+
+    /// <summary>Processos com janela (candidatos ao escopo). Marcados = AllowedProcesses do config.</summary>
+    public ObservableCollection<ProcessOption> Processes { get; } = [];
+
+    public void RefreshProcesses()
+    {
+        var cfg = _store.Load();
+        var allowed = cfg.AllowedProcesses.Select(Core.Hotkeys.GuardModes.NormalizeProcess).ToHashSet();
+        var seen = new HashSet<string>();
+        var list = new List<ProcessOption>();
+
+        foreach (var p in System.Diagnostics.Process.GetProcesses())
+        {
+            string name;
+            string title;
+            try
+            {
+                if (p.MainWindowHandle == nint.Zero) continue;
+                name = p.ProcessName;
+                title = p.MainWindowTitle;
+            }
+            catch { continue; }
+            finally { try { p.Dispose(); } catch { } }
+
+            var norm = Core.Hotkeys.GuardModes.NormalizeProcess(name);
+            if (norm.Length == 0 || !seen.Add(norm)) continue;
+            list.Add(new ProcessOption(name, title, allowed.Contains(norm)));
+        }
+
+        Processes.Clear();
+        foreach (var item in list.OrderBy(x => x.Name))
+            Processes.Add(item);
+    }
 
     private void Apply()
     {
@@ -160,6 +217,7 @@ public sealed class ShortcutsViewModel : ObservableObject
         cfg.GuardMode = _guardMode;
         cfg.DoublePressEnabled = _doublePress;
         cfg.DoublePressWindowMs = _doubleWindow;
+        cfg.AllowedProcesses = Processes.Where(p => p.Selected).Select(p => p.Name).ToList();
 
         var err = _store.Save(cfg);
         if (err != null)
@@ -183,6 +241,8 @@ public sealed class ShortcutsViewModel : ObservableObject
         var d = AppConfig.Default();
         foreach (var r in Rows)
             r.Gesture = d.Shortcuts[r.ActionKey];
+        foreach (var p in Processes)
+            p.Selected = false;
         EnableGlobal = false;
         SelectedGuardMode = Core.Hotkeys.GuardModes.Always;
         DoublePressEnabled = true;

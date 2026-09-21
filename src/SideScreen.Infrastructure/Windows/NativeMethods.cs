@@ -46,6 +46,19 @@ internal static partial class NativeMethods
     [LibraryImport("user32.dll", EntryPoint = "GetSystemMetrics")]
     public static partial int GetSystemMetrics(int nIndex);
 
+    // ---- Diagnóstico de integridade (UAC/UIPI) ----
+    [LibraryImport("advapi32.dll", EntryPoint = "OpenProcessToken")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool OpenProcessToken(nint processHandle, uint desiredAccess, out nint tokenHandle);
+
+    [LibraryImport("advapi32.dll", EntryPoint = "GetTokenInformation")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool GetTokenInformation(nint tokenHandle, uint tokenInformationClass, out int tokenInformation, int tokenInformationLength, out int returnLength);
+
+    [LibraryImport("kernel32.dll", EntryPoint = "CloseHandle")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool CloseHandle(nint hObject);
+
     [StructLayout(LayoutKind.Sequential)]
     public struct RECT
     {

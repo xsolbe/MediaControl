@@ -8,7 +8,8 @@ namespace SideScreen.Infrastructure.Hotkeys;
 /// - Always: executa sempre (opt-in explícito).
 /// - PauseWhenFullscreen (default): se a janela em foco ocupa a tela toda, ignora.
 /// - OnlyWhenPlayerFocused: só se o foco estiver no PotPlayer.
-/// Injetável para testes (foreground + bounds + isPlayer como funções).
+/// - OnlyListed: só se o processo em foco estiver na allowlist (ex: só BNSR).
+/// Injetável para testes.
 /// </summary>
 public sealed class ForegroundGuard
 {
@@ -16,12 +17,14 @@ public sealed class ForegroundGuard
     private readonly Func<nint, (int w, int h)?> _windowSize;
     private readonly Func<(int w, int h)> _screenSize;
     private readonly Func<bool> _isPlayerFocused;
+    private readonly Func<string?> _foregroundProcess;
 
     public ForegroundGuard() : this(
         Windows.NativeMethods.GetForegroundWindow,
         GetRect,
         PrimaryScreenSize,
-        IsPotPlayerForeground)
+        IsPotPlayerForeground,
+        ForegroundProcessName)
     {
     }
 
@@ -29,22 +32,42 @@ public sealed class ForegroundGuard
         Func<nint> foregroundHook,
         Func<nint, (int w, int h)?> windowSizeHook,
         Func<(int w, int h)> screenSizeHook,
-        Func<bool> isPlayerFocusedHook)
+        Func<bool> isPlayerFocusedHook,
+        Func<string?>? foregroundProcessHook = null)
     {
         _foreground = foregroundHook;
         _windowSize = windowSizeHook;
         _screenSize = screenSizeHook;
         _isPlayerFocused = isPlayerFocusedHook;
+        _foregroundProcess = foregroundProcessHook ?? (() => null);
     }
 
-    public bool ShouldExecute(string guardMode)
+    public bool ShouldExecute(string guardMode) => ShouldExecute(guardMode, null);
+
+    public bool ShouldExecute(string guardMode, IEnumerable<string>? allowedProcesses)
     {
         return guardMode switch
         {
             GuardModes.Always => true,
             GuardModes.OnlyWhenPlayerFocused => Safe(_isPlayerFocused),
+            GuardModes.OnlyListed => IsForegroundListed(allowedProcesses),
             _ => !IsFullscreenForeground(), // PauseWhenFullscreen (default)
         };
+    }
+
+    /// <summary>True se o processo em foco está na allowlist. Nome desconhecido = bloqueia (fail closed).</summary>
+    public bool IsForegroundListed(IEnumerable<string>? allowed)
+    {
+        try
+        {
+            var set = (allowed ?? []).Select(Core.Hotkeys.GuardModes.NormalizeProcess)
+                .Where(s => s.Length > 0).ToHashSet();
+            if (set.Count == 0) return false; // lista vazia = nada passa (não vire Always sem querer)
+            var fg = SafeName(_foregroundProcess);
+            if (string.IsNullOrEmpty(fg)) return false;
+            return set.Contains(Core.Hotkeys.GuardModes.NormalizeProcess(fg));
+        }
+        catch { return false; }
     }
 
     public bool IsFullscreenForeground()
@@ -66,6 +89,25 @@ public sealed class ForegroundGuard
     {
         try { return f(); }
         catch { return false; }
+    }
+
+    private static string? SafeName(Func<string?> f)
+    {
+        try { return f(); }
+        catch { return null; }
+    }
+
+    private static string? ForegroundProcessName()
+    {
+        try
+        {
+            var fg = Windows.NativeMethods.GetForegroundWindow();
+            if (fg == nint.Zero) return null;
+            Windows.NativeMethods.GetWindowThreadProcessId(fg, out uint pid);
+            using var p = System.Diagnostics.Process.GetProcessById((int)pid);
+            return p.ProcessName; // ex: "BNSR" (GetProcessById funciona até p/ processo elevado)
+        }
+        catch { return null; }
     }
 
     private static (int w, int h)? GetRect(nint hWnd)

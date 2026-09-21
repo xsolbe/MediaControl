@@ -26,6 +26,26 @@
                     <TextBox Text="{Binding DoublePressWindowMs, UpdateSourceTrigger=PropertyChanged}" Width="50"/>
                 </StackPanel>
 
+                <TextBlock Text="Process scope — usado quando Guard = OnlyListed" FontWeight="SemiBold" Margin="0,4,0,4"/>
+                <TextBlock Text="Marque em quais programas os atalhos disparam (ex: só BNSR). Lista vazia = nada passa."
+                           Style="{StaticResource MutedText}" FontSize="11" TextWrapping="Wrap" Margin="0,0,0,6"/>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                    <Button Content="↻ Atualizar lista" Command="{Binding RefreshProcessesCommand}" Width="130" Height="28"/>
+                </StackPanel>
+                <ScrollViewer MaxHeight="170" VerticalScrollBarVisibility="Auto" Margin="0,0,0,12">
+                    <ItemsControl ItemsSource="{Binding Processes}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Margin="0,3">
+                                    <CheckBox IsChecked="{Binding Selected}" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding Name}" FontFamily="Consolas" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding Title}" Style="{StaticResource MutedText}" FontSize="11" Margin="8,0,0,0" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
                 <ItemsControl ItemsSource="{Binding Rows}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>

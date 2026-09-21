@@ -8,8 +8,19 @@ public static class GuardModes
     public const string Always = "Always";
     public const string PauseWhenFullscreen = "PauseWhenFullscreen";
     public const string OnlyWhenPlayerFocused = "OnlyWhenPlayerFocused";
+    public const string OnlyListed = "OnlyListed";
 
-    public static readonly string[] All = [Always, PauseWhenFullscreen, OnlyWhenPlayerFocused];
+    public static readonly string[] All = [Always, PauseWhenFullscreen, OnlyWhenPlayerFocused, OnlyListed];
+
+    /// <summary>Normaliza nome de processo: sem .exe, minúsculo. Ex: "BNSR.exe" → "bnsr".</summary>
+    public static string NormalizeProcess(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return "";
+        name = name.Trim();
+        if (name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+            name = name[..^4];
+        return name.ToLowerInvariant();
+    }
 }
 
 /// <summary>

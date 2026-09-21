@@ -121,4 +121,42 @@ public class Fase4Tests
             isPlayerFocusedHook: () => false);
         Assert.False(notFocused.ShouldExecute(GuardModes.OnlyWhenPlayerFocused));
     }
+
+    [Fact]
+    public void NormalizeProcess_StripsExe_IgnoresCase()
+    {
+        Assert.Equal("bnsr", GuardModes.NormalizeProcess("BNSR.exe"));
+        Assert.Equal("bnsr", GuardModes.NormalizeProcess("bnsr"));
+        Assert.Equal("", GuardModes.NormalizeProcess(null));
+    }
+
+    [Fact]
+    public void Guard_OnlyListed_MatchesForegroundProcess()
+    {
+        ForegroundGuard InGame() => new(
+            foregroundHook: () => (nint)7,
+            windowSizeHook: _ => (800, 600),
+            screenSizeHook: () => (2560, 1440),
+            isPlayerFocusedHook: () => false,
+            foregroundProcessHook: () => "BNSR");
+
+        var guard = InGame();
+        Assert.True(guard.ShouldExecute(GuardModes.OnlyListed, ["BNSR"]));
+        Assert.True(guard.ShouldExecute(GuardModes.OnlyListed, ["bnsr.exe"])); // normaliza
+        Assert.False(guard.ShouldExecute(GuardModes.OnlyListed, ["notepad"]));
+        Assert.False(guard.ShouldExecute(GuardModes.OnlyListed, [])); // lista vazia = nada passa
+        Assert.False(guard.ShouldExecute(GuardModes.OnlyListed, null));
+    }
+
+    [Fact]
+    public void Guard_OnlyListed_UnknownProcess_Blocks()
+    {
+        var guard = new ForegroundGuard(
+            foregroundHook: () => (nint)7,
+            windowSizeHook: _ => (800, 600),
+            screenSizeHook: () => (2560, 1440),
+            isPlayerFocusedHook: () => false,
+            foregroundProcessHook: () => null); // ex: processo elevado ilegível
+        Assert.False(guard.ShouldExecute(GuardModes.OnlyListed, ["BNSR"]));
+    }
 }

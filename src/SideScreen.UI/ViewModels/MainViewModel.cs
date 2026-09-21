@@ -69,7 +69,7 @@ public sealed class MainViewModel : ObservableObject
     public void AttachHwnd(nint hWnd)
     {
         _hWnd = hWnd;
-        HotkeyLog.Append($"attach hWnd=0x{hWnd:X} enable={_config.EnableGlobalHotkeys}");
+        HotkeyLog.Append($"attach hWnd=0x{hWnd:X} enable={_config.EnableGlobalHotkeys} il={Infrastructure.Security.ProcessIntegrity.Current()}");
         if (_config.EnableGlobalHotkeys)
             StartService();
         else
@@ -101,6 +101,7 @@ public sealed class MainViewModel : ObservableObject
         _service.GuardMode = _config.GuardMode;
         _service.DoublePressEnabled = _config.DoublePressEnabled;
         _service.DoublePressWindowMs = _config.DoublePressWindowMs;
+        _service.AllowedProcesses = [.. _config.AllowedProcesses];
         _service.Start(_hWnd, new Dictionary<string, string>(_config.Shortcuts));
         RefreshSummary();
     }

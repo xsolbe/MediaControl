@@ -13,7 +13,17 @@
 5. **Implementação:** `RegisterHotKey` (não bloqueia outras teclas) > `WH_KEYBOARD_LL` (só se necessário, com aviso).
 6. **Diferença real vs AHK:** o `F1::` do AutoHotkey SUPRIME a tecla (o jogo nunca recebe F1). O `RegisterHotKey` NÃO suprime — com guard `Always`, o BNSR também recebe F1/F2/Numpad. Verifique os binds do jogo (F1/F2 podem disparar algo lá também); Numpad +/- normalmente é seguro. Se precisar de supressão real, o caminho seria hook low-level — evitado por causa de anticheat (BNS usa XignCode).
 
-## Tela Shortcuts (Fase 4 — implementado)
+## Guard modes
+
+| Modo | Dispara quando |
+|---|---|
+| `Always` | Sempre (para controlar o vídeo jogando — exige app como admin se o jogo for elevado) |
+| `PauseWhenFullscreen` | Exceto com janela fullscreen em foco |
+| `OnlyWhenPlayerFocused` | Só com o PotPlayer focado |
+| `OnlyListed` | **Só se o programa em foco estiver na lista** (ex: só `BNSR`) — marque na seção *Process scope* + `↻ Atualizar lista` |
+
+> Importante: a allowlist é filtro **pós-entrega** (roda depois que o Windows entrega a tecla).
+> Com jogo elevado (BNSR) + app não-elevado, nada chega — rode como administrador primeiro.
 
 - Captura de combo (clique + pressione), detecção de conflito (gestos duplicados), warning para F1/F2/teclas sozinhas, `Apply` + `Restaurar padrões`, guard combo + double-press 200-500ms.
 - Persistência em `%AppData%\SideScreen\config.json` via `JsonSettingsStore` (criado no 1º Apply).
@@ -23,6 +33,16 @@
 
 `%AppData%\SideScreen\hotkeys.log` registra attach/start/WM_HOTKEY/executed (só nossos hotkeys — não é keylogger).
 Cadeia provada ao vivo: tecla sintética NumpadAdd → `WM_HOTKEY volumeUp` → `executed` → volume 16→21; NumpadSub → 21→16.
+
+## ⚠ Jogo elevado (BNSR) — rode como administrador
+
+Sintoma: funciona com o app focado, mas **nada chega** (`WM_HOTKEY` some do log) com o jogo em foco.
+Causa: o BNSR roda elevado (nem abre para consulta — `open-fail` no token) e o UIPI do Windows
+não entrega `WM_HOTKEY` a processos de nível menor. O AHK antigo não sofria disso porque usa
+hook de teclado (mecanismo diferente, mas que anticheats como XignCode podem sinalizar).
+
+Solução: feche o SideScreen → botão direito no `.exe` → **Executar como administrador** → teste no jogo.
+O log passa a mostrar `il=elevated` no attach. `SendMessage` para o PotPlayer (nível médio) continua OK.
 
 ## Como testar (roteiro BNSR)
 
