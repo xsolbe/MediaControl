@@ -4,7 +4,7 @@
 
 `RegisterHotKey(F1)` global rouba F1 de todo jogo/programa. Anticheat pode sinalizar hooks low-level.
 
-## Estratégia SideScreen (Fase 4)
+## Estratégia MediaControl (Fase 4)
 
 1. **Default: zero hotkey global.** Controle por botão + `SendMessage` sem foco já resolve 80%.
 2. **Padrões do usuário (script MusicControl):** `NumpadAdd`/`NumpadSub` (volume), `F2` = Play/Pause, `F1` = próximo, `F1 x2` = anterior (double-press compartilha o F1; `previous` nem é registrado separadamente).
@@ -26,12 +26,12 @@
 > Com jogo elevado (BNSR) + app não-elevado, nada chega — rode como administrador primeiro.
 
 - Captura de combo (clique + pressione), detecção de conflito (gestos duplicados), warning para F1/F2/teclas sozinhas, `Apply` + `Restaurar padrões`, guard combo + double-press 200-500ms.
-- Persistência em `%AppData%\SideScreen\config.json` via `JsonSettingsStore` (criado no 1º Apply).
+- Persistência em `%AppData%\MediaControl\config.json` via `JsonSettingsStore` (criado no 1º Apply).
 - Sem `WH_KEYBOARD_LL` — só `RegisterHotKey` no HWND da janela + hook `WM_HOTKEY` na View.
 
 ## Diagnóstico remoto — `hotkeys.log` (2026-09-21)
 
-`%AppData%\SideScreen\hotkeys.log` registra attach/start/WM_HOTKEY/executed (só nossos hotkeys — não é keylogger).
+`%AppData%\MediaControl\hotkeys.log` registra attach/start/WM_HOTKEY/executed (só nossos hotkeys — não é keylogger).
 Cadeia provada ao vivo: tecla sintética NumpadAdd → `WM_HOTKEY volumeUp` → `executed` → volume 16→21; NumpadSub → 21→16.
 
 ## ⚠ Conflito 1409 — outro programa segurou a tecla (2026-09-21)
@@ -50,13 +50,13 @@ Causa: o BNSR roda elevado (nem abre para consulta — `open-fail` no token) e o
 não entrega `WM_HOTKEY` a processos de nível menor. O AHK antigo não sofria disso porque usa
 hook de teclado (mecanismo diferente, mas que anticheats como XignCode podem sinalizar).
 
-Solução: feche o SideScreen → botão direito no `.exe` → **Executar como administrador** → teste no jogo.
+Solução: feche o MediaControl → botão direito no `.exe` → **Executar como administrador** → teste no jogo.
 O log passa a mostrar `il=elevated` no attach. `SendMessage` para o PotPlayer (nível médio) continua OK.
 
 ## Como testar (roteiro BNSR)
 
 1. Com PotPlayer aberto, abra Shortcuts → marque `Enable global hotkeys` → Apply (guard default `PauseWhenFullscreen`).
-2. Com SideScreen focado ou Bloco de Notas focado (janela pequena): `Ctrl+Alt+P` → pausa/retoma o vídeo sem focar o player.
+2. Com MediaControl focado ou Bloco de Notas focado (janela pequena): `Ctrl+Alt+P` → pausa/retoma o vídeo sem focar o player.
 3. Abra um jogo/programa fullscreen → `Ctrl+Alt+P` deve ser **ignorado** (Status mostra `ignorado pelo guard`).
 4. Tente cadastrar `F1` sozinho → warning amarelo. Duplicar um gesto → `Conflito` bloqueia o Apply.
 5. Double-press: ative, Apply, pressione `Ctrl+Alt+Right` 1x (aguarda ~350ms → Next) e 2x rápido (→ Previous). Note o delay — por isso é experimental e desligado por padrão.

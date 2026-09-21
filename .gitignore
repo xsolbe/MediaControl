@@ -481,6 +481,6 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 
-# --- SideScreen: auxiliares locais (não versionar) ---
+# --- MediaControl: auxiliares locais (nï¿½o versionar) ---
 MusicControl.exe
 config.local.json

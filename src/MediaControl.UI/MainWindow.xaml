@@ -1,0 +1,120 @@
+<Window x:Class="MediaControl.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="MediaControl" Height="640" Width="880"
+        MinWidth="780" MinHeight="540"
+        Background="{DynamicResource DsBgBrush}"
+        WindowStyle="None"
+        WindowStartupLocation="CenterScreen"
+        FontFamily="{StaticResource DsFont}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="44"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ===== TOP BAR ===== -->
+        <Grid Grid.Row="0" Background="{DynamicResource DsBgBrush}" MouseLeftButtonDown="TopBar_MouseLeftButtonDown">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Width="14" Height="14" BorderBrush="{DynamicResource DsText2Brush}"
+                    BorderThickness="1.6" VerticalAlignment="Center" Margin="20,0,0,0"/>
+
+            <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock Text="MediaControl" FontSize="13" FontWeight="SemiBold" TextAlignment="Center"
+                           Foreground="{DynamicResource DsTextBrush}"/>
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center"
+                           FontSize="11" Foreground="{DynamicResource DsText2Brush}" Margin="0,1,0,0">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0} - {1}">
+                            <Binding Path="Dashboard.PlayerName"/>
+                            <Binding Path="Dashboard.PlayerState"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+            </StackPanel>
+
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <Button Style="{StaticResource WinBtn}" Click="Min_Click">
+                    <Path Data="{StaticResource G_Min}" Style="{StaticResource WinGlyph}"/>
+                </Button>
+                <Button Style="{StaticResource WinBtn}" Click="Max_Click">
+                    <Grid>
+                        <Path x:Name="IcoMax" Data="{StaticResource G_Max}" Style="{StaticResource WinGlyph}"/>
+                        <Path x:Name="IcoRestore" Data="{StaticResource G_Restore}" Style="{StaticResource WinGlyph}" Visibility="Collapsed"/>
+                    </Grid>
+                </Button>
+                <Button Style="{StaticResource WinBtnClose}" Click="Close_Click">
+                    <Path Data="{StaticResource G_Close}" Style="{StaticResource WinGlyph}"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="168"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- ===== SIDEBAR ===== -->
+            <Border Grid.Column="0" Background="{DynamicResource DsSidebarBrush}" Padding="0,12,0,12">
+                <StackPanel>
+                    <ToggleButton Style="{StaticResource NavToggle}" IsChecked="{Binding IsDashboardActive, Mode=OneWay}"
+                                  Command="{Binding NavigateCommand}" CommandParameter="Dashboard">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource G_Dash}" Style="{StaticResource NavIcon}"/>
+                            <TextBlock Text="{DynamicResource S_NavDashboard}" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ToggleButton>
+                    <ToggleButton Style="{StaticResource NavToggle}" IsChecked="{Binding IsPlayersActive, Mode=OneWay}"
+                                  Command="{Binding NavigateCommand}" CommandParameter="Players">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource G_Players}" Style="{StaticResource NavIcon}"/>
+                            <TextBlock Text="{DynamicResource S_NavPlayers}" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ToggleButton>
+                    <ToggleButton Style="{StaticResource NavToggle}" IsChecked="{Binding IsShortcutsActive, Mode=OneWay}"
+                                  Command="{Binding NavigateCommand}" CommandParameter="Shortcuts">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource G_Keys}" Style="{StaticResource NavIcon}"/>
+                            <TextBlock Text="{DynamicResource S_NavShortcuts}" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ToggleButton>
+                    <ToggleButton Style="{StaticResource NavToggle}" IsChecked="{Binding IsDisplayActive, Mode=OneWay}"
+                                  Command="{Binding NavigateCommand}" CommandParameter="Display">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource G_Display}" Style="{StaticResource NavIcon}"/>
+                            <TextBlock Text="{DynamicResource S_NavDisplay}" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ToggleButton>
+                    <ToggleButton Style="{StaticResource NavToggle}" IsChecked="{Binding IsSettingsActive, Mode=OneWay}"
+                                  Command="{Binding NavigateCommand}" CommandParameter="Settings">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource G_Settings}" Style="{StaticResource NavIcon}"/>
+                            <TextBlock Text="{DynamicResource S_NavSettings}" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ToggleButton>
+
+                    <TextBlock Text="{Binding HotkeySummary}" Style="{StaticResource MutedText}"
+                               Margin="22,24,0,0" FontSize="11"/>
+                </StackPanel>
+            </Border>
+
+            <!-- ===== MAIN CONTENT ===== -->
+            <Border Grid.Column="1" Background="{DynamicResource DsMainBrush}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="36,28,36,32">
+                    <StackPanel>
+                        <ContentControl Content="{Binding Current}"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

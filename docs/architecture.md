@@ -1,4 +1,4 @@
-# Arquitetura SideScreen
+# Arquitetura MediaControl
 
 ## Princípio
 
@@ -12,14 +12,14 @@
 
 | Projeto | Responsabilidade | Pode usar |
 |---|---|---|
-| `SideScreen.Core` | `IPlayerController`, `PlayerStatus`, `AppConfig` | Só BCL |
-| `SideScreen.Infrastructure` | `PotPlayerController`, `PotPlayerCommandIds`, futuro `WindowFinder`, `HotkeyService`, `MonitorService` | Core + P/Invoke |
-| `SideScreen.UI` | WPF, MVVM, Design System `#070707` | Core + Infrastructure |
-| `SideScreen.Core.Tests` | Contratos + defaults seguros | Core + Infrastructure |
+| `MediaControl.Core` | `IPlayerController`, `PlayerStatus`, `AppConfig` | Só BCL |
+| `MediaControl.Infrastructure` | `PotPlayerController`, `PotPlayerCommandIds`, futuro `WindowFinder`, `HotkeyService`, `MonitorService` | Core + P/Invoke |
+| `MediaControl.UI` | WPF, MVVM, Design System `#070707` | Core + Infrastructure |
+| `MediaControl.Core.Tests` | Contratos + defaults seguros | Core + Infrastructure |
 
 ## Como adicionar um novo player (ex: MPC-HC)
 
-1. Criar `src/SideScreen.Infrastructure/Players/MpcHcController.cs : IPlayerController` com `Id="mpc-hc"`.
+1. Criar `src/MediaControl.Infrastructure/Players/MpcHcController.cs : IPlayerController` com `Id="mpc-hc"`.
 2. Implementar `IsRunning/GetWindowHandle` via `FindWindow` da classe do MPC-HC.
 3. Implementar comandos via `WM_COMMAND` do MPC-HC (ele tem tabela pública, mais fácil que PotPlayer).
 4. Registrar no seletor de players (Fase 2). Nenhuma mudança no Dashboard.

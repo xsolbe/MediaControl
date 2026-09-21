@@ -2,9 +2,8 @@
 
 Controle minimalista do player de vídeo no segundo monitor — sem interferir em jogos.
 
-> Nome do produto: **MediaControl** (antes SideScreen). Namespaces/pasta do código e
-> repositório seguem `SideScreen`/`xsolbe/SideScreen` por enquanto — só a superfície mudou
-> (título, TopBar, `.exe`). Dados em `%AppData%\SideScreen` (não migrados de propósito).
+> Nome do produto: **MediaControl** (antes SideScreen — rename completo: pasta, projetos,
+> namespaces, repo e dados; config antigo migrado de `%AppData%\SideScreen` automaticamente).
 
 **Stack:** C# + .NET 10 LTS + WPF (MVVM) · **Player v1:** PotPlayer via `SendMessage` (sem simular teclas) · **Status:** Design System v1 aplicado (38 testes)
 
@@ -18,15 +17,15 @@ Controle minimalista do player de vídeo no segundo monitor — sem interferir e
 ## Estrutura
 
 ```text
-SideScreen/
+MediaControl/
 ├── docs/                  # arquitetura, protocolos, guias de teste
 ├── src/
-│   ├── SideScreen.Core/           # IPlayerController, PlayerStatus, AppConfig (sem UI, sem Win32)
-│   ├── SideScreen.Infrastructure/ # PotPlayerController, PotPlayerCommandIds, (Fase 3-5: Win32)
-│   └── SideScreen.UI/             # WPF MVVM, Dark #070707
+│   ├── MediaControl.Core/           # IPlayerController, PlayerStatus, AppConfig (sem UI, sem Win32)
+│   ├── MediaControl.Infrastructure/ # PotPlayerController, PotPlayerCommandIds, (Fase 3-5: Win32)
+│   └── MediaControl.UI/             # WPF MVVM, Dark #070707
 ├── tests/
-│   └── SideScreen.Core.Tests/     # xUnit
-└── SideScreen.slnx
+│   └── MediaControl.Core.Tests/     # xUnit
+└── MediaControl.slnx
 ```
 
 ## Como rodar localmente (Fase 2)
@@ -36,20 +35,20 @@ SideScreen/
 dotnet --version  # deve mostrar 10.x
 
 # 2. Build
-dotnet build SideScreen.slnx
+dotnet build MediaControl.slnx
 
 # 3. Testes
-dotnet test SideScreen.slnx
+dotnet test MediaControl.slnx
 
 # 4. Rodar UI
-dotnet run --project src/SideScreen.UI/SideScreen.UI.csproj
+dotnet run --project src/MediaControl.UI/MediaControl.UI.csproj
 ```
 
 Esperado: janela escura `#070707` com sidebar (Dashboard, Players, Shortcuts, Display, Settings).
 
 ## Config futura (Fase 6)
 
-`%AppData%\SideScreen\config.json` — player selecionado, atalhos, shuffle, monitor, lock.
+`%AppData%\MediaControl\config.json` — player selecionado, atalhos, shuffle, monitor, lock.
 
 ## Roadmap
 
@@ -62,7 +61,7 @@ Esperado: janela escura `#070707` com sidebar (Dashboard, Players, Shortcuts, Di
 - [x] Fase 6 — Persistência central (dono único + backup + migrações)
 - [x] Fase 7 — Testes (38 automatizados + checklist de aceitação)
 - [ ] Fase 8 — Build `.exe` + instalador
-- [x] Fase 9 — GitHub `xsolbe/SideScreen` (conectado, pushes por fase)
+- [x] Fase 9 — GitHub `xsolbe/MediaControl` (conectado, pushes por fase)
 
 ## Docs
 

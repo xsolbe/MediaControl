@@ -1,14 +1,14 @@
-# Aceitação final — SideScreen (Fase 7)
+# Aceitação final — MediaControl (Fase 7)
 
-Automatizado: `dotnet test SideScreen.slnx` → **38 testes** (protocolo, gestos, conflitos, KeyMapper,
+Automatizado: `dotnet test MediaControl.slnx` → **38 testes** (protocolo, gestos, conflitos, KeyMapper,
 double-press, guards incl. allowlist, store roundtrip/corrupt/migração, HotkeyService sem Win32).
 O resto é manual — marque cada item ao validar.
 
 ## 0. Base (sempre antes)
 
 ```powershell
-dotnet build SideScreen.slnx   # 0 warnings, 0 errors
-dotnet test SideScreen.slnx    # 38/38
+dotnet build MediaControl.slnx   # 0 warnings, 0 errors
+dotnet test MediaControl.slnx    # 38/38
 ```
 
 ## 1. Dashboard — controle sem foco
@@ -55,5 +55,5 @@ Com PotPlayer aberto (playlist de 3 vídeos):
 ## Debug
 
 - Classe: `PotPlayer64` (Spy++ / `Find Window`); HWND muda por sessão, classe não
-- `%AppData%\SideScreen\hotkeys.log`, `config.json`, `config.corrupt-*`
+- `%AppData%\MediaControl\hotkeys.log`, `config.json`, `config.corrupt-*`
 - `dotnet --version` → 10.x

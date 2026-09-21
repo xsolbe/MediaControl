@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/MediaControl.Core/MediaControl.Core.csproj" />
+    <Project Path="src/MediaControl.Infrastructure/MediaControl.Infrastructure.csproj" />
+    <Project Path="src/MediaControl.UI/MediaControl.UI.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/MediaControl.Core.Tests/MediaControl.Core.Tests.csproj" />
+  </Folder>
+</Solution>
