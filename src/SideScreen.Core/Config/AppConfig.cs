@@ -14,6 +14,8 @@ public sealed class AppConfig
 
     public int SelectedMonitorIndex { get; set; } = 1;
 
+    /// <summary>REMOVIDO o comportamento (2026-09-21): campo mantido por compatibilidade, ignorado.</summary>
+    [System.Obsolete("Trava de posição removida — ver docs/monitors.md")]
     public bool LockPlayerToMonitor { get; set; } = false;
 
     /// <summary>Alvo do lock por chave estável (ex: "\\.\DISPLAY2"). Vazio = usa o índice/primário.</summary>
