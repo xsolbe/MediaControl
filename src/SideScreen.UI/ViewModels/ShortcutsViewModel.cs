@@ -121,9 +121,9 @@ public sealed class ShortcutsViewModel : ObservableObject
         try
         {
             if (System.Diagnostics.Process.GetProcessesByName("MusicControl").Length > 0)
-                notes.Add("MusicControl.exe rodando: o AHK engole F1/F2/Numpad antes do SideScreen — feche-o para testar.");
-            if (System.Diagnostics.Process.GetProcessesByName("SideScreen.UI").Length > 1)
-                notes.Add("outra instância do SideScreen aberta: só uma registra os hotkeys.");
+                notes.Add("MusicControl.exe rodando: o AHK engole F1/F2/Numpad antes do MediaControl — feche-o para testar.");
+            if (System.Diagnostics.Process.GetProcessesByName("MediaControl").Length > 1)
+                notes.Add("outra instância do MediaControl aberta: só uma registra os hotkeys.");
         }
         catch { }
         return notes.Count == 0 ? "" : " Atenção: " + string.Join(" ", notes);

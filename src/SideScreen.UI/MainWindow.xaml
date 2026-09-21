@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="SideScreen" Height="640" Width="880"
+        Title="MediaControl" Height="640" Width="880"
         MinWidth="780" MinHeight="540"
         Background="#070707"
         WindowStyle="None"
@@ -26,7 +26,7 @@
 
             <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0,0,0">
                 <Border Width="14" Height="14" BorderBrush="{StaticResource DsText2Brush}" BorderThickness="1.6" VerticalAlignment="Center"/>
-                <TextBlock Text="SideScreen" FontSize="14" FontWeight="SemiBold"
+                <TextBlock Text="MediaControl" FontSize="14" FontWeight="SemiBold"
                            Foreground="{StaticResource DsTextBrush}" Margin="10,0,0,0" VerticalAlignment="Center"/>
             </StackPanel>
 

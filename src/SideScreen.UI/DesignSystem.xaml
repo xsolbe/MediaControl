@@ -40,8 +40,8 @@
     <Style x:Key="NavIcon" TargetType="Path">
         <Setter Property="Width" Value="20"/>
         <Setter Property="Height" Value="20"/>
-        <Setter Property="Stretch" Value="None"/>
-        <Setter Property="StrokeThickness" Value="1.6"/>
+        <Setter Property="Stretch" Value="Uniform"/>
+        <Setter Property="StrokeThickness" Value="2"/>
         <Setter Property="StrokeLineJoin" Value="Round"/>
         <Setter Property="StrokeStartLineCap" Value="Round"/>
         <Setter Property="StrokeEndLineCap" Value="Round"/>
@@ -50,27 +50,26 @@
     <Style x:Key="RowIcon" TargetType="Path" BasedOn="{StaticResource NavIcon}">
         <Setter Property="Width" Value="18"/>
         <Setter Property="Height" Value="18"/>
-        <Setter Property="Stroke" Value="{StaticResource DsText2Brush}"/>
     </Style>
 
-    <Geometry x:Key="G_Dash">M4 7h16 M4 12h16 M4 17h16 M14 5.5h4v3h-4z M8 10.5h4v3H8z M15 15.5h4v3h-4z</Geometry>
-    <Geometry x:Key="G_Players">M4 5h16v14H4z M10 9.5l6 2.5-6 2.5z</Geometry>
-    <Geometry x:Key="G_Keys">M3 7h18v10H3z M7 10.5h1 M11 10.5h1 M15 10.5h1 M7 14h10</Geometry>
-    <Geometry x:Key="G_Display">M4 5h16v10H4z M9 19h6 M12 15v4</Geometry>
-    <Geometry x:Key="G_Settings">M12 9a3 3 0 1 0 6 0a3 3 0 1 0-6 0 M12 4v2 M12 18v2 M4 12h2 M18 12h2 M6.5 6.5l1.4 1.4 M16.1 16.1l1.4 1.4 M17.5 6.5l-1.4 1.4 M8.4 15.6l-1.4 1.4</Geometry>
-    <Geometry x:Key="G_Vol">M4 9.5v5h3.5L12 18V6L7.5 9.5z M15.5 9a4.5 4.5 0 0 1 0 6 M18 6.5a8 8 0 0 1 0 11</Geometry>
-    <Geometry x:Key="G_Play">M8 5.5l11 6.5-11 6.5z</Geometry>
-    <Geometry x:Key="G_Prev">M7 6v12 M19 6l-9 6 9 6z</Geometry>
-    <Geometry x:Key="G_Next">M17 6v12 M5 6l9 6-9 6z</Geometry>
-    <Geometry x:Key="G_Shuffle">M3 7h4l10 10h4 M3 7l2.5-2.5M3 7l2.5 2.5 M21 7h-4l-10 10H3 M21 7l-2.5-2.5M21 7l-2.5 2.5 M21 17l-2.5-2.5M21 17l-2.5 2.5 M3 17l2.5-2.5M3 17l2.5 2.5</Geometry>
-    <Geometry x:Key="G_Refresh">M19 12a7 7 0 1 1-2-4.9 M17 3.5V8h-4.5</Geometry>
-    <Geometry x:Key="G_Warn">M12 4L21 20H3z M12 10v4 M12 17v.5</Geometry>
-    <Geometry x:Key="G_Min">M2 12h12</Geometry>
-    <Geometry x:Key="G_Max">M3 3h13v13H3z</Geometry>
-    <Geometry x:Key="G_Restore">M5 8V5h13v13h-3 M3 11v10h10v-3</Geometry>
-    <Geometry x:Key="G_Close">M4 4l12 12M16 4L4 16</Geometry>
+    <!-- Lucide (ISC) — monitor-play, keyboard, monitor, settings, sliders-horizontal etc. -->
+    <Geometry x:Key="G_Dash">M10 5H3 M12 19H3 M14 3v4 M16 17v4 M21 12h-9 M21 19h-5 M21 5h-7 M8 10v4 M8 12H3</Geometry>
+    <Geometry x:Key="G_Players">M15.033 9.44a.647.647 0 0 1 0 1.12l-4.065 2.352a.645.645 0 0 1-.968-.56V7.648a.645.645 0 0 1 .967-.56z M12 17v4 M8 21h8 M4 3H20A2 2 0 0 1 22 5V15A2 2 0 0 1 20 17H4A2 2 0 0 1 2 15V5A2 2 0 0 1 4 3Z</Geometry>
+    <Geometry x:Key="G_Keys">M10 8h.01 M12 12h.01 M14 8h.01 M16 12h.01 M18 8h.01 M6 8h.01 M7 16h10 M8 12h.01 M4 4H20A2 2 0 0 1 22 6V18A2 2 0 0 1 20 20H4A2 2 0 0 1 2 18V6A2 2 0 0 1 4 4Z</Geometry>
+    <Geometry x:Key="G_Display">M4 3H20A2 2 0 0 1 22 5V15A2 2 0 0 1 20 17H4A2 2 0 0 1 2 15V5A2 2 0 0 1 4 3Z M8 21H16 M12 17V21</Geometry>
+    <Geometry x:Key="G_Settings">M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915 M9 12A3 3 0 1 0 15 12A3 3 0 1 0 9 12Z</Geometry>
+    <Geometry x:Key="G_Vol">M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z M16 9a5 5 0 0 1 0 6 M19.364 18.364a9 9 0 0 0 0-12.728</Geometry>
+    <Geometry x:Key="G_Play">M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z</Geometry>
+    <Geometry x:Key="G_Prev">M17.971 4.285A2 2 0 0 1 21 6v12a2 2 0 0 1-3.029 1.715l-9.997-5.998a2 2 0 0 1-.003-3.432z M3 20V4</Geometry>
+    <Geometry x:Key="G_Next">M21 4v16 M6.029 4.285A2 2 0 0 0 3 6v12a2 2 0 0 0 3.029 1.715l9.997-5.998a2 2 0 0 0 .003-3.432z</Geometry>
+    <Geometry x:Key="G_Shuffle">m18 14 4 4-4 4 m18 2 4 4-4 4 M2 18h1.973a4 4 0 0 0 3.3-1.7l5.454-8.6a4 4 0 0 1 3.3-1.7H22 M2 6h1.972a4 4 0 0 1 3.6 2.2 M22 18h-6.041a4 4 0 0 1-3.3-1.8l-.359-.45</Geometry>
+    <Geometry x:Key="G_Warn">m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3 M12 9v4 M12 17h.01</Geometry>
+    <Geometry x:Key="G_Check">M20 6L9 17l-5-5</Geometry>
     <Geometry x:Key="G_Chevron">M6 9l6 6 6-6</Geometry>
-    <Geometry x:Key="G_Check">M5 12.5l4.5 4.5L19 7</Geometry>
+    <Geometry x:Key="G_Min">M5 12H19</Geometry>
+    <Geometry x:Key="G_Max">M5 3H19A2 2 0 0 1 21 5V19A2 2 0 0 1 19 21H5A2 2 0 0 1 3 19V5A2 2 0 0 1 5 3Z</Geometry>
+    <Geometry x:Key="G_Restore">M5 8V5h13v13h-3 M3 11v10h10v-3</Geometry>
+    <Geometry x:Key="G_Close">M18 6L6 18 M6 6l12 12</Geometry>
 
     <!-- ============ TIPOGRAFIA ============ -->
     <Style x:Key="SectionTitle" TargetType="TextBlock">
@@ -175,6 +174,18 @@
         </Setter>
     </Style>
 
+    <!-- Botão "Usar / Em breve" das linhas de player (style no dicionário:
+         BasedOn dentro de DataTemplate quebra no runtime — ver crash 2026-09-21). -->
+    <Style x:Key="PlayerUseButton" TargetType="Button" BasedOn="{StaticResource BtnDark}">
+        <Setter Property="Content" Value="Usar"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsFuture}" Value="True">
+                <Setter Property="Content" Value="Em breve"/>
+                <Setter Property="IsEnabled" Value="False"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
     <!-- Navegação lateral -->
     <Style x:Key="NavToggle" TargetType="ToggleButton">
         <Setter Property="FontFamily" Value="{StaticResource DsFont}"/>
@@ -257,12 +268,40 @@
     <Style x:Key="WinGlyph" TargetType="Path">
         <Setter Property="Width" Value="12"/>
         <Setter Property="Height" Value="12"/>
-        <Setter Property="Stretch" Value="None"/>
+        <Setter Property="Stretch" Value="Uniform"/>
         <Setter Property="Stroke" Value="{StaticResource DsText2Brush}"/>
-        <Setter Property="StrokeThickness" Value="1.2"/>
+        <Setter Property="StrokeThickness" Value="2"/>
+        <Setter Property="StrokeLineJoin" Value="Round"/>
+        <Setter Property="StrokeStartLineCap" Value="Round"/>
+        <Setter Property="StrokeEndLineCap" Value="Round"/>
     </Style>
 
     <!-- ============ COMBOBOX ============ -->
+    <Style x:Key="ComboItem" TargetType="ComboBoxItem">
+        <Setter Property="FontFamily" Value="{StaticResource DsFont}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Foreground" Value="{StaticResource DsTextBrush}"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Padding" Value="12,8"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBoxItem">
+                    <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{StaticResource DsHoverBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="{StaticResource DsSidebarActiveBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
     <Style x:Key="SettingCombo" TargetType="ComboBox">
         <Setter Property="FontFamily" Value="{StaticResource DsFont}"/>
         <Setter Property="FontSize" Value="13"/>
@@ -319,32 +358,6 @@
             </Setter.Value>
         </Setter>
     </Style>
-    <Style x:Key="ComboItem" TargetType="ComboBoxItem">
-        <Setter Property="FontFamily" Value="{StaticResource DsFont}"/>
-        <Setter Property="FontSize" Value="13"/>
-        <Setter Property="Foreground" Value="{StaticResource DsTextBrush}"/>
-        <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="Padding" Value="12,8"/>
-        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="ComboBoxItem">
-                    <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
-                        <ContentPresenter/>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="{StaticResource DsHoverBrush}"/>
-                        </Trigger>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="Background" Value="{StaticResource DsSidebarActiveBrush}"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
     <!-- ============ CHECKBOX QUADRADO ============ -->
     <Style TargetType="CheckBox">
         <Setter Property="FontFamily" Value="{StaticResource DsFont}"/>

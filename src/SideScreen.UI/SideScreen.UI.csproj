@@ -14,6 +14,8 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows</TargetFramework>
+    <!-- Nome do produto: o .exe sai como MediaControl.exe. Namespaces seguem SideScreen.* (invisível). -->
+    <AssemblyName>MediaControl</AssemblyName>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>

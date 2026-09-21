@@ -1,6 +1,10 @@
-# SideScreen
+# MediaControl
 
 Controle minimalista do player de vídeo no segundo monitor — sem interferir em jogos.
+
+> Nome do produto: **MediaControl** (antes SideScreen). Namespaces/pasta do código e
+> repositório seguem `SideScreen`/`xsolbe/SideScreen` por enquanto — só a superfície mudou
+> (título, TopBar, `.exe`). Dados em `%AppData%\SideScreen` (não migrados de propósito).
 
 **Stack:** C# + .NET 10 LTS + WPF (MVVM) · **Player v1:** PotPlayer via `SendMessage` (sem simular teclas) · **Status:** Design System v1 aplicado (38 testes)
 

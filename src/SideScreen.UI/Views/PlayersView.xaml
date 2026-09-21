@@ -41,20 +41,9 @@
                                 <TextBlock Text="{Binding Status}" Style="{StaticResource RowDesc}"/>
                             </StackPanel>
                             <Button Grid.Column="2" Width="90" VerticalAlignment="Center"
+                                    Style="{StaticResource PlayerUseButton}"
                                     Command="{Binding DataContext.SelectPlayerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                    CommandParameter="{Binding Id}">
-                                <Button.Style>
-                                    <Style TargetType="Button" BasedOn="{StaticResource BtnDark}">
-                                        <Setter Property="Content" Value="Usar"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding IsFuture}" Value="True">
-                                                <Setter Property="Content" Value="Em breve"/>
-                                                <Setter Property="IsEnabled" Value="False"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Button.Style>
-                            </Button>
+                                    CommandParameter="{Binding Id}"/>
                         </Grid>
                         <Border Style="{StaticResource Divider}"/>
                     </StackPanel>

@@ -34,9 +34,26 @@ public partial class MainWindow : Window
             HotkeyLog.Append("attach FAILED (hWnd zero)");
             return;
         }
+        DarkenChrome(hWnd);
         Vm.AttachHwnd(hWnd);
         TryHook("loaded");
     }
+
+    /// <summary>Borda e cantos escuros do DWM (sem isso o Windows desenha filete claro).</summary>
+    private static void DarkenChrome(nint hWnd)
+    {
+        try
+        {
+            int dark = 1, border = 0x00151515, caption = 0x00070707;
+            DwmSetWindowAttribute(hWnd, 20, ref dark, 4);    // DWMWA_USE_IMMERSIVE_DARK_MODE
+            DwmSetWindowAttribute(hWnd, 92, ref border, 4);  // DWMWA_BORDER_COLOR
+            DwmSetWindowAttribute(hWnd, 35, ref caption, 4); // DWMWA_CAPTION_COLOR
+        }
+        catch { }
+    }
+
+    [System.Runtime.InteropServices.DllImport("dwmapi.dll")]
+    private static extern int DwmSetWindowAttribute(nint hWnd, int attr, ref int value, int size);
 
     private void TryHook(string phase)
     {
