@@ -6,8 +6,8 @@
         <StackPanel Orientation="Horizontal">
             <Path Data="{StaticResource G_Players}" Style="{StaticResource RowIcon}" Width="20" Height="20" VerticalAlignment="Top" Margin="0,2,0,0"/>
             <StackPanel Margin="12,0,0,0">
-                <TextBlock Text="Player Control" Style="{StaticResource SectionTitle}"/>
-                <TextBlock Text="Control the selected player" Style="{StaticResource SectionSub}"/>
+                <TextBlock Text="{DynamicResource S_DashTitle}" Style="{StaticResource SectionTitle}"/>
+                <TextBlock Text="{DynamicResource S_DashSub}" Style="{StaticResource SectionSub}"/>
             </StackPanel>
         </StackPanel>
         <Border Style="{StaticResource Divider}" Margin="0,16,0,8"/>
@@ -23,7 +23,7 @@
                 <TextBlock Text="{Binding PlayerName}" Style="{StaticResource RowLabel}"/>
                 <TextBlock Text="{Binding PlayerState}" Style="{StaticResource RowDesc}"/>
             </StackPanel>
-            <Button Grid.Column="2" Content="Refresh" Style="{StaticResource BtnDark}" Width="90"
+            <Button Grid.Column="2" Content="{DynamicResource S_Refresh}" Style="{StaticResource BtnDark}" Width="90"
                     Command="{Binding RefreshCommand}" VerticalAlignment="Center"/>
         </Grid>
         <Border Style="{StaticResource Divider}"/>
@@ -36,7 +36,7 @@
             </Grid.ColumnDefinitions>
             <Path Data="{StaticResource G_Vol}" Style="{StaticResource RowIcon}" VerticalAlignment="Center"/>
             <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                <TextBlock Text="Volume" Style="{StaticResource RowLabel}"/>
+                <TextBlock Text="{DynamicResource S_Volume}" Style="{StaticResource RowLabel}"/>
             </StackPanel>
             <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
                 <Slider Style="{StaticResource SettingSlider}" Value="{Binding Volume, UpdateSourceTrigger=PropertyChanged}"
@@ -54,22 +54,22 @@
             </Grid.ColumnDefinitions>
             <Path Data="{StaticResource G_Play}" Style="{StaticResource RowIcon}" VerticalAlignment="Center"/>
             <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                <TextBlock Text="Playback" Style="{StaticResource RowLabel}"/>
-                <TextBlock Text="Play, navigate and seek without focusing the player" Style="{StaticResource RowDesc}"/>
+                <TextBlock Text="{DynamicResource S_Playback}" Style="{StaticResource RowLabel}"/>
+                <TextBlock Text="{DynamicResource S_PlaybackDesc}" Style="{StaticResource RowDesc}"/>
             </StackPanel>
             <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                <Button Content="|◀" Style="{StaticResource BtnDark}" Width="52" Command="{Binding PreviousCommand}" ToolTip="Previous video"/>
-                <Button Content="▶ / ❚❚" Style="{StaticResource BtnDark}" Width="76" Margin="8,0,0,0" Command="{Binding PlayPauseCommand}" ToolTip="Play / Pause"/>
-                <Button Content="▶|" Style="{StaticResource BtnDark}" Width="52" Margin="8,0,0,0" Command="{Binding NextCommand}" ToolTip="Next video"/>
-                <Button Content="-5s" Style="{StaticResource BtnDark}" Width="52" Margin="8,0,0,0" Command="{Binding SeekBackCommand}" ToolTip="Back 5 seconds"/>
-                <Button Content="+5s" Style="{StaticResource BtnDark}" Width="52" Margin="8,0,0,0" Command="{Binding SeekForwardCommand}" ToolTip="Forward 5 seconds"/>
+                <Button Content="|◀" Style="{StaticResource BtnDark}" Width="52" Command="{Binding PreviousCommand}"/>
+                <Button Content="▶ / ❚❚" Style="{StaticResource BtnDark}" Width="76" Margin="8,0,0,0" Command="{Binding PlayPauseCommand}"/>
+                <Button Content="▶|" Style="{StaticResource BtnDark}" Width="52" Margin="8,0,0,0" Command="{Binding NextCommand}"/>
+                <Button Content="-5s" Style="{StaticResource BtnDark}" Width="52" Margin="8,0,0,0" Command="{Binding SeekBackCommand}"/>
+                <Button Content="+5s" Style="{StaticResource BtnDark}" Width="52" Margin="8,0,0,0" Command="{Binding SeekForwardCommand}"/>
             </StackPanel>
         </Grid>
         <Border Style="{StaticResource Divider}"/>
 
         <!-- Section: Playback -->
-        <TextBlock Text="Playback" Style="{StaticResource SectionTitle}" Margin="0,20,0,0"/>
-        <TextBlock Text="How videos keep playing" Style="{StaticResource SectionSub}"/>
+        <TextBlock Text="{DynamicResource S_PlaybackSection}" Style="{StaticResource SectionTitle}" Margin="0,20,0,0"/>
+        <TextBlock Text="{DynamicResource S_PlaybackSectionSub}" Style="{StaticResource SectionSub}"/>
         <Border Style="{StaticResource Divider}" Margin="0,16,0,8"/>
 
         <Grid MinHeight="52">
@@ -80,19 +80,19 @@
             </Grid.ColumnDefinitions>
             <Path Data="{StaticResource G_Shuffle}" Style="{StaticResource RowIcon}" VerticalAlignment="Center"/>
             <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                <TextBlock Text="Shuffle" Style="{StaticResource RowLabel}"/>
-                <TextBlock Text="Native player shuffle (ID candidate — see docs)" Style="{StaticResource RowDesc}"/>
+                <TextBlock Text="{DynamicResource S_Shuffle}" Style="{StaticResource RowLabel}"/>
+                <TextBlock Text="{DynamicResource S_ShuffleDesc}" Style="{StaticResource RowDesc}"/>
             </StackPanel>
             <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
                 <TextBlock Width="30" TextAlignment="Right" Margin="0,0,10,0" VerticalAlignment="Center"
-                           FontSize="12" Foreground="{StaticResource DsText2Brush}">
+                           FontSize="12" Foreground="{DynamicResource DsText2Brush}">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">
                             <Setter Property="Text" Value="OFF"/>
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Shuffle}" Value="True">
                                     <Setter Property="Text" Value="ON"/>
-                                    <Setter Property="Foreground" Value="{StaticResource DsAccentBrush}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource DsAccentBrush}"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -104,8 +104,8 @@
         <Border Style="{StaticResource Divider}"/>
 
         <!-- Section: Status -->
-        <TextBlock Text="Status" Style="{StaticResource SectionTitle}" Margin="0,20,0,0"/>
-        <TextBlock Text="Live player state" Style="{StaticResource SectionSub}"/>
+        <TextBlock Text="{DynamicResource S_Status}" Style="{StaticResource SectionTitle}" Margin="0,20,0,0"/>
+        <TextBlock Text="{DynamicResource S_StatusSub}" Style="{StaticResource SectionSub}"/>
         <Border Style="{StaticResource Divider}" Margin="0,16,0,8"/>
 
         <TextBlock Text="{Binding StatusLine}" Style="{StaticResource MutedText}"/>

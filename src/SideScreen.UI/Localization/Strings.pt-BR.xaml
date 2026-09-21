@@ -1,0 +1,96 @@
+<!-- Strings PT-BR. -->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:s="clr-namespace:System;assembly=mscorlib">
+    <s:String x:Key="S_NavDashboard">Painel</s:String>
+    <s:String x:Key="S_NavPlayers">Players</s:String>
+    <s:String x:Key="S_NavShortcuts">Atalhos</s:String>
+    <s:String x:Key="S_NavDisplay">Tela</s:String>
+    <s:String x:Key="S_NavSettings">Configurações</s:String>
+
+    <s:String x:Key="S_DashTitle">Controle do player</s:String>
+    <s:String x:Key="S_DashSub">Controle o player selecionado</s:String>
+    <s:String x:Key="S_Refresh">Atualizar</s:String>
+    <s:String x:Key="S_Volume">Volume</s:String>
+    <s:String x:Key="S_Playback">Reprodução</s:String>
+    <s:String x:Key="S_PlaybackDesc">Toque, navegue e pule sem focar o player</s:String>
+    <s:String x:Key="S_PlaybackSection">Reprodução</s:String>
+    <s:String x:Key="S_PlaybackSectionSub">Como os vídeos continuam tocando</s:String>
+    <s:String x:Key="S_Shuffle">Aleatório</s:String>
+    <s:String x:Key="S_ShuffleDesc">Aleatório nativo do player (ID da comunidade — ver docs)</s:String>
+    <s:String x:Key="S_Status">Estado</s:String>
+    <s:String x:Key="S_StatusSub">Estado ao vivo do player</s:String>
+    <s:String x:Key="S_StPlaying">Tocando</s:String>
+    <s:String x:Key="S_StPaused">Pausado</s:String>
+    <s:String x:Key="S_StStopped">Parado</s:String>
+    <s:String x:Key="S_StUnknown">Desconhecido</s:String>
+    <s:String x:Key="S_StOffline">Offline — abra o PotPlayer</s:String>
+
+    <s:String x:Key="S_PlayersTitle">Players</s:String>
+    <s:String x:Key="S_PlayersSub">Selecione e configure o player</s:String>
+    <s:String x:Key="S_CurrentPlayer">Player atual</s:String>
+    <s:String x:Key="S_Use">Usar</s:String>
+    <s:String x:Key="S_Soon">Em breve</s:String>
+    <s:String x:Key="S_PotStatus">Suportado — controle real via SendMessage</s:String>
+    <s:String x:Key="S_MpcStatus">Futuro — fase pós-v1</s:String>
+    <s:String x:Key="S_VlcStatus">Futuro — ideia</s:String>
+    <s:String x:Key="S_MpcNote">O MPC-HC chega como um novo IPlayerController, sem tocar no Dashboard. Ver docs/architecture.md.</s:String>
+
+    <s:String x:Key="S_ShortcutsTitle">Atalhos de teclado</s:String>
+    <s:String x:Key="S_ShortcutsSub">Clique no campo e pressione a combinação</s:String>
+    <s:String x:Key="S_Behavior">Comportamento</s:String>
+    <s:String x:Key="S_BehaviorSub">Quando os atalhos globais podem disparar</s:String>
+    <s:String x:Key="S_EnableGlobal">Ativar atalhos globais</s:String>
+    <s:String x:Key="S_EnableGlobalDesc">Opt-in. Desligado = controle só pelos botões do Painel.</s:String>
+    <s:String x:Key="S_Guard">Guarda</s:String>
+    <s:String x:Key="S_GuardDesc">OnlyListed dispara só nos processos abaixo.</s:String>
+    <s:String x:Key="S_DoublePress">Toque duplo Avançar→Anterior</s:String>
+    <s:String x:Key="S_DoublePressDesc">Experimental: o Avançar simples espera ~350ms.</s:String>
+    <s:String x:Key="S_WindowMs">Janela (ms):</s:String>
+    <s:String x:Key="S_ProcessScope">Escopo de processos</s:String>
+    <s:String x:Key="S_ProcessScopeSub">Usado quando Guarda = OnlyListed. Lista vazia bloqueia tudo.</s:String>
+    <s:String x:Key="S_RunningPrograms">Programas abertos</s:String>
+    <s:String x:Key="S_RunningProgramsDesc">Marque onde os atalhos podem disparar.</s:String>
+    <s:String x:Key="S_RefreshList">Atualizar lista</s:String>
+    <s:String x:Key="S_Apply">Aplicar</s:String>
+    <s:String x:Key="S_Restore">Restaurar padrões</s:String>
+    <s:String x:Key="S_Disclaimer">Atalhos globais disparam com o jogo em foco e podem duplicar teclas lá (F1/F2 também chegam ao BNSR). Confira os atalhos do jogo antes da ranked.</s:String>
+
+    <s:String x:Key="S_ScVolUp">Aumentar volume</s:String>
+    <s:String x:Key="S_ScVolUpD">Sobe o volume do PotPlayer (Numpad +)</s:String>
+    <s:String x:Key="S_ScVolDown">Diminuir volume</s:String>
+    <s:String x:Key="S_ScVolDownD">Desce o volume do PotPlayer (Numpad -)</s:String>
+    <s:String x:Key="S_ScPlay">Play / Pause</s:String>
+    <s:String x:Key="S_ScPlayD">Pausa ou retoma o vídeo (F2 — aviso gamer; guarda pausa em fullscreen)</s:String>
+    <s:String x:Key="S_ScNext">Próximo vídeo</s:String>
+    <s:String x:Key="S_ScNextD">Avança para o próximo vídeo da playlist/pasta (F1)</s:String>
+    <s:String x:Key="S_ScPrev">Vídeo anterior</s:String>
+    <s:String x:Key="S_ScPrevD">Volta ao vídeo anterior (F1 pressionado 2x — toque duplo)</s:String>
+    <s:String x:Key="S_ScFwd">Avançar 5 segundos</s:String>
+    <s:String x:Key="S_ScFwdD">Pula +5s no vídeo atual (seta →)</s:String>
+    <s:String x:Key="S_ScBack">Voltar 5 segundos</s:String>
+    <s:String x:Key="S_ScBackD">Volta -5s no vídeo atual (seta ←)</s:String>
+
+    <s:String x:Key="S_DisplayTitle">Posição do player</s:String>
+    <s:String x:Key="S_DisplaySub">Onde o player fica</s:String>
+    <s:String x:Key="S_Monitor">Monitor</s:String>
+    <s:String x:Key="S_MonitorDesc">Detectado ao vivo via EnumDisplayMonitors.</s:String>
+    <s:String x:Key="S_DisplayNote">Mover é one-shot (sem vigia). Para não arrastar sem querer, use fullscreen (F5) no monitor desejado.</s:String>
+
+    <s:String x:Key="S_SettingsTitle">Geral</s:String>
+    <s:String x:Key="S_SettingsSub">App, runtime e armazenamento</s:String>
+    <s:String x:Key="S_Version">Versão</s:String>
+    <s:String x:Key="S_Runtime">Runtime</s:String>
+    <s:String x:Key="S_ConfigFile">Arquivo de config</s:String>
+    <s:String x:Key="S_AboutTitle">Sobre</s:String>
+    <s:String x:Key="S_AboutSub">O que este utilitário faz</s:String>
+    <s:String x:Key="S_AboutText">O MediaControl pilota o player no segundo monitor via SendMessage, com atalhos que respeitam seus jogos.</s:String>
+    <s:String x:Key="S_Appearance">Aparência</s:String>
+    <s:String x:Key="S_AppearanceDesc">Interface escura ou clara. Aplica na hora.</s:String>
+    <s:String x:Key="S_ThemeDark">Escuro</s:String>
+    <s:String x:Key="S_ThemeLight">Claro</s:String>
+    <s:String x:Key="S_Language">Idioma</s:String>
+    <s:String x:Key="S_LanguageDesc">Aplica na hora.</s:String>
+    <s:String x:Key="S_LangEn">English</s:String>
+    <s:String x:Key="S_LangPt">Português (BR)</s:String>
+</ResourceDictionary>

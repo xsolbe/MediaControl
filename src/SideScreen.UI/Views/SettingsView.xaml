@@ -5,8 +5,8 @@
         <StackPanel Orientation="Horizontal">
             <Path Data="{StaticResource G_Settings}" Style="{StaticResource RowIcon}" Width="20" Height="20" VerticalAlignment="Top" Margin="0,2,0,0"/>
             <StackPanel Margin="12,0,0,0">
-                <TextBlock Text="General" Style="{StaticResource SectionTitle}"/>
-                <TextBlock Text="App, runtime and storage" Style="{StaticResource SectionSub}"/>
+                <TextBlock Text="{DynamicResource S_SettingsTitle}" Style="{StaticResource SectionTitle}"/>
+                <TextBlock Text="{DynamicResource S_SettingsSub}" Style="{StaticResource SectionSub}"/>
             </StackPanel>
         </StackPanel>
         <Border Style="{StaticResource Divider}" Margin="0,16,0,8"/>
@@ -16,7 +16,37 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Text="Version" Style="{StaticResource RowLabel}" VerticalAlignment="Center"/>
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="{DynamicResource S_Appearance}" Style="{StaticResource RowLabel}"/>
+                <TextBlock Text="{DynamicResource S_AppearanceDesc}" Style="{StaticResource RowDesc}"/>
+            </StackPanel>
+            <ComboBox Grid.Column="1" Style="{StaticResource SettingCombo}"
+                      ItemsSource="{Binding Themes}" DisplayMemberPath="Label"
+                      SelectedValue="{Binding Appearance}" SelectedValuePath="Id" VerticalAlignment="Center"/>
+        </Grid>
+        <Border Style="{StaticResource Divider}"/>
+
+        <Grid MinHeight="52">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="{DynamicResource S_Language}" Style="{StaticResource RowLabel}"/>
+                <TextBlock Text="{DynamicResource S_LanguageDesc}" Style="{StaticResource RowDesc}"/>
+            </StackPanel>
+            <ComboBox Grid.Column="1" Style="{StaticResource SettingCombo}"
+                      ItemsSource="{Binding Languages}" DisplayMemberPath="Label"
+                      SelectedValue="{Binding Language}" SelectedValuePath="Id" VerticalAlignment="Center"/>
+        </Grid>
+        <Border Style="{StaticResource Divider}"/>
+
+        <Grid MinHeight="52">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{DynamicResource S_Version}" Style="{StaticResource RowLabel}" VerticalAlignment="Center"/>
             <TextBlock Grid.Column="1" Text="{Binding Version}" Style="{StaticResource ValueText}"/>
         </Grid>
         <Border Style="{StaticResource Divider}"/>
@@ -26,7 +56,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Text="Runtime" Style="{StaticResource RowLabel}" VerticalAlignment="Center"/>
+            <TextBlock Text="{DynamicResource S_Runtime}" Style="{StaticResource RowLabel}" VerticalAlignment="Center"/>
             <TextBlock Grid.Column="1" Text="{Binding Runtime}" Style="{StaticResource ValueText}"/>
         </Grid>
         <Border Style="{StaticResource Divider}"/>
@@ -36,15 +66,15 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Text="Config file" Style="{StaticResource RowLabel}" VerticalAlignment="Center"/>
+            <TextBlock Text="{DynamicResource S_ConfigFile}" Style="{StaticResource RowLabel}" VerticalAlignment="Center"/>
             <TextBlock Grid.Column="1" Text="{Binding ConfigPath}" Style="{StaticResource ValueText}" FontSize="11"/>
         </Grid>
         <Border Style="{StaticResource Divider}"/>
 
-        <TextBlock Text="About" Style="{StaticResource SectionTitle}" Margin="0,20,0,0"/>
-        <TextBlock Text="What this utility does" Style="{StaticResource SectionSub}"/>
+        <TextBlock Text="{DynamicResource S_AboutTitle}" Style="{StaticResource SectionTitle}" Margin="0,20,0,0"/>
+        <TextBlock Text="{DynamicResource S_AboutSub}" Style="{StaticResource SectionSub}"/>
         <Border Style="{StaticResource Divider}" Margin="0,16,0,8"/>
 
-        <TextBlock Text="{Binding About}" Style="{StaticResource MutedText}"/>
+        <TextBlock Text="{DynamicResource S_AboutText}" Style="{StaticResource MutedText}"/>
     </StackPanel>
 </UserControl>

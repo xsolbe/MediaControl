@@ -61,12 +61,9 @@ public sealed class PotPlayerController : IPlayerController
 
     public void SetShuffle(bool enabled)
     {
-        // Sem API oficial. Estratégia honesta: tenta o candidato e documenta.
-        // Se o candidato não existir nessa versão, o PotPlayer ignora WM_COMMAND desconhecido.
-        // NÃO simulamos tecla aqui — fallback será definido após validação Spy++ (ver docs/potplayer-protocol.md).
-        // Por enquanto: envia toggle somente se já sabemos o estado desejado difere? Sem GET_SHUFFLE, envia toggle.
-        // Para evitar toggle acidental, a UI deve confirmar antes (Dashboard mostra "a validar").
-        SendWmCommand(PotPlayerCommandIds.CmdShuffleToggleCandidate);
+        // WM_COMMAND 10069 (lista comunitária ld3l). Sem leitura de estado no protocolo:
+        // o toggle é write-only — confira no player se Next ficou sequencial/aleatório.
+        SendWmCommand(PotPlayerCommandIds.CmdShuffleToggle);
     }
 
     public void SeekForward(int seconds = 5) => SeekBy(seconds);

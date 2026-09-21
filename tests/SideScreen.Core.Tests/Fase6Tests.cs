@@ -14,6 +14,14 @@ public class Fase6Tests : IDisposable
     }
 
     [Fact]
+    public void AppConfig_Defaults_AppearanceDark_LanguageEn()
+    {
+        var cfg = AppConfig.Default();
+        Assert.Equal("Dark", cfg.Appearance);
+        Assert.Equal("en", cfg.Language);
+    }
+
+    [Fact]
     public void Roundtrip_PreservesAllFields()
     {
         var store = new JsonSettingsStore(_dir);

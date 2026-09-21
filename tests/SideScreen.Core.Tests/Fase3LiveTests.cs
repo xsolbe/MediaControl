@@ -41,6 +41,7 @@ public class Fase3LiveTests
         Assert.Equal(0xE0000, PotPlayerCommandIds.AppCommandMediaPlayPause);
         Assert.Equal(10035, PotPlayerCommandIds.CmdVolumeUp);
         Assert.Equal(10036, PotPlayerCommandIds.CmdVolumeDown);
+        Assert.Equal(10069, PotPlayerCommandIds.CmdShuffleToggle); // lista ld3l/PotPlayerControl
         Assert.Equal(0x5000, PotPlayerCommandIds.PotGetVolume);
         Assert.Equal(0x5001, PotPlayerCommandIds.PotSetVolume);
         Assert.Equal(0x5006, PotPlayerCommandIds.PotGetPlayStatus);

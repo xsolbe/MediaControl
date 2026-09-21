@@ -1,6 +1,8 @@
+using System.Windows;
 using SideScreen.Core.Config;
 using SideScreen.Core.Players;
 using SideScreen.Infrastructure.Players;
+using SideScreen.UI.Localization;
 
 namespace SideScreen.UI.ViewModels;
 
@@ -58,7 +60,7 @@ public sealed class DashboardViewModel : ObservableObject
     }
 
     public string PlayerName => "PotPlayer";
-    public string PlayerState => _player.IsRunning() ? GetStateLabel(_player.GetStatus().State) : "Offline — abra o PotPlayer";
+    public string PlayerState => _player.IsRunning() ? GetStateLabel(_player.GetStatus().State) : Loc.Get("S_StOffline");
 
     public string StatusLine
     {
@@ -103,6 +105,27 @@ public sealed class DashboardViewModel : ObservableObject
 
     private void RefreshStatus(string action, bool skipVolumeRead = false)
     {
+        // Leitura imediata costuma pegar o estado ANTES do player aplicar (Playing/Paused defasado).
+        // Releitura com atraso confirma o estado real. Thread-safe via Dispatcher.
+        RefreshStatusOnUi(action, skipVolumeRead);
+        Task.Run(async () =>
+        {
+            await Task.Delay(450);
+            RefreshStatusOnUi(action + " (confirmado)", skipVolumeRead);
+        });
+    }
+
+    private void RefreshStatusOnUi(string action, bool skipVolumeRead)
+    {
+        var d = Application.Current?.Dispatcher;
+        if (d is null || d.CheckAccess())
+            DoRefresh(action, skipVolumeRead);
+        else
+            d.Invoke(() => DoRefresh(action, skipVolumeRead));
+    }
+
+    private void DoRefresh(string action, bool skipVolumeRead)
+    {
         try
         {
             var s = _player.GetStatus();
@@ -120,9 +143,9 @@ public sealed class DashboardViewModel : ObservableObject
 
     private static string GetStateLabel(PlaybackState state) => state switch
     {
-        PlaybackState.Playing => "Playing",
-        PlaybackState.Paused => "Paused",
-        PlaybackState.Stopped => "Stopped",
-        _ => "Unknown",
+        PlaybackState.Playing => Loc.Get("S_StPlaying"),
+        PlaybackState.Paused => Loc.Get("S_StPaused"),
+        PlaybackState.Stopped => Loc.Get("S_StStopped"),
+        _ => Loc.Get("S_StUnknown"),
     };
 }

@@ -1,6 +1,8 @@
 ﻿using System.IO;
 using System.Windows;
 using System.Windows.Threading;
+using SideScreen.Infrastructure.Config;
+using SideScreen.UI.Localization;
 
 namespace SideScreen.UI;
 
@@ -12,6 +14,19 @@ public partial class App : Application
     public App()
     {
         DispatcherUnhandledException += OnCrash;
+    }
+
+    protected override void OnStartup(StartupEventArgs e)
+    {
+        // Tema e idioma salvos antes da primeira janela (sem flash de tema errado).
+        try
+        {
+            var cfg = new JsonSettingsStore().Load();
+            ThemeService.Apply(cfg.Appearance);
+            LanguageService.Apply(cfg.Language);
+        }
+        catch { }
+        base.OnStartup(e);
     }
 
     private static void OnCrash(object sender, DispatcherUnhandledExceptionEventArgs e)

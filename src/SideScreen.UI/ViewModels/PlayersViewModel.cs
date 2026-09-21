@@ -1,4 +1,5 @@
 using SideScreen.Core.Config;
+using SideScreen.UI.Localization;
 
 namespace SideScreen.UI.ViewModels;
 
@@ -20,9 +21,9 @@ public sealed class PlayersViewModel : ObservableObject
         _onSelected = onSelected;
         Available =
         [
-            new PlayerOption("potplayer", "PotPlayer", "Suportado — controle real via SendMessage", false),
-            new PlayerOption("mpc-hc", "MPC-HC", "Futuro — Fase pós-v1", true),
-            new PlayerOption("vlc", "VLC", "Futuro — ideia", true),
+            new PlayerOption("potplayer", "PotPlayer", Loc.Get("S_PotStatus"), false),
+            new PlayerOption("mpc-hc", "MPC-HC", Loc.Get("S_MpcStatus"), true),
+            new PlayerOption("vlc", "VLC", Loc.Get("S_VlcStatus"), true),
         ];
         _selected = Available.FirstOrDefault(o => o.Id == selectedId) ?? Available[0];
         SelectPlayerCommand = new RelayCommand(id =>

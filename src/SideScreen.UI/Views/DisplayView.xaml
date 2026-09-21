@@ -5,8 +5,8 @@
         <StackPanel Orientation="Horizontal">
             <Path Data="{StaticResource G_Display}" Style="{StaticResource RowIcon}" Width="20" Height="20" VerticalAlignment="Top" Margin="0,2,0,0"/>
             <StackPanel Margin="12,0,0,0">
-                <TextBlock Text="Player Position" Style="{StaticResource SectionTitle}"/>
-                <TextBlock Text="Where the player lives" Style="{StaticResource SectionSub}"/>
+                <TextBlock Text="{DynamicResource S_DisplayTitle}" Style="{StaticResource SectionTitle}"/>
+                <TextBlock Text="{DynamicResource S_DisplaySub}" Style="{StaticResource SectionSub}"/>
             </StackPanel>
         </StackPanel>
         <Border Style="{StaticResource Divider}" Margin="0,16,0,8"/>
@@ -17,8 +17,8 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="Monitor" Style="{StaticResource RowLabel}"/>
-                <TextBlock Text="Detected live via EnumDisplayMonitors." Style="{StaticResource RowDesc}"/>
+                <TextBlock Text="{DynamicResource S_Monitor}" Style="{StaticResource RowLabel}"/>
+                <TextBlock Text="{DynamicResource S_MonitorDesc}" Style="{StaticResource RowDesc}"/>
             </StackPanel>
             <ComboBox Grid.Column="1" Style="{StaticResource SettingCombo}"
                       ItemsSource="{Binding Monitors}" SelectedItem="{Binding Selected}"
@@ -26,6 +26,7 @@
         </Grid>
         <Border Style="{StaticResource Divider}"/>
 
-        <TextBlock Text="{Binding Note}" Style="{StaticResource MutedText}" Margin="0,12,0,0"/>
+        <TextBlock Text="{Binding Status}" Style="{StaticResource MutedText}" Margin="0,12,0,0"/>
+        <TextBlock Text="{DynamicResource S_DisplayNote}" Style="{StaticResource MutedText}" Margin="0,8,0,0" FontSize="11"/>
     </StackPanel>
 </UserControl>

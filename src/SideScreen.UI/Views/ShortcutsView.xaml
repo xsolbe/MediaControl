@@ -5,8 +5,8 @@
         <StackPanel Orientation="Horizontal">
             <Path Data="{StaticResource G_Keys}" Style="{StaticResource RowIcon}" Width="20" Height="20" VerticalAlignment="Top" Margin="0,2,0,0"/>
             <StackPanel Margin="12,0,0,0">
-                <TextBlock Text="Keyboard Shortcuts" Style="{StaticResource SectionTitle}"/>
-                <TextBlock Text="Click a field and press the combination" Style="{StaticResource SectionSub}"/>
+                <TextBlock Text="{DynamicResource S_ShortcutsTitle}" Style="{StaticResource SectionTitle}"/>
+                <TextBlock Text="{DynamicResource S_ShortcutsSub}" Style="{StaticResource SectionSub}"/>
             </StackPanel>
         </StackPanel>
         <Border Style="{StaticResource Divider}" Margin="0,16,0,8"/>
@@ -23,13 +23,13 @@
                             <StackPanel VerticalAlignment="Center">
                                 <TextBlock Text="{Binding Label}" Style="{StaticResource RowLabel}"/>
                                 <TextBlock Text="{Binding Description}" Style="{StaticResource RowDesc}"/>
-                                <TextBlock Text="{Binding Warning}" Foreground="{StaticResource DsWarnBrush}" FontSize="11"
+                                <TextBlock Text="{Binding Warning}" Foreground="{DynamicResource DsWarnBrush}" FontSize="11"
                                            TextWrapping="Wrap" Margin="0,2,0,0"
                                            Visibility="{Binding Warning, Converter={StaticResource NullToVisibilityConverter}}"/>
                             </StackPanel>
                             <TextBox Grid.Column="1" Text="{Binding Gesture, UpdateSourceTrigger=PropertyChanged}"
                                      Style="{StaticResource GestureBox}" VerticalAlignment="Center"
-                                     PreviewKeyDown="GestureBox_PreviewKeyDown" ToolTip="Clique e pressione o combo"/>
+                                     PreviewKeyDown="GestureBox_PreviewKeyDown"/>
                         </Grid>
                         <Border Style="{StaticResource Divider}"/>
                     </StackPanel>
@@ -38,8 +38,8 @@
         </ItemsControl>
 
         <!-- Section: Behavior -->
-        <TextBlock Text="Behavior" Style="{StaticResource SectionTitle}" Margin="0,20,0,0"/>
-        <TextBlock Text="When global hotkeys are allowed to fire" Style="{StaticResource SectionSub}"/>
+        <TextBlock Text="{DynamicResource S_Behavior}" Style="{StaticResource SectionTitle}" Margin="0,20,0,0"/>
+        <TextBlock Text="{DynamicResource S_BehaviorSub}" Style="{StaticResource SectionSub}"/>
         <Border Style="{StaticResource Divider}" Margin="0,16,0,8"/>
 
         <Grid MinHeight="52">
@@ -48,8 +48,8 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="Enable global hotkeys" Style="{StaticResource RowLabel}"/>
-                <TextBlock Text="Opt-in. Off = control only from Dashboard buttons." Style="{StaticResource RowDesc}"/>
+                <TextBlock Text="{DynamicResource S_EnableGlobal}" Style="{StaticResource RowLabel}"/>
+                <TextBlock Text="{DynamicResource S_EnableGlobalDesc}" Style="{StaticResource RowDesc}"/>
             </StackPanel>
             <CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitch}" IsChecked="{Binding EnableGlobal}" VerticalAlignment="Center"/>
         </Grid>
@@ -61,8 +61,8 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="Guard" Style="{StaticResource RowLabel}"/>
-                <TextBlock Text="OnlyListed fires only in the processes below." Style="{StaticResource RowDesc}"/>
+                <TextBlock Text="{DynamicResource S_Guard}" Style="{StaticResource RowLabel}"/>
+                <TextBlock Text="{DynamicResource S_GuardDesc}" Style="{StaticResource RowDesc}"/>
             </StackPanel>
             <ComboBox Grid.Column="1" Style="{StaticResource SettingCombo}"
                       ItemsSource="{Binding GuardModes}" SelectedItem="{Binding SelectedGuardMode}" VerticalAlignment="Center"/>
@@ -75,20 +75,21 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="Double-press Next → Previous" Style="{StaticResource RowLabel}"/>
-                <TextBlock Text="Experimental: single Next waits ~350ms." Style="{StaticResource RowDesc}"/>
+                <TextBlock Text="{DynamicResource S_DoublePress}" Style="{StaticResource RowLabel}"/>
+                <TextBlock Text="{DynamicResource S_DoublePressDesc}" Style="{StaticResource RowDesc}"/>
             </StackPanel>
             <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="{DynamicResource S_WindowMs}" Style="{StaticResource MutedText}" VerticalAlignment="Center"/>
                 <TextBox Text="{Binding DoublePressWindowMs, UpdateSourceTrigger=PropertyChanged}"
-                         Style="{StaticResource GestureBox}" Width="64" Margin="0,0,10,0" ToolTip="Janela em ms (200-500)"/>
+                         Style="{StaticResource GestureBox}" Width="64" Margin="8,0,10,0"/>
                 <CheckBox Style="{StaticResource ToggleSwitch}" IsChecked="{Binding DoublePressEnabled}" VerticalAlignment="Center"/>
             </StackPanel>
         </Grid>
         <Border Style="{StaticResource Divider}"/>
 
         <!-- Section: Process scope -->
-        <TextBlock Text="Process scope" Style="{StaticResource SectionTitle}" Margin="0,20,0,0"/>
-        <TextBlock Text="Used when Guard = OnlyListed. Empty list blocks everything." Style="{StaticResource SectionSub}"/>
+        <TextBlock Text="{DynamicResource S_ProcessScope}" Style="{StaticResource SectionTitle}" Margin="0,20,0,0"/>
+        <TextBlock Text="{DynamicResource S_ProcessScopeSub}" Style="{StaticResource SectionSub}"/>
         <Border Style="{StaticResource Divider}" Margin="0,16,0,8"/>
 
         <Grid MinHeight="52">
@@ -97,10 +98,10 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="Running programs" Style="{StaticResource RowLabel}"/>
-                <TextBlock Text="Tick where hotkeys may fire." Style="{StaticResource RowDesc}"/>
+                <TextBlock Text="{DynamicResource S_RunningPrograms}" Style="{StaticResource RowLabel}"/>
+                <TextBlock Text="{DynamicResource S_RunningProgramsDesc}" Style="{StaticResource RowDesc}"/>
             </StackPanel>
-            <Button Grid.Column="1" Content="↻ Atualizar lista" Style="{StaticResource BtnDark}"
+            <Button Grid.Column="1" Content="{DynamicResource S_RefreshList}" Style="{StaticResource BtnDark}"
                     Command="{Binding RefreshProcessesCommand}" VerticalAlignment="Center"/>
         </Grid>
         <ScrollViewer MaxHeight="180" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,4,0,0">
@@ -120,13 +121,13 @@
         <Border Style="{StaticResource Divider}"/>
 
         <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
-            <Button Content="Apply" Style="{StaticResource BtnPrimary}" Command="{Binding ApplyCommand}" Width="110"/>
-            <Button Content="Restaurar padrões" Style="{StaticResource BtnDark}" Command="{Binding RestoreDefaultsCommand}" Width="150" Margin="10,0,0,0"/>
+            <Button Content="{DynamicResource S_Apply}" Style="{StaticResource BtnPrimary}" Command="{Binding ApplyCommand}" Width="110"/>
+            <Button Content="{DynamicResource S_Restore}" Style="{StaticResource BtnDark}" Command="{Binding RestoreDefaultsCommand}" Width="150" Margin="10,0,0,0"/>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
             <Path Data="{StaticResource G_Warn}" Style="{StaticResource RowIcon}" Width="16" Height="16" VerticalAlignment="Top" Margin="0,1,0,0"/>
-            <TextBlock Text="Global hotkeys fire with the game focused and may double-trigger keys there (F1/F2 also reach BNSR). Check game bindings before ranked."
+            <TextBlock Text="{DynamicResource S_Disclaimer}"
                        Style="{StaticResource MutedText}" Margin="8,0,0,0"/>
         </StackPanel>
         <TextBlock Text="{Binding Status}" Style="{StaticResource MutedText}" Margin="0,10,0,0"/>

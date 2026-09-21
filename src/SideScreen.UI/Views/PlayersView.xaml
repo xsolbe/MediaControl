@@ -5,8 +5,8 @@
         <StackPanel Orientation="Horizontal">
             <Path Data="{StaticResource G_Players}" Style="{StaticResource RowIcon}" Width="20" Height="20" VerticalAlignment="Top" Margin="0,2,0,0"/>
             <StackPanel Margin="12,0,0,0">
-                <TextBlock Text="Players" Style="{StaticResource SectionTitle}"/>
-                <TextBlock Text="Select and configure the player" Style="{StaticResource SectionSub}"/>
+                <TextBlock Text="{DynamicResource S_PlayersTitle}" Style="{StaticResource SectionTitle}"/>
+                <TextBlock Text="{DynamicResource S_PlayersSub}" Style="{StaticResource SectionSub}"/>
             </StackPanel>
         </StackPanel>
         <Border Style="{StaticResource Divider}" Margin="0,16,0,8"/>
@@ -19,7 +19,7 @@
             </Grid.ColumnDefinitions>
             <Path Data="{StaticResource G_Display}" Style="{StaticResource RowIcon}" VerticalAlignment="Center"/>
             <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                <TextBlock Text="Current player" Style="{StaticResource MutedText}"/>
+                <TextBlock Text="{DynamicResource S_CurrentPlayer}" Style="{StaticResource MutedText}"/>
                 <TextBlock Text="{Binding Selected.Name}" Style="{StaticResource RowLabel}"/>
             </StackPanel>
         </Grid>
@@ -51,7 +51,7 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
 
-        <TextBlock Text="MPC-HC entra como um novo IPlayerController, sem tocar no Dashboard. Ver docs/architecture.md."
+        <TextBlock Text="{DynamicResource S_MpcNote}"
                    Style="{StaticResource MutedText}" Margin="0,12,0,0"/>
     </StackPanel>
 </UserControl>

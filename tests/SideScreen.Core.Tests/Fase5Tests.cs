@@ -32,4 +32,20 @@ public class Fase5Tests
         var cfg = AppConfig.Default();
         Assert.Equal("", cfg.SelectedMonitorDevice);
     }
+
+    [Fact]
+    public void MonitorMover_Center_PutsMiddle()
+    {
+        var (x, y) = MonitorMover.Center(800, 600, 1920, 0, 1920, 1080);
+        Assert.Equal(1920 + (1920 - 800) / 2, x);
+        Assert.Equal((1080 - 600) / 2, y);
+    }
+
+    [Fact]
+    public void MonitorMover_Center_Oversized_PinsCorner()
+    {
+        var (x, y) = MonitorMover.Center(3000, 2000, 1920, 0, 1920, 1080);
+        Assert.Equal(1920, x);
+        Assert.Equal(0, y);
+    }
 }

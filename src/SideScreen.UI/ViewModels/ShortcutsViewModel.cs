@@ -4,6 +4,7 @@ using SideScreen.Core.Hotkeys;
 using SideScreen.Infrastructure.Config;
 using SideScreen.Infrastructure.Hotkeys;
 using SideScreen.Infrastructure.Players;
+using SideScreen.UI.Localization;
 
 namespace SideScreen.UI.ViewModels;
 
@@ -64,15 +65,15 @@ public sealed class ProcessOption : ObservableObject
 /// </summary>
 public sealed class ShortcutsViewModel : ObservableObject
 {
-    private static readonly (string Key, string Label, string Description)[] Order =
+    private static (string Key, string LabelKey, string DescKey)[] OrderKeys() =>
     [
-        ("volumeUp", "Aumentar volume", "Sobe o volume do PotPlayer (Numpad +)"),
-        ("volumeDown", "Diminuir volume", "Desce o volume do PotPlayer (Numpad -)"),
-        ("playPause", "Play / Pause", "Pausa ou retoma o vídeo (F2 — mostra aviso gamer; guard pausa em fullscreen)"),
-        ("next", "Próximo vídeo", "Avança para o próximo vídeo da playlist/pasta (F1)"),
-        ("previous", "Vídeo anterior", "Volta ao vídeo anterior (F1 pressionado 2x — double-press)"),
-        ("seekForward", "Avançar 5 segundos", "Pula +5s no vídeo atual (seta →)"),
-        ("seekBackward", "Voltar 5 segundos", "Volta -5s no vídeo atual (seta ←)"),
+        ("volumeUp", "S_ScVolUp", "S_ScVolUpD"),
+        ("volumeDown", "S_ScVolDown", "S_ScVolDownD"),
+        ("playPause", "S_ScPlay", "S_ScPlayD"),
+        ("next", "S_ScNext", "S_ScNextD"),
+        ("previous", "S_ScPrev", "S_ScPrevD"),
+        ("seekForward", "S_ScFwd", "S_ScFwdD"),
+        ("seekBackward", "S_ScBack", "S_ScBackD"),
     ];
 
     private readonly JsonSettingsStore _store;
@@ -92,8 +93,8 @@ public sealed class ShortcutsViewModel : ObservableObject
         _service.Triggered += msg => Status = msg;
 
         var cfg = _store.Load();
-        Rows = new ObservableCollection<ShortcutEdit>(Order.Select(o =>
-            new ShortcutEdit(o.Key, o.Label, o.Description, cfg.Shortcuts.TryGetValue(o.Key, out var g) ? g : AppConfig.Default().Shortcuts[o.Key])));
+        Rows = new ObservableCollection<ShortcutEdit>(OrderKeys().Select(o =>
+            new ShortcutEdit(o.Key, Loc.Get(o.LabelKey), Loc.Get(o.DescKey), cfg.Shortcuts.TryGetValue(o.Key, out var g) ? g : AppConfig.Default().Shortcuts[o.Key])));
 
         _enableGlobal = cfg.EnableGlobalHotkeys;
         _guardMode = Core.Hotkeys.GuardModes.All.Contains(cfg.GuardMode) ? cfg.GuardMode : Core.Hotkeys.GuardModes.Always;

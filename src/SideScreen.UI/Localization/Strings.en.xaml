@@ -1,0 +1,96 @@
+<!-- Strings EN (default). -->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:s="clr-namespace:System;assembly=mscorlib">
+    <s:String x:Key="S_NavDashboard">Dashboard</s:String>
+    <s:String x:Key="S_NavPlayers">Players</s:String>
+    <s:String x:Key="S_NavShortcuts">Shortcuts</s:String>
+    <s:String x:Key="S_NavDisplay">Display</s:String>
+    <s:String x:Key="S_NavSettings">Settings</s:String>
+
+    <s:String x:Key="S_DashTitle">Player Control</s:String>
+    <s:String x:Key="S_DashSub">Control the selected player</s:String>
+    <s:String x:Key="S_Refresh">Refresh</s:String>
+    <s:String x:Key="S_Volume">Volume</s:String>
+    <s:String x:Key="S_Playback">Playback</s:String>
+    <s:String x:Key="S_PlaybackDesc">Play, navigate and seek without focusing the player</s:String>
+    <s:String x:Key="S_PlaybackSection">Playback</s:String>
+    <s:String x:Key="S_PlaybackSectionSub">How videos keep playing</s:String>
+    <s:String x:Key="S_Shuffle">Shuffle</s:String>
+    <s:String x:Key="S_ShuffleDesc">Native player shuffle (community ID — see docs)</s:String>
+    <s:String x:Key="S_Status">Status</s:String>
+    <s:String x:Key="S_StatusSub">Live player state</s:String>
+    <s:String x:Key="S_StPlaying">Playing</s:String>
+    <s:String x:Key="S_StPaused">Paused</s:String>
+    <s:String x:Key="S_StStopped">Stopped</s:String>
+    <s:String x:Key="S_StUnknown">Unknown</s:String>
+    <s:String x:Key="S_StOffline">Offline — open PotPlayer</s:String>
+
+    <s:String x:Key="S_PlayersTitle">Players</s:String>
+    <s:String x:Key="S_PlayersSub">Select and configure the player</s:String>
+    <s:String x:Key="S_CurrentPlayer">Current player</s:String>
+    <s:String x:Key="S_Use">Use</s:String>
+    <s:String x:Key="S_Soon">Coming soon</s:String>
+    <s:String x:Key="S_PotStatus">Supported — real control via SendMessage</s:String>
+    <s:String x:Key="S_MpcStatus">Future — post-v1 phase</s:String>
+    <s:String x:Key="S_VlcStatus">Future — idea</s:String>
+    <s:String x:Key="S_MpcNote">MPC-HC arrives as a new IPlayerController, without touching the Dashboard. See docs/architecture.md.</s:String>
+
+    <s:String x:Key="S_ShortcutsTitle">Keyboard Shortcuts</s:String>
+    <s:String x:Key="S_ShortcutsSub">Click a field and press the combination</s:String>
+    <s:String x:Key="S_Behavior">Behavior</s:String>
+    <s:String x:Key="S_BehaviorSub">When global hotkeys are allowed to fire</s:String>
+    <s:String x:Key="S_EnableGlobal">Enable global hotkeys</s:String>
+    <s:String x:Key="S_EnableGlobalDesc">Opt-in. Off = control only from Dashboard buttons.</s:String>
+    <s:String x:Key="S_Guard">Guard</s:String>
+    <s:String x:Key="S_GuardDesc">OnlyListed fires only in the processes below.</s:String>
+    <s:String x:Key="S_DoublePress">Double-press Next→Previous</s:String>
+    <s:String x:Key="S_DoublePressDesc">Experimental: single Next waits ~350ms.</s:String>
+    <s:String x:Key="S_WindowMs">Window (ms):</s:String>
+    <s:String x:Key="S_ProcessScope">Process scope</s:String>
+    <s:String x:Key="S_ProcessScopeSub">Used when Guard = OnlyListed. Empty list blocks everything.</s:String>
+    <s:String x:Key="S_RunningPrograms">Running programs</s:String>
+    <s:String x:Key="S_RunningProgramsDesc">Tick where hotkeys may fire.</s:String>
+    <s:String x:Key="S_RefreshList">Refresh list</s:String>
+    <s:String x:Key="S_Apply">Apply</s:String>
+    <s:String x:Key="S_Restore">Restore defaults</s:String>
+    <s:String x:Key="S_Disclaimer">Global hotkeys fire with the game focused and may double-trigger keys there (F1/F2 also reach BNSR). Check game bindings before ranked.</s:String>
+
+    <s:String x:Key="S_ScVolUp">Volume up</s:String>
+    <s:String x:Key="S_ScVolUpD">Raises PotPlayer volume (Numpad +)</s:String>
+    <s:String x:Key="S_ScVolDown">Volume down</s:String>
+    <s:String x:Key="S_ScVolDownD">Lowers PotPlayer volume (Numpad -)</s:String>
+    <s:String x:Key="S_ScPlay">Play / Pause</s:String>
+    <s:String x:Key="S_ScPlayD">Pauses or resumes the video (F2 — gamer warning; guard pauses in fullscreen)</s:String>
+    <s:String x:Key="S_ScNext">Next video</s:String>
+    <s:String x:Key="S_ScNextD">Jumps to the next video in playlist/folder (F1)</s:String>
+    <s:String x:Key="S_ScPrev">Previous video</s:String>
+    <s:String x:Key="S_ScPrevD">Back to the previous video (F1 pressed twice — double-press)</s:String>
+    <s:String x:Key="S_ScFwd">Forward 5 seconds</s:String>
+    <s:String x:Key="S_ScFwdD">Skips +5s in the current video (→)</s:String>
+    <s:String x:Key="S_ScBack">Back 5 seconds</s:String>
+    <s:String x:Key="S_ScBackD">Back -5s in the current video (←)</s:String>
+
+    <s:String x:Key="S_DisplayTitle">Player Position</s:String>
+    <s:String x:Key="S_DisplaySub">Where the player lives</s:String>
+    <s:String x:Key="S_Monitor">Monitor</s:String>
+    <s:String x:Key="S_MonitorDesc">Detected live via EnumDisplayMonitors.</s:String>
+    <s:String x:Key="S_DisplayNote">Moving is one-shot (no watch). To avoid accidental drags, use fullscreen (F5) on the desired monitor.</s:String>
+
+    <s:String x:Key="S_SettingsTitle">General</s:String>
+    <s:String x:Key="S_SettingsSub">App, runtime and storage</s:String>
+    <s:String x:Key="S_Version">Version</s:String>
+    <s:String x:Key="S_Runtime">Runtime</s:String>
+    <s:String x:Key="S_ConfigFile">Config file</s:String>
+    <s:String x:Key="S_AboutTitle">About</s:String>
+    <s:String x:Key="S_AboutSub">What this utility does</s:String>
+    <s:String x:Key="S_AboutText">MediaControl drives the player on the second monitor via SendMessage, with hotkeys that respect your games.</s:String>
+    <s:String x:Key="S_Appearance">Appearance</s:String>
+    <s:String x:Key="S_AppearanceDesc">Dark or light interface. Applies immediately.</s:String>
+    <s:String x:Key="S_ThemeDark">Dark</s:String>
+    <s:String x:Key="S_ThemeLight">Light</s:String>
+    <s:String x:Key="S_Language">Language</s:String>
+    <s:String x:Key="S_LanguageDesc">Applies immediately.</s:String>
+    <s:String x:Key="S_LangEn">English</s:String>
+    <s:String x:Key="S_LangPt">Português (BR)</s:String>
+</ResourceDictionary>

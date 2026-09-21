@@ -26,12 +26,10 @@ public static class PotPlayerCommandIds
     public const int AppCommandMediaPrevious = 0xC0000;  // 12 << 16
     public const int AppCommandMediaPlayPause = 0xE0000; // 14 << 16
 
-    // Shuffle/Repeat: sem ID oficial no SDK. Candidatos a validar com Spy++.
-    // O PotPlayer expõe shuffle na playlist; se nenhum WM_COMMAND funcionar,
-    // Fase 3 documenta fallback (não simula tecla silenciosamente).
-    // Para validar: abrir PotPlayer -> Spy++ -> Messages -> alternar Shuffle
-    // e anotar o wParam de WM_COMMAND. Troque abaixo pelo ID real encontrado.
-    public const int CmdShuffleToggleCandidate = 10125;
+    // Shuffle: lista comunitária ld3l/PotPlayerControl (raw.md) documenta WM_COMMAND 10069
+    // ("off playback shuffling") — melhor candidato que qualquer chute. 10495-10497 são REPEAT,
+    // não shuffle. Sem leitura de estado (sem POT_GET_SHUFFLE): toggle é write-only, valide no player.
+    public const int CmdShuffleToggle = 10069;
 
     // POT_COMMAND (WM_USER = 0x0400)
     public const int PotCommand = 0x0400;

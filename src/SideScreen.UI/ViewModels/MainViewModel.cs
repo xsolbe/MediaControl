@@ -2,6 +2,7 @@ using SideScreen.Core.Config;
 using SideScreen.Infrastructure.Config;
 using SideScreen.Infrastructure.Hotkeys;
 using SideScreen.Infrastructure.Players;
+using SideScreen.UI.Localization;
 
 namespace SideScreen.UI.ViewModels;
 
@@ -36,7 +37,7 @@ public sealed class MainViewModel : ObservableObject
         Players = new PlayersViewModel(_config.SelectedPlayerId, id => UpdateConfig(c => c.SelectedPlayerId = id));
         Shortcuts = new ShortcutsViewModel(_service, _store, ReloadHotkeys);
         Display = new DisplayViewModel(() => _config, UpdateConfig);
-        Settings = new SettingsViewModel();
+        Settings = new SettingsViewModel(() => _config, UpdateConfig, ApplyLanguage);
 
         _current = Dashboard;
         NavigateCommand = new RelayCommand(nav => Navigate(nav as string ?? "Dashboard"));
@@ -59,11 +60,28 @@ public sealed class MainViewModel : ObservableObject
             : "Hotkeys: OFF";
     }
 
-    public DashboardViewModel Dashboard { get; }
-    public PlayersViewModel Players { get; }
-    public ShortcutsViewModel Shortcuts { get; }
-    public DisplayViewModel Display { get; }
-    public SettingsViewModel Settings { get; }
+    public DashboardViewModel Dashboard { get; private set; }
+    public PlayersViewModel Players { get; private set; }
+    public ShortcutsViewModel Shortcuts { get; private set; }
+    public DisplayViewModel Display { get; private set; }
+    public SettingsViewModel Settings { get; private set; }
+
+    /// <summary>Troca de idioma ao vivo: troca o dicionário e recria as telas (serviço de hotkeys é mantido).</summary>
+    public void ApplyLanguage(string lang)
+    {
+        LanguageService.Apply(lang);
+        Dashboard = new DashboardViewModel(new PotPlayerController(), _config, shuffle => UpdateConfig(c => c.ShuffleEnabled = shuffle));
+        Players = new PlayersViewModel(_config.SelectedPlayerId, id => UpdateConfig(c => c.SelectedPlayerId = id));
+        Shortcuts = new ShortcutsViewModel(_service, _store, ReloadHotkeys);
+        Display = new DisplayViewModel(() => _config, UpdateConfig);
+        Settings = new SettingsViewModel(() => _config, UpdateConfig, ApplyLanguage);
+        Raise(nameof(Dashboard));
+        Raise(nameof(Players));
+        Raise(nameof(Shortcuts));
+        Raise(nameof(Display));
+        Raise(nameof(Settings));
+        Navigate(SelectedNav);
+    }
 
     public object Current
     {

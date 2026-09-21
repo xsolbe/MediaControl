@@ -56,5 +56,11 @@ public sealed class AppConfig
     /// <summary>Allowlist de processos para GuardModes.OnlyListed. Ex: ["BNSR"]. Vazia = nada passa.</summary>
     public List<string> AllowedProcesses { get; set; } = [];
 
+    /// <summary>Dark (padrão) ou Light.</summary>
+    public string Appearance { get; set; } = "Dark";
+
+    /// <summary>en (padrão) ou pt-BR.</summary>
+    public string Language { get; set; } = "en";
+
     public static AppConfig Default() => new();
 }
