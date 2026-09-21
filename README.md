@@ -2,7 +2,7 @@
 
 Controle minimalista do player de vídeo no segundo monitor — sem interferir em jogos.
 
-**Stack:** C# + .NET 10 LTS + WPF (MVVM) · **Player v1:** PotPlayer via `SendMessage` (sem simular teclas) · **Status:** Fase 1 — shell funcionando
+**Stack:** C# + .NET 10 LTS + WPF (MVVM) · **Player v1:** PotPlayer via `SendMessage` (sem simular teclas) · **Status:** Fase 2 — Interface com navegação
 
 ## Por que este stack?
 
@@ -25,7 +25,7 @@ SideScreen/
 └── SideScreen.slnx
 ```
 
-## Como rodar localmente (Fase 1)
+## Como rodar localmente (Fase 2)
 
 ```powershell
 # 1. Pré-requisito: .NET 10 SDK
@@ -41,7 +41,7 @@ dotnet test SideScreen.slnx
 dotnet run --project src/SideScreen.UI/SideScreen.UI.csproj
 ```
 
-Esperado: janela escura `#070707` com “PotPlayer · Offline (stub Fase 1)”.
+Esperado: janela escura `#070707` com sidebar (Dashboard, Players, Shortcuts, Display, Settings).
 
 ## Config futura (Fase 6)
 
@@ -50,15 +50,15 @@ Esperado: janela escura `#070707` com “PotPlayer · Offline (stub Fase 1)”.
 ## Roadmap
 
 - [x] Fase 0 — Planejamento
-- [x] Fase 1 — Projeto inicial (esta versão)
-- [ ] Fase 2 — Interface (Dashboard, Players, Shortcuts, Display, Settings)
+- [x] Fase 1 — Projeto inicial
+- [x] Fase 2 — Interface (Dashboard, Players, Shortcuts, Display, Settings) (esta versão)
 - [ ] Fase 3 — PotPlayer (`FindWindow` + `SendMessage`)
 - [ ] Fase 4 — Atalhos contextuais (Modo Jogo)
 - [ ] Fase 5 — Monitores (auto-reposicionamento)
 - [ ] Fase 6 — Persistência
 - [ ] Fase 7 — Testes
 - [ ] Fase 8 — Build `.exe` + instalador
-- [ ] Fase 9 — GitHub `xsolbe/SideScreen` (só após local estável)
+- [x] Fase 9 — GitHub `xsolbe/SideScreen` (conectado, push Fase 1 OK)
 
 ## Docs
 

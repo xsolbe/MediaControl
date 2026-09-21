@@ -1,0 +1,25 @@
+<UserControl x:Class="SideScreen.UI.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel>
+        <Border Style="{StaticResource Card}">
+            <StackPanel>
+                <TextBlock Text="General" Style="{StaticResource MutedText}"/>
+                <TextBlock Text="{Binding Version}" FontSize="15" Margin="0,6,0,0"/>
+                <TextBlock Text="{Binding Runtime}" Style="{StaticResource MutedText}" Margin="0,4,0,0"/>
+            </StackPanel>
+        </Border>
+        <Border Style="{StaticResource Card}" Margin="0,12,0,0">
+            <StackPanel>
+                <TextBlock Text="Config file" Style="{StaticResource MutedText}"/>
+                <TextBlock Text="{Binding ConfigPath}" Margin="0,6,0,0" TextWrapping="Wrap" FontFamily="Consolas" FontSize="12"/>
+            </StackPanel>
+        </Border>
+        <Border Style="{StaticResource Card}" Margin="0,12,0,0">
+            <StackPanel>
+                <TextBlock Text="About" Style="{StaticResource MutedText}"/>
+                <TextBlock Text="{Binding About}" Margin="0,6,0,0" TextWrapping="Wrap"/>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</UserControl>

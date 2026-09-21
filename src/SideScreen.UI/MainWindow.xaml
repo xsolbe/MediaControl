@@ -3,56 +3,42 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SideScreen.UI"
         mc:Ignorable="d"
-        Title="SideScreen — Fase 1" Height="520" Width="720"
+        Title="SideScreen — Fase 2" Height="600" Width="860"
         Background="#070707"
         WindowStartupLocation="CenterScreen">
-    <Grid Margin="32">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="16"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="16"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="170"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-        <!-- Header -->
-        <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center">
-            <Ellipse Width="8" Height="8" Fill="#2A2A2A" VerticalAlignment="Center"/>
-            <TextBlock Text="  SideScreen" FontSize="18" FontWeight="SemiBold" Foreground="#EDEDED"/>
-            <TextBlock Text="  ·  Fase 1 — shell funcionando" Style="{StaticResource MutedText}" VerticalAlignment="Center"/>
-        </StackPanel>
-
-        <!-- Current Player -->
-        <Border Grid.Row="2" Style="{StaticResource Card}">
+        <!-- Sidebar -->
+        <Border Grid.Column="0" Background="#0B0B0B" BorderBrush="#1E1E1E" BorderThickness="0,0,1,0" Padding="12">
             <StackPanel>
-                <TextBlock Text="Current Player" Style="{StaticResource MutedText}"/>
-                <TextBlock Text="PotPlayer  ·  Offline (stub Fase 1)" FontSize="15" Margin="0,6,0,0"/>
-                <TextBlock x:Name="StatusText" Text="IsRunning=False — Fase 3 vai detectar via FindWindow."
-                           Style="{StaticResource MutedText}" Margin="0,6,0,0" TextWrapping="Wrap"/>
-            </StackPanel>
-        </Border>
-
-        <!-- Controls placeholder -->
-        <Border Grid.Row="4" Style="{StaticResource Card}">
-            <StackPanel>
-                <TextBlock Text="Playback Controls (placeholder Fase 2)" Style="{StaticResource MutedText}"/>
-                <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
-                    <Button Content="Play/Pause" Width="110" Height="32" Margin="0,0,8,0"/>
-                    <Button Content="|◀ Prev" Width="90" Height="32" Margin="0,0,8,0"/>
-                    <Button Content="Next ▶|" Width="90" Height="32"/>
+                <StackPanel Orientation="Horizontal" Margin="4,4,0,16">
+                    <Ellipse Width="8" Height="8" Fill="#2A2A2A" VerticalAlignment="Center"/>
+                    <TextBlock Text="  SideScreen" FontWeight="SemiBold" FontSize="14"/>
                 </StackPanel>
-                <TextBlock Text="Botões ainda não controlam o PotPlayer. Isso entra na Fase 3 via SendMessage."
-                           Style="{StaticResource MutedText}" Margin="0,12,0,0" TextWrapping="Wrap"/>
+
+                <Button Content="Dashboard" Style="{StaticResource NavButton}" Command="{Binding NavigateCommand}" CommandParameter="Dashboard"/>
+                <Button Content="Players" Style="{StaticResource NavButton}" Command="{Binding NavigateCommand}" CommandParameter="Players"/>
+                <Button Content="Shortcuts" Style="{StaticResource NavButton}" Command="{Binding NavigateCommand}" CommandParameter="Shortcuts"/>
+                <Button Content="Display" Style="{StaticResource NavButton}" Command="{Binding NavigateCommand}" CommandParameter="Display"/>
+                <Button Content="Settings" Style="{StaticResource NavButton}" Command="{Binding NavigateCommand}" CommandParameter="Settings"/>
+
+                <TextBlock Text="v0.2.0 · Fase 2" Style="{StaticResource MutedText}" Margin="4,24,0,0"/>
             </StackPanel>
         </Border>
 
-        <!-- Footer -->
-        <TextBlock Grid.Row="6" x:Name="FooterText"
-                   Text="SideScreen 0.1.0  ·  .NET 10 + WPF  ·  %AppData%\SideScreen\config.json (Fase 6)"
-                   Style="{StaticResource MutedText}"/>
+        <!-- Content -->
+        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" Padding="28">
+            <StackPanel>
+                <TextBlock Text="{Binding SelectedNav}" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,16"/>
+                <ContentControl Content="{Binding Current}"/>
+                <TextBlock Text="SideScreen 0.2.0 · .NET + WPF · PotPlayer real na Fase 3 · Atalhos reais na Fase 4 · Monitores na Fase 5"
+                           Style="{StaticResource MutedText}" Margin="0,24,0,0" TextWrapping="Wrap"/>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Window>
