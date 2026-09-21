@@ -2,7 +2,7 @@ namespace SideScreen.Core.Config;
 
 /// <summary>
 /// Configuração persistida em %AppData%\SideScreen\config.json
-/// Fase 1: modelo + defaults. Fase 6: leitura/escrita real com versionamento.
+/// Fase 4: hotkeys globais opt-in + guard mode + double-press. Fase 6: store com versionamento.
 /// </summary>
 public sealed class AppConfig
 {
@@ -19,7 +19,6 @@ public sealed class AppConfig
     public Dictionary<string, string> Shortcuts { get; set; } = new()
     {
         // Valores iniciais SEGUROS: sem hotkeys globais perigosas.
-        // Fase 4 vai permitir personalizar com detecção de conflito.
         // F1/F2 sozinhos são propositalmente evitados por padrão (conflito com jogos).
         ["volumeUp"] = "Ctrl+Alt+Up",
         ["volumeDown"] = "Ctrl+Alt+Down",
@@ -27,6 +26,17 @@ public sealed class AppConfig
         ["next"] = "Ctrl+Alt+Right",
         ["previous"] = "Ctrl+Alt+Left",
     };
+
+    /// <summary>Globais desligadas por padrão — usuário opt-in (requisito: não interferir em jogos).</summary>
+    public bool EnableGlobalHotkeys { get; set; } = false;
+
+    /// <summary>Always | PauseWhenFullscreen (default) | OnlyWhenPlayerFocused</summary>
+    public string GuardMode { get; set; } = "PauseWhenFullscreen";
+
+    /// <summary>Experimental, desligado por padrão (introduz delay no Next). Ver docs/hotkeys.md.</summary>
+    public bool DoublePressEnabled { get; set; } = false;
+
+    public int DoublePressWindowMs { get; set; } = 350;
 
     public static AppConfig Default() => new();
 }

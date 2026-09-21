@@ -4,8 +4,10 @@
              xmlns:local="clr-namespace:SideScreen.UI"
              xmlns:vm="clr-namespace:SideScreen.UI.ViewModels"
              xmlns:views="clr-namespace:SideScreen.UI.Views"
+             xmlns:conv="clr-namespace:SideScreen.UI.Converters"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
+        <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
         <!-- Design System SideScreen v0.2 — Dark only, ultraminimalista -->
         <Color x:Key="BgColor">#070707</Color>
         <Color x:Key="SurfaceColor">#0E0E0E</Color>

@@ -1,27 +1,59 @@
 <UserControl x:Class="SideScreen.UI.Views.ShortcutsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Border Style="{StaticResource Card}">
-        <StackPanel>
-            <TextBlock Text="Shortcuts" FontSize="16" FontWeight="SemiBold"/>
-            <TextBlock Text="{Binding Note}" Style="{StaticResource MutedText}" Margin="0,4,0,12" TextWrapping="Wrap"/>
-            <ItemsControl ItemsSource="{Binding Rows}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Grid Margin="0,6">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="{Binding Action}"/>
-                            <Border Grid.Column="1" BorderBrush="#2A2A2A" BorderThickness="1" CornerRadius="6" Padding="10,4">
-                                <TextBlock Text="{Binding Gesture}" FontFamily="Consolas"/>
-                            </Border>
-                        </Grid>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-            <TextBlock Text="Captura, conflitos e double-press entram na Fase 4." Style="{StaticResource MutedText}" Margin="0,12,0,0"/>
-        </StackPanel>
-    </Border>
+    <StackPanel>
+        <Border Style="{StaticResource Card}">
+            <StackPanel>
+                <TextBlock Text="Shortcuts" FontSize="16" FontWeight="SemiBold"/>
+                <TextBlock Text="Clique na caixa e pressione o combo (ex: Ctrl+Alt+P). Globais desligadas por padrão para não interferir em jogos."
+                           Style="{StaticResource MutedText}" Margin="0,4,0,12" TextWrapping="Wrap"/>
+
+                <CheckBox IsChecked="{Binding EnableGlobal}" Content="Enable global hotkeys (opt-in)" Margin="0,0,0,8"/>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                    <TextBlock Text="Guard: " VerticalAlignment="Center"/>
+                    <ComboBox ItemsSource="{Binding GuardModes}" SelectedItem="{Binding SelectedGuardMode}" Width="200" Height="28"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                    <CheckBox IsChecked="{Binding DoublePressEnabled}" Content="Double-press Next→Previous (experimental, com delay)" VerticalAlignment="Center"/>
+                    <TextBlock Text="   Janela (ms): " VerticalAlignment="Center" Style="{StaticResource MutedText}"/>
+                    <TextBox Text="{Binding DoublePressWindowMs, UpdateSourceTrigger=PropertyChanged}" Width="50"/>
+                </StackPanel>
+
+                <ItemsControl ItemsSource="{Binding Rows}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="0,6">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="170"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Label}" VerticalAlignment="Center"/>
+                                    <TextBox Grid.Column="1" Text="{Binding Gesture, UpdateSourceTrigger=PropertyChanged}"
+                                             FontFamily="Consolas" Height="28"
+                                             PreviewKeyDown="GestureBox_PreviewKeyDown"
+                                             ToolTip="Clique e pressione o combo"/>
+                                </Grid>
+                                <TextBlock Text="{Binding Warning}" Foreground="#E0A500" FontSize="11" TextWrapping="Wrap"
+                                           Visibility="{Binding Warning, Converter={StaticResource NullToVisibilityConverter}}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                    <Button Content="Apply" Command="{Binding ApplyCommand}" Width="100" Height="30" Margin="0,0,8,0"/>
+                    <Button Content="Restaurar padrões" Command="{Binding RestoreDefaultsCommand}" Width="140" Height="30"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <Border Style="{StaticResource Card}" Margin="0,12,0,0">
+            <StackPanel>
+                <TextBlock Text="Status" Style="{StaticResource MutedText}"/>
+                <TextBlock Text="{Binding Status}" TextWrapping="Wrap" Margin="0,6,0,0"/>
+                <TextBlock Text="{Binding ConfigPath}" Style="{StaticResource MutedText}" Margin="0,6,0,0" FontFamily="Consolas" FontSize="11"/>
+            </StackPanel>
+        </Border>
+    </StackPanel>
 </UserControl>
