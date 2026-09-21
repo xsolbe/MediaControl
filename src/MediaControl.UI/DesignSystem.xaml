@@ -311,8 +311,8 @@
                         <Popup IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" AllowsTransparency="True"
                                PopupAnimation="Fade" StaysOpen="False">
                             <Border Background="{DynamicResource DsInputBrush}" BorderBrush="{DynamicResource DsBorderBrush}"
-                                    BorderThickness="1" CornerRadius="6" Margin="0,4,0,0" MinWidth="{TemplateBinding ActualWidth}">
-                                <ScrollViewer MaxHeight="220" VerticalScrollBarVisibility="Auto">
+                                    BorderThickness="1" CornerRadius="6" Margin="0,4,0,0" MinWidth="{TemplateBinding ActualWidth}" MaxWidth="300">
+                                <ScrollViewer MaxHeight="220" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                                     <ItemsPresenter/>
                                 </ScrollViewer>
                             </Border>
