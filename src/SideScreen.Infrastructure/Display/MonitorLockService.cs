@@ -5,18 +5,27 @@ using SideScreen.Infrastructure.Windows;
 namespace SideScreen.Infrastructure.Display;
 
 /// <summary>
-/// "Lock" por reposicionamento (não intercepta arrasto — menos intrusivo).
-/// Polling 750ms: se o player ficar fora do monitor alvo por 3 leituras seguidas (~2,25s),
-/// devolve preservando tamanho/offset, sem roubar foco (SWP_NOACTIVATE).
-/// Nunca move maximizado/fullscreen; player fechado = Offline.
+/// Lock "parede magnética" (sem interceptar arrasto — sem injeção, sem hook global).
+/// Polling 100ms: no alvo, memoriza a posição (âncora); fora do alvo durante arrasto,
+/// segura na borda (a janela desliza sem sair); fora com mouse solto, restaura a âncora na hora.
+/// Sem roubar foco (SWP_NOACTIVATE). Nunca move maximizado/fullscreen; player fechado = Offline.
 /// </summary>
 public sealed class MonitorLockService : IDisposable
 {
+    public enum LockAction { UpdateAnchor, HoldEdge, RestoreAnchor, Skip }
+
+    public static LockAction Decide(bool onTarget, bool blocked, bool dragging) =>
+        onTarget ? LockAction.UpdateAnchor
+        : blocked ? LockAction.Skip
+        : dragging ? LockAction.HoldEdge
+        : LockAction.RestoreAnchor;
+
+    private const int VkLButton = 0x01;
+
     private readonly IPlayerController _player;
     private readonly Func<List<DisplayMonitor>> _listMonitors;
     private System.Threading.Timer? _timer;
     private string _targetDevice = "";
-    private int _offCount;
     private (int x, int y)? _anchor; // lugar exato no monitor alvo (atualizado enquanto estável por lá)
     private bool _disposed;
 
@@ -36,11 +45,10 @@ public sealed class MonitorLockService : IDisposable
     {
         Stop();
         _targetDevice = targetDevice ?? "";
-        _offCount = 0;
         _anchor = null; // reaprende a posição quando estabilizar no alvo
         IsRunning = true;
-        SetStatus($"Vigiando {targetDevice}.");
-        _timer = new System.Threading.Timer(_ => Tick(), null, 0, 750);
+        SetStatus($"Vigiando {targetDevice} (parede magnética).");
+        _timer = new System.Threading.Timer(_ => Tick(), null, 0, 100);
     }
 
     public void Stop()
@@ -48,7 +56,6 @@ public sealed class MonitorLockService : IDisposable
         _timer?.Dispose();
         _timer = null;
         IsRunning = false;
-        _offCount = 0;
         _anchor = null;
     }
 
@@ -66,7 +73,7 @@ public sealed class MonitorLockService : IDisposable
             var h = _player.GetWindowHandle();
             if (h == nint.Zero)
             {
-                _offCount = 0;
+                _anchor = null;
                 SetStatus("Player fechado (Offline) — aguardando abrir.");
                 return;
             }
@@ -90,48 +97,64 @@ public sealed class MonitorLockService : IDisposable
             var current = monitors.FirstOrDefault(m => IsOnMonitor(h, m))
                 ?? Nearest(monitors, rc.Left + w / 2, rc.Top + hgt / 2);
 
-            // Maximizado? Não move.
-            if (IsMaximized(h))
-            {
-                _offCount = 0;
-                SetStatus($"Maximizado — não movo (desmaximize para travar).");
-                return;
-            }
+            bool onTarget = current is not null && current.DeviceKey == target.DeviceKey;
+            bool blocked = IsMaximized(h)
+                || (current is not null && MonitorLayout.CoversMonitor(rc.Left, rc.Top, w, hgt, current));
+            bool dragging = IsDragging();
 
-            if (current is not null && current.DeviceKey == target.DeviceKey)
+            switch (Decide(onTarget, blocked, dragging))
             {
-                _offCount = 0;
-                _anchor = (rc.Left, rc.Top); // memoriza o lugar exato enquanto estável no alvo
-                SetStatus($"OK no {target.Label.Split('—')[0].Trim()} (posição travada).");
-                return;
-            }
+                case LockAction.UpdateAnchor:
+                    _anchor = (rc.Left, rc.Top); // memoriza o lugar exato enquanto estável no alvo
+                    SetStatus($"Preso no {target.Label.Split('—')[0].Trim()} (posição travada).");
+                    return;
 
-            // Fullscreen/borderless cobrindo o monitor atual? Não move, só avisa.
-            if (current is not null && MonitorLayout.CoversMonitor(rc.Left, rc.Top, w, hgt, current))
-            {
-                _offCount = 0;
-                SetStatus("Fullscreen detectado — não movo (saia do fullscreen para travar).");
-                return;
-            }
+                case LockAction.Skip:
+                    SetStatus(blocked && IsMaximized(h)
+                        ? "Maximizado — não movo (desmaximize para travar)."
+                        : "Fullscreen detectado — não movo (saia do fullscreen para travar).");
+                    return;
 
-            _offCount++;
-            if (_offCount < 3)
-            {
-                SetStatus($"Fora do alvo ({_offCount}/3) — aguardando estabilizar (arrasto em curso?).");
-                return;
-            }
+                case LockAction.HoldEdge:
+                {
+                    // Parede: prende no ponto mais próximo DENTRO do alvo enquanto arrasta.
+                    var (nx, ny) = MonitorLayout.ClampIntoBounds(
+                        rc.Left, rc.Top, w, hgt,
+                        current?.Left ?? target.Left, current?.Top ?? target.Top,
+                        target.Left, target.Top, target.Width, target.Height);
+                    if (nx != rc.Left || ny != rc.Top)
+                        NativeMethods.SetWindowPos(h, nint.Zero, nx, ny, 0, 0,
+                            NativeMethods.SwpNoSize | NativeMethods.SwpNoZOrder | NativeMethods.SwpNoActivate);
+                    SetStatus("Segurando na borda do monitor (solte para fixar).");
+                    return;
+                }
 
-            _offCount = 0;
-            var from = current ?? target;
-            var (nx, ny) = MonitorLayout.RestorePosition(rc.Left, rc.Top, w, hgt, _anchor, from.Left, from.Top, target.Left, target.Top, target.Width, target.Height);
-            bool ok = NativeMethods.SetWindowPos(h, nint.Zero, nx, ny, 0, 0,
-                NativeMethods.SwpNoSize | NativeMethods.SwpNoZOrder | NativeMethods.SwpNoActivate);
-            SetStatus(ok ? $"Devolvido à posição travada no {target.Label.Split('—')[0].Trim()}." : "Falha ao reposicionar (acesso negado?).");
+                default: // RestoreAnchor
+                {
+                    var from = current ?? target;
+                    var (rx, ry) = MonitorLayout.RestorePosition(
+                        rc.Left, rc.Top, w, hgt, _anchor,
+                        from.Left, from.Top, target.Left, target.Top, target.Width, target.Height);
+                    if (rx != rc.Left || ry != rc.Top)
+                    {
+                        bool ok = NativeMethods.SetWindowPos(h, nint.Zero, rx, ry, 0, 0,
+                            NativeMethods.SwpNoSize | NativeMethods.SwpNoZOrder | NativeMethods.SwpNoActivate);
+                        SetStatus(ok ? $"Devolvido à posição travada no {target.Label.Split('—')[0].Trim()}." : "Falha ao reposicionar (acesso negado?).");
+                    }
+                    return;
+                }
+            }
         }
         catch (Exception ex)
         {
             SetStatus($"Erro no vigia: {ex.Message}");
         }
+    }
+
+    private static bool IsDragging()
+    {
+        try { return (NativeMethods.GetAsyncKeyState(VkLButton) & 0x8000) != 0; }
+        catch { return false; }
     }
 
     private static bool IsOnMonitor(nint hWnd, DisplayMonitor m)

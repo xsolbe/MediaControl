@@ -59,6 +59,10 @@ internal static partial class NativeMethods
     [return: MarshalAs(UnmanagedType.Bool)]
     public static partial bool CloseHandle(nint hObject);
 
+    // ---- Fase 5 (parede magnética): arrasto em curso? ----
+    [LibraryImport("user32.dll", EntryPoint = "GetAsyncKeyState")]
+    public static partial short GetAsyncKeyState(int vKey);
+
     // ---- Fase 5: monitores e posicionamento ----
     public const int MonitorDefaultToNearest = 2;
     public const uint SwpNoSize = 0x0001;

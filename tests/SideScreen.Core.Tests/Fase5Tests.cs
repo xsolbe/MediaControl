@@ -72,4 +72,15 @@ public class Fase5Tests
         Assert.NotEmpty(list);
         Assert.Contains(list, m => m.Width > 0 && m.Height > 0);
     }
+
+    [Theory]
+    [InlineData(true, false, false, MonitorLockService.LockAction.UpdateAnchor)]   // no alvo → ancora
+    [InlineData(false, true, false, MonitorLockService.LockAction.Skip)]           // maximizado → ignora
+    [InlineData(false, true, true, MonitorLockService.LockAction.Skip)]            // fullscreen arrastando? ignora
+    [InlineData(false, false, true, MonitorLockService.LockAction.HoldEdge)]       // fora + arrasto → parede
+    [InlineData(false, false, false, MonitorLockService.LockAction.RestoreAnchor)] // fora + solto → restaura
+    public void Decide_PicksRightAction(bool onTarget, bool blocked, bool dragging, MonitorLockService.LockAction expected)
+    {
+        Assert.Equal(expected, MonitorLockService.Decide(onTarget, blocked, dragging));
+    }
 }

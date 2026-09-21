@@ -66,7 +66,7 @@ public sealed class DisplayViewModel : ObservableObject
         set => Set(ref _status, value);
     }
 
-    public string Note => "Lock = vigia a cada 750ms e devolve após ~2s fora do alvo. Nunca rouba foco; ignora maximizado/fullscreen.";
+    public string Note => "Parede magnética (100ms): arrastando, desliza na borda sem sair; soltou fora, volta ao ponto travado. Nunca rouba foco; ignora maximizado/fullscreen.";
 
     private void ApplyChoice()
     {
