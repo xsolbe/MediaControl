@@ -1,45 +1,119 @@
-﻿<Window x:Class="SideScreen.UI.MainWindow"
+<Window x:Class="SideScreen.UI.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="SideScreen" Height="600" Width="860"
+        Title="SideScreen" Height="640" Width="880"
+        MinWidth="780" MinHeight="540"
         Background="#070707"
-        WindowStartupLocation="CenterScreen">
+        WindowStyle="None"
+        WindowStartupLocation="CenterScreen"
+        FontFamily="{StaticResource DsFont}">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="170"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="52"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-        <!-- Sidebar -->
-        <Border Grid.Column="0" Background="#0B0B0B" BorderBrush="#1E1E1E" BorderThickness="0,0,1,0" Padding="12">
-            <StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="4,4,0,16">
-                    <Ellipse Width="8" Height="8" Fill="#2A2A2A" VerticalAlignment="Center"/>
-                    <TextBlock Text="  SideScreen" FontWeight="SemiBold" FontSize="14"/>
+        <!-- ===== TOP BAR ===== -->
+        <Grid Grid.Row="0" Background="{StaticResource DsBgBrush}" MouseLeftButtonDown="TopBar_MouseLeftButtonDown">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0,0,0">
+                <Border Width="14" Height="14" BorderBrush="{StaticResource DsText2Brush}" BorderThickness="1.6" VerticalAlignment="Center"/>
+                <TextBlock Text="SideScreen" FontSize="14" FontWeight="SemiBold"
+                           Foreground="{StaticResource DsTextBrush}" Margin="10,0,0,0" VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <TextBlock Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center"
+                       FontSize="12" Foreground="{StaticResource DsText2Brush}">
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="{}{0} - {1}">
+                        <Binding Path="Dashboard.PlayerName"/>
+                        <Binding Path="Dashboard.PlayerState"/>
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <Button Style="{StaticResource WinBtn}" Click="Min_Click">
+                    <Path Data="{StaticResource G_Min}" Style="{StaticResource WinGlyph}"/>
+                </Button>
+                <Button Style="{StaticResource WinBtn}" Click="Max_Click">
+                    <Grid>
+                        <Path x:Name="IcoMax" Data="{StaticResource G_Max}" Style="{StaticResource WinGlyph}"/>
+                        <Path x:Name="IcoRestore" Data="{StaticResource G_Restore}" Style="{StaticResource WinGlyph}" Visibility="Collapsed"/>
+                    </Grid>
+                </Button>
+                <Button Style="{StaticResource WinBtnClose}" Click="Close_Click">
+                    <Path Data="{StaticResource G_Close}" Style="{StaticResource WinGlyph}"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="168"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- ===== SIDEBAR ===== -->
+            <Border Grid.Column="0" Background="{StaticResource DsSidebarBrush}" Padding="0,12,0,12">
+                <StackPanel>
+                    <ToggleButton Style="{StaticResource NavToggle}" IsChecked="{Binding IsDashboardActive, Mode=OneWay}"
+                                  Command="{Binding NavigateCommand}" CommandParameter="Dashboard">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource G_Dash}" Style="{StaticResource NavIcon}"/>
+                            <TextBlock Text="Dashboard" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ToggleButton>
+                    <ToggleButton Style="{StaticResource NavToggle}" IsChecked="{Binding IsPlayersActive, Mode=OneWay}"
+                                  Command="{Binding NavigateCommand}" CommandParameter="Players">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource G_Players}" Style="{StaticResource NavIcon}"/>
+                            <TextBlock Text="Players" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ToggleButton>
+                    <ToggleButton Style="{StaticResource NavToggle}" IsChecked="{Binding IsShortcutsActive, Mode=OneWay}"
+                                  Command="{Binding NavigateCommand}" CommandParameter="Shortcuts">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource G_Keys}" Style="{StaticResource NavIcon}"/>
+                            <TextBlock Text="Shortcuts" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ToggleButton>
+                    <ToggleButton Style="{StaticResource NavToggle}" IsChecked="{Binding IsDisplayActive, Mode=OneWay}"
+                                  Command="{Binding NavigateCommand}" CommandParameter="Display">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource G_Display}" Style="{StaticResource NavIcon}"/>
+                            <TextBlock Text="Display" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ToggleButton>
+                    <ToggleButton Style="{StaticResource NavToggle}" IsChecked="{Binding IsSettingsActive, Mode=OneWay}"
+                                  Command="{Binding NavigateCommand}" CommandParameter="Settings">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource G_Settings}" Style="{StaticResource NavIcon}"/>
+                            <TextBlock Text="Settings" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ToggleButton>
+
+                    <TextBlock Text="{Binding HotkeySummary}" Style="{StaticResource MutedText}"
+                               Margin="22,24,0,0" FontSize="11"/>
                 </StackPanel>
+            </Border>
 
-                <Button Content="Dashboard" Style="{StaticResource NavButton}" Command="{Binding NavigateCommand}" CommandParameter="Dashboard"/>
-                <Button Content="Players" Style="{StaticResource NavButton}" Command="{Binding NavigateCommand}" CommandParameter="Players"/>
-                <Button Content="Shortcuts" Style="{StaticResource NavButton}" Command="{Binding NavigateCommand}" CommandParameter="Shortcuts"/>
-                <Button Content="Display" Style="{StaticResource NavButton}" Command="{Binding NavigateCommand}" CommandParameter="Display"/>
-                <Button Content="Settings" Style="{StaticResource NavButton}" Command="{Binding NavigateCommand}" CommandParameter="Settings"/>
-
-                <TextBlock Text="SideScreen" Style="{StaticResource MutedText}" Margin="4,24,0,0"/>
-                <TextBlock Text="{Binding HotkeySummary}" Style="{StaticResource MutedText}" Margin="4,4,0,0"/>
-            </StackPanel>
-        </Border>
-
-        <!-- Content -->
-        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" Padding="28">
-            <StackPanel>
-                <TextBlock Text="{Binding SelectedNav}" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,16"/>
-                <ContentControl Content="{Binding Current}"/>
-                <TextBlock Text="SideScreen 0.2.0 · .NET + WPF · PotPlayer real na Fase 3 · Atalhos reais na Fase 4 · Monitores na Fase 5"
-                           Style="{StaticResource MutedText}" Margin="0,24,0,0" TextWrapping="Wrap"/>
-            </StackPanel>
-        </ScrollViewer>
+            <!-- ===== MAIN CONTENT ===== -->
+            <Border Grid.Column="1" Background="{StaticResource DsMainBrush}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="36,28,36,32">
+                    <StackPanel>
+                        <ContentControl Content="{Binding Current}"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
     </Grid>
 </Window>

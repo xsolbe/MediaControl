@@ -7,92 +7,29 @@
              xmlns:conv="clr-namespace:SideScreen.UI.Converters"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
-        <!-- Design System SideScreen v0.2 — Dark only, ultraminimalista -->
-        <Color x:Key="BgColor">#070707</Color>
-        <Color x:Key="SurfaceColor">#0E0E0E</Color>
-        <Color x:Key="Surface2Color">#121212</Color>
-        <Color x:Key="BorderColor">#1E1E1E</Color>
-        <Color x:Key="HoverColor">#1A1A1A</Color>
-        <Color x:Key="TextColor">#EDEDED</Color>
-        <Color x:Key="MutedColor">#A1A1A1</Color>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="DesignSystem.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
 
-        <SolidColorBrush x:Key="BgBrush" Color="{StaticResource BgColor}"/>
-        <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource SurfaceColor}"/>
-        <SolidColorBrush x:Key="Surface2Brush" Color="{StaticResource Surface2Color}"/>
-        <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}"/>
-        <SolidColorBrush x:Key="TextBrush" Color="{StaticResource TextColor}"/>
-        <SolidColorBrush x:Key="MutedBrush" Color="{StaticResource MutedColor}"/>
+            <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
 
-        <Style TargetType="Window">
-            <Setter Property="Background" Value="{StaticResource BgBrush}"/>
-            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
-            <Setter Property="FontFamily" Value="Segoe UI Variable, Segoe UI"/>
-            <Setter Property="FontSize" Value="13"/>
-        </Style>
-
-        <Style x:Key="MutedText" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="{StaticResource MutedBrush}"/>
-            <Setter Property="FontSize" Value="12"/>
-        </Style>
-
-        <Style x:Key="Card" TargetType="Border">
-            <Setter Property="Background" Value="{StaticResource SurfaceBrush}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="Padding" Value="16"/>
-        </Style>
-
-        <Style TargetType="Button">
-            <Setter Property="Background" Value="#141414"/>
-            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="12,6"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#1C1C1C"/>
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" Value="#242424"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="NavButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-            <Setter Property="HorizontalContentAlignment" Value="Left"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Padding" Value="12,8"/>
-            <Setter Property="Margin" Value="0,2"/>
-        </Style>
-
-        <!-- ViewModel -> View (navegação automática) -->
-        <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
-            <views:DashboardView/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:PlayersViewModel}">
-            <views:PlayersView/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:ShortcutsViewModel}">
-            <views:ShortcutsView/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:DisplayViewModel}">
-            <views:DisplayView/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
-            <views:SettingsView/>
-        </DataTemplate>
+            <!-- ViewModel -> View (navegação automática) -->
+            <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
+                <views:DashboardView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:PlayersViewModel}">
+                <views:PlayersView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:ShortcutsViewModel}">
+                <views:ShortcutsView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:DisplayViewModel}">
+                <views:DisplayView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
+                <views:SettingsView/>
+            </DataTemplate>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

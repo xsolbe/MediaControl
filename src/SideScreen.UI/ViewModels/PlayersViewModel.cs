@@ -25,6 +25,12 @@ public sealed class PlayersViewModel : ObservableObject
             new PlayerOption("vlc", "VLC", "Futuro — ideia", true),
         ];
         _selected = Available.FirstOrDefault(o => o.Id == selectedId) ?? Available[0];
+        SelectPlayerCommand = new RelayCommand(id =>
+        {
+            var opt = Available.FirstOrDefault(o => o.Id == (id as string));
+            if (opt is not null && !opt.IsFuture)
+                Selected = opt;
+        });
     }
 
     public List<PlayerOption> Available { get; }
@@ -40,4 +46,6 @@ public sealed class PlayersViewModel : ObservableObject
             }
         }
     }
+
+    public RelayCommand SelectPlayerCommand { get; }
 }

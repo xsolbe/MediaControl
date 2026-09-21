@@ -20,6 +20,11 @@ public sealed class MainViewModel : ObservableObject
     private object _current;
     private string _selectedNav = "Dashboard";
     private string _hotkeySummary = "Hotkeys: ...";
+    private bool _isDashboardActive = true;
+    private bool _isPlayersActive;
+    private bool _isShortcutsActive;
+    private bool _isDisplayActive;
+    private bool _isSettingsActive;
 
     public MainViewModel()
     {
@@ -71,6 +76,12 @@ public sealed class MainViewModel : ObservableObject
         get => _selectedNav;
         set => Set(ref _selectedNav, value);
     }
+
+    public bool IsDashboardActive { get => _isDashboardActive; private set => Set(ref _isDashboardActive, value); }
+    public bool IsPlayersActive { get => _isPlayersActive; private set => Set(ref _isPlayersActive, value); }
+    public bool IsShortcutsActive { get => _isShortcutsActive; private set => Set(ref _isShortcutsActive, value); }
+    public bool IsDisplayActive { get => _isDisplayActive; private set => Set(ref _isDisplayActive, value); }
+    public bool IsSettingsActive { get => _isSettingsActive; private set => Set(ref _isSettingsActive, value); }
 
     /// <summary>Exibido no rodapé da sidebar. Ex: "Hotkeys: ON · 6" ou "Hotkeys: OFF".</summary>
     public string HotkeySummary
@@ -125,6 +136,11 @@ public sealed class MainViewModel : ObservableObject
     private void Navigate(string nav)
     {
         SelectedNav = nav;
+        IsDashboardActive = nav == "Dashboard";
+        IsPlayersActive = nav == "Players";
+        IsShortcutsActive = nav == "Shortcuts";
+        IsDisplayActive = nav == "Display";
+        IsSettingsActive = nav == "Settings";
         Current = nav switch
         {
             "Players" => Players,
