@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SideScreen.Core/SideScreen.Core.csproj" />
+    <Project Path="src/SideScreen.Infrastructure/SideScreen.Infrastructure.csproj" />
+    <Project Path="src/SideScreen.UI/SideScreen.UI.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SideScreen.Core.Tests/SideScreen.Core.Tests.csproj" />
+  </Folder>
+</Solution>
