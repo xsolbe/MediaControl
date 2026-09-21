@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using SideScreen.Core.Players;
+using SideScreen.Infrastructure.Hotkeys;
 using SideScreen.Infrastructure.Windows;
 
 namespace SideScreen.Infrastructure.Display;
@@ -81,15 +82,20 @@ public sealed class MonitorLockService : IDisposable
                 return;
             }
 
-            // Blindagem: sem ela o mouse agarra a janela. Tenta até aplicar.
-            if (!_shielded)
+            // Blindagem: o player (skins) pode limpar o estilo sozinho — verifica TODO tick e reaplica.
+            // Sem ela o mouse agarra a janela.
+            bool shieldedNow = WindowInteraction.IsClickThrough(h);
+            if (!_shielded || !shieldedNow)
             {
+                bool was = _shielded;
                 _shielded = WindowInteraction.SetClickThrough(h, true);
                 if (!_shielded)
                 {
                     SetStatus("Ativando blindagem do mouse...");
                     return;
                 }
+                if (!was || !shieldedNow)
+                    HotkeyLog.Append($"re-blindado 0x{h:X}");
             }
 
             var monitors = _listMonitors();
