@@ -16,13 +16,20 @@ dotnet run --project src/SideScreen.UI/SideScreen.UI.csproj
 
 - Abrir cada tela: Dashboard, Players, Shortcuts, Display, Settings com dados fake.
 
-## Fase 3 (PotPlayer)
+## Fase 3 (PotPlayer — atual, validado live 2026-09-21)
 
+Leitura (segura, sem interromper):
+- [x] `WindowFinder` acha `0xA760ACE` classe `PotPlayer64`
+- [x] `GET_VOLUME` retorna ex.: 21, `GET_STATUS` retorna Playing
+- [ ] No Dashboard: `↻ Refresh` mostra `Playing Vol=21 HWND=0x...` (confira com seu player aberto)
+
+Ações (teste você, pois mudam reprodução — faça com playlist de 3 vídeos):
 1. Abrir PotPlayer com 1 vídeo + playlist de 3 vídeos.
-2. Clicar Play/Pause → alterna sem focar o player.
+2. No Dashboard, clicar Play/Pause → alterna sem focar o player.
 3. Next/Prev → troca faixa.
-4. Slider volume → `GET_VOLUME` reflete.
-5. Fechar player → Offline, sem crash.
+4. Arrastar slider volume → volume do player muda junto; Refresh confirma.
+5. Fechar player → Dashboard mostra Offline, sem crash. Reabrir → volta a Playing.
+6. Shuffle ON/OFF → verificar se playlist alterna; se nada acontecer, o ID 10125 não é o da sua versão — anote via Spy++ e me passe.
 
 ## Fase 4 (Atalhos)
 

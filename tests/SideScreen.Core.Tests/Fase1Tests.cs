@@ -6,11 +6,23 @@ namespace SideScreen.Core.Tests;
 public class Fase1Tests
 {
     [Fact]
-    public void PotPlayerController_Stub_ReportsNotRunning()
+    public void PotPlayerController_OfflineFake_ReportsNotRunning()
     {
-        var player = new PotPlayerController();
+        // Determinístico: HWND fake zero = player fechado. Não depende do PotPlayer real estar aberto.
+        var player = new PotPlayerController(() => nint.Zero);
         Assert.Equal("potplayer", player.Id);
         Assert.False(player.IsRunning());
+
+        var status = player.GetStatus();
+        Assert.False(status.IsRunning);
+
+        // No-op quando offline: não deve lançar.
+        player.PlayPause();
+        player.Next();
+        player.Previous();
+        player.SetVolume(50);
+        player.VolumeUp();
+        player.VolumeDown();
     }
 
     [Fact]

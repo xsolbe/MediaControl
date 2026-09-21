@@ -2,7 +2,7 @@ namespace SideScreen.Infrastructure.Players;
 
 /// <summary>
 /// IDs do protocolo PotPlayer descobertos via SDK oficial (fórum Daum) + comunidade AHK.
-/// Fase 3 vai usar estes IDs com SendMessage. Fase 1: só documenta, não envia nada.
+/// Fase 3: usados com SendMessage. Sem foco, sem simular teclas.
 /// </summary>
 public static class PotPlayerCommandIds
 {
@@ -16,6 +16,13 @@ public static class PotPlayerCommandIds
     public const int CmdPrevious = 10123;
     public const int CmdVolumeUp = 10035;
     public const int CmdVolumeDown = 10036;
+
+    // Shuffle/Repeat: sem ID oficial no SDK. Candidatos a validar com Spy++.
+    // O PotPlayer expõe shuffle na playlist; se nenhum WM_COMMAND funcionar,
+    // Fase 3 documenta fallback (não simula tecla silenciosamente).
+    // Para validar: abrir PotPlayer -> Spy++ -> Messages -> alternar Shuffle
+    // e anotar o wParam de WM_COMMAND. Troque abaixo pelo ID real encontrado.
+    public const int CmdShuffleToggleCandidate = 10125;
 
     // POT_COMMAND (WM_USER = 0x0400)
     public const int PotCommand = 0x0400;

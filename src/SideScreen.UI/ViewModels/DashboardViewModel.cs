@@ -5,7 +5,7 @@ using SideScreen.Infrastructure.Players;
 namespace SideScreen.UI.ViewModels;
 
 /// <summary>
-/// Dashboard — Fase 2: exibe estado fake + chama stub. Fase 3: liga no PotPlayer real.
+/// Dashboard — Fase 3: chama PotPlayer real via SendMessage. Sem foco, sem SendKeys.
 /// </summary>
 public sealed class DashboardViewModel : ObservableObject
 {
@@ -19,17 +19,34 @@ public sealed class DashboardViewModel : ObservableObject
     public DashboardViewModel(IPlayerController player, AppConfig config)
     {
         _player = player;
-        Shuffle = config.ShuffleEnabled;
 
-        PlayPauseCommand = new RelayCommand(() => StatusLine = $"[{DateTime.Now:HH:mm:ss}] Play/Pause → {_player.DisplayName} (stub Fase 2, real na Fase 3)");
-        NextCommand = new RelayCommand(() => StatusLine = $"[{DateTime.Now:HH:mm:ss}] Next → {_player.DisplayName} (stub)");
-        PreviousCommand = new RelayCommand(() => StatusLine = $"[{DateTime.Now:HH:mm:ss}] Previous → {_player.DisplayName} (stub)");
+        PlayPauseCommand = new RelayCommand(() =>
+        {
+            _player.PlayPause();
+            RefreshStatus("Play/Pause enviado via WM_COMMAND 10014");
+        });
+        NextCommand = new RelayCommand(() =>
+        {
+            _player.Next();
+            RefreshStatus("Next enviado via WM_COMMAND 10124");
+        });
+        PreviousCommand = new RelayCommand(() =>
+        {
+            _player.Previous();
+            RefreshStatus("Previous enviado via WM_COMMAND 10123");
+        });
+        RefreshCommand = new RelayCommand(() => RefreshStatus("Refresh manual"));
 
-        Refresh();
+        // Volume inicial vem do player (POT_GET_VOLUME). Shuffle vem do config (sem GET_SHUFFLE oficial).
+        var s = _player.GetStatus();
+        _volume = s.Volume;
+        _shuffle = config.ShuffleEnabled;
+        RefreshStatus("Inicializado — leitura via POT_GET_VOLUME/POT_GET_PLAY_STATUS");
+        Raise(nameof(PlayerState));
     }
 
     public string PlayerName => "PotPlayer";
-    public string PlayerState => _player.IsRunning() ? "Running" : "Offline (stub Fase 1)";
+    public string PlayerState => _player.IsRunning() ? GetStateLabel(_player.GetStatus().State) : "Offline — abra o PotPlayer";
 
     public string StatusLine
     {
@@ -42,8 +59,12 @@ public sealed class DashboardViewModel : ObservableObject
         get => _volume;
         set
         {
-            if (Set(ref _volume, Math.Clamp(value, 0, 100)))
-                StatusLine = $"Volume → {Volume} (slider local, SET_VOLUME real na Fase 3)";
+            int v = Math.Clamp(value, 0, 100);
+            if (Set(ref _volume, v))
+            {
+                _player.SetVolume(v);
+                RefreshStatus($"SET_VOLUME {v} via POT_SET_VOLUME 0x5001", skipVolumeRead: true);
+            }
         }
     }
 
@@ -53,18 +74,40 @@ public sealed class DashboardViewModel : ObservableObject
         set
         {
             if (Set(ref _shuffle, value))
-                StatusLine = $"Shuffle {(value ? "ON" : "OFF")} (nativo do player na Fase 3)";
+            {
+                _player.SetShuffle(value);
+                RefreshStatus($"Shuffle {(value ? "ON" : "OFF")} — ID candidato, a validar com Spy++ (ver docs)", skipVolumeRead: false);
+            }
         }
     }
 
     public RelayCommand PlayPauseCommand { get; }
     public RelayCommand NextCommand { get; }
     public RelayCommand PreviousCommand { get; }
+    public RelayCommand RefreshCommand { get; }
 
-    private void Refresh()
+    private void RefreshStatus(string action, bool skipVolumeRead = false)
     {
-        var s = _player.GetStatus();
-        _volume = s.Volume;
-        StatusLine = $"IsRunning={s.IsRunning} — {PlayerName} ({_player.Id}) — Fase 3 vai detectar via FindWindow.";
+        try
+        {
+            var s = _player.GetStatus();
+            if (!skipVolumeRead)
+                Set(ref _volume, s.Volume);
+            string state = s.IsRunning ? GetStateLabel(s.State) : "Offline";
+            StatusLine = $"[{DateTime.Now:HH:mm:ss}] {action} | {state} Vol={s.Volume} HWND=0x{_player.GetWindowHandle():X}";
+            Raise(nameof(PlayerState));
+        }
+        catch (Exception ex)
+        {
+            StatusLine = $"[{DateTime.Now:HH:mm:ss}] {action} | erro: {ex.Message}";
+        }
     }
+
+    private static string GetStateLabel(PlaybackState state) => state switch
+    {
+        PlaybackState.Playing => "Playing",
+        PlaybackState.Paused => "Paused",
+        PlaybackState.Stopped => "Stopped",
+        _ => "Unknown",
+    };
 }
