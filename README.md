@@ -59,11 +59,10 @@ Esperado: janela escura `#070707` com sidebar (Dashboard, Players, Shortcuts, Di
 - [x] Fase 3 — PotPlayer (`FindWindow` + `SendMessage`) (leitura validada, ações p/ testar no Dashboard)
 - [x] Fase 4 — Atalhos contextuais + Modo Jogo + process scope
 - [x] Fase 5 — Monitores (lista real; trava REMOVIDA após validação — post-mortem em docs/monitors.md)
-- [x] Fase 6 — Persistência central (dono único + backup + migrações) (esta versão)
-- [ ] Fase 6 — Persistência
-- [ ] Fase 7 — Testes
+- [x] Fase 6 — Persistência central (dono único + backup + migrações)
+- [x] Fase 7 — Testes (38 automatizados + checklist de aceitação)
 - [ ] Fase 8 — Build `.exe` + instalador
-- [x] Fase 9 — GitHub `xsolbe/SideScreen` (conectado, push Fase 1 OK)
+- [x] Fase 9 — GitHub `xsolbe/SideScreen` (conectado, pushes por fase)
 
 ## Docs
 
