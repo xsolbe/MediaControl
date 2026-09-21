@@ -84,6 +84,16 @@ internal static partial class NativeMethods
 
     public delegate bool MonitorEnumProc(nint hMonitor, nint hdcMonitor, ref RECT lprcMonitor, nint dwData);
 
+    public delegate bool EnumWindowsProc(nint hWnd, nint lParam);
+
+    [LibraryImport("user32.dll", EntryPoint = "EnumWindows")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool EnumWindows(EnumWindowsProc lpEnumFunc, nint lParam);
+
+    [LibraryImport("user32.dll", EntryPoint = "IsWindowVisible")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool IsWindowVisible(nint hWnd);
+
     // EnumDisplayMonitors/GetMonitorInfo usam DllImport clássico (ByValTStr não é suportado pelo gerador source).
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]

@@ -28,7 +28,7 @@ public sealed class MonitorLockService : IDisposable
     private System.Threading.Timer? _timer;
     private string _targetDevice = "";
     private (int x, int y)? _anchor; // lugar exato no monitor alvo (atualizado enquanto estável por lá)
-    private bool _shielded; // click-through aplicado?
+    private readonly HashSet<nint> _shielded = []; // top-levels já blindadas
     private bool _disposed;
 
     public MonitorLockService(IPlayerController player) : this(player, MonitorService.List) { }
@@ -48,7 +48,7 @@ public sealed class MonitorLockService : IDisposable
         Stop();
         _targetDevice = targetDevice ?? "";
         _anchor = null; // reaprende a posição quando estabilizar no alvo
-        _shielded = false;
+        _shielded.Clear();
         IsRunning = true;
         SetStatus($"Vigiando {targetDevice} (blindado + posição travada).");
         _timer = new System.Threading.Timer(_ => Tick(), null, 0, 100);
@@ -82,20 +82,23 @@ public sealed class MonitorLockService : IDisposable
                 return;
             }
 
-            // Blindagem: o player (skins) pode limpar o estilo sozinho — verifica TODO tick e reaplica.
-            // Sem ela o mouse agarra a janela.
-            bool shieldedNow = WindowInteraction.IsClickThrough(h);
-            if (!_shielded || !shieldedNow)
+            // Blindagem em TODAS as top-levels do PotPlayer (frame, vídeo, popups de skin).
+            // Verifica todo tick: skins limpam o estilo sozinhas. Loga transições (re-blindado).
+            _shielded.RemoveWhere(w => !Windows.NativeMethods.IsWindow(w)); // limpa handles mortas
+            foreach (var win in Windows.WindowFinder.FindPotPlayerWindows())
             {
-                bool was = _shielded;
-                _shielded = WindowInteraction.SetClickThrough(h, true);
-                if (!_shielded)
+                if (_shielded.Contains(win) && WindowInteraction.IsClickThrough(win))
+                    continue;
+                if (WindowInteraction.SetClickThrough(win, true))
+                {
+                    _shielded.Add(win);
+                    HotkeyLog.Append($"re-blindado 0x{win:X}");
+                }
+                else if (!_shielded.Contains(win))
                 {
                     SetStatus("Ativando blindagem do mouse...");
                     return;
                 }
-                if (!was || !shieldedNow)
-                    HotkeyLog.Append($"re-blindado 0x{h:X}");
             }
 
             var monitors = _listMonitors();
@@ -179,15 +182,21 @@ public sealed class MonitorLockService : IDisposable
 
     private void RemoveShield()
     {
-        if (!_shielded) return;
-        _shielded = false;
+        if (_shielded.Count == 0) return;
         try
         {
-            var h = _player.GetWindowHandle();
-            if (h != nint.Zero)
-                WindowInteraction.SetClickThrough(h, false);
+            foreach (var w in _shielded)
+            {
+                try
+                {
+                    if (Windows.NativeMethods.IsWindow(w))
+                        WindowInteraction.SetClickThrough(w, false);
+                }
+                catch { }
+            }
         }
         catch { }
+        _shielded.Clear();
     }
 
     private static bool IsOnMonitor(nint hWnd, DisplayMonitor m)

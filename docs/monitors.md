@@ -11,8 +11,10 @@ Interceptar `WM_MOVING`/`WM_WINDOWPOSCHANGING` é intrusivo, quebra fullscreen/m
 Vetar o arrasto de verdade exigiria injeção de DLL no PotPlayer (fora de questão: frágil + anticheat).
 Snap-back com polling causava flashes e briga durante o arrasto. Solução adotada:
 
-1. **Blindagem:** com lock ativo, liga `WS_EX_TRANSPARENT` na janela do player — o mouse atravessa,
-   impossível agarrar/arrastar. Troca de estado do window manager (sem injeção, sem hook).
+1. **Blindagem em TODAS as top-levels:** descoberto ao vivo que o PotPlayer tem 3 janelas visíveis
+   (`PotPlayer64` + 2 frames `Afx:` sem título — é nelas que o arrasto acontece).
+   Blindar só a principal não adiantava. `WindowFinder.FindPotPlayerWindows()` enumera todas por PID
+   e o serviço aplica `WS_EX_TRANSPARENT` em cada uma, verificando todo tick (skins limpam o estilo).
    O vídeo continua renderizando; clique no player não funciona travado (use botões/atalhos).
 2. **Âncora:** enquanto no alvo, memoriza a posição exata; se algo mover via teclado
    (`Win+Shift+Seta`), restaura na hora com o tamanho atual.
