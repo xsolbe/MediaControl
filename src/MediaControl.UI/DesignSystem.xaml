@@ -202,8 +202,8 @@
     <Style x:Key="WinBtn" TargetType="Button">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Width" Value="46"/>
-        <Setter Property="Height" Value="44"/>
+        <Setter Property="Width" Value="40"/>
+        <Setter Property="Height" Value="36"/>
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="Template">
@@ -238,14 +238,16 @@
         </Setter>
     </Style>
     <Style x:Key="WinGlyph" TargetType="Path">
-        <Setter Property="Width" Value="12"/>
-        <Setter Property="Height" Value="12"/>
+        <Setter Property="Width" Value="10"/>
+        <Setter Property="Height" Value="10"/>
         <Setter Property="Stretch" Value="Uniform"/>
         <Setter Property="Stroke" Value="{DynamicResource DsText2Brush}"/>
         <Setter Property="StrokeThickness" Value="2"/>
         <Setter Property="StrokeLineJoin" Value="Round"/>
         <Setter Property="StrokeStartLineCap" Value="Round"/>
         <Setter Property="StrokeEndLineCap" Value="Round"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
     </Style>
 
     <!-- ============ COMBOBOX ============ -->
