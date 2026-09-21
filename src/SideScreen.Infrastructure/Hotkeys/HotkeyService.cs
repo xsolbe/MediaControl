@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using SideScreen.Core.Hotkeys;
 using SideScreen.Core.Players;
 
@@ -81,7 +82,11 @@ public sealed class HotkeyService : IDisposable
             catch (Exception ex) { Errors.Add($"{action} ({g}): {ex.Message}"); continue; }
 
             if (!ok)
-                Errors.Add($"{action} ({g}): já em uso por outro programa ou inválido");
+            {
+                int err = Marshal.GetLastWin32Error();
+                // 1409 = já registrado por outro programa (ex: BnS-Multi-Tool); 87 = parâmetro inválido.
+                Errors.Add($"{action} ({g}): código {err} (1409=em uso, 87=inválido)");
+            }
             else
             {
                 _idToAction[id] = action;

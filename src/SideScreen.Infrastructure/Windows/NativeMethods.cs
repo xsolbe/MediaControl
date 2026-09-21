@@ -24,7 +24,7 @@ internal static partial class NativeMethods
     public const int ModWin = 0x8;
     public const int WmHotkey = 0x0312;
 
-    [LibraryImport("user32.dll", EntryPoint = "RegisterHotKey")]
+    [LibraryImport("user32.dll", EntryPoint = "RegisterHotKey", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static partial bool RegisterHotKey(nint hWnd, int id, uint fsModifiers, uint vk);
 

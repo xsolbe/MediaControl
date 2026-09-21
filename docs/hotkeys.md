@@ -34,6 +34,15 @@
 `%AppData%\SideScreen\hotkeys.log` registra attach/start/WM_HOTKEY/executed (só nossos hotkeys — não é keylogger).
 Cadeia provada ao vivo: tecla sintética NumpadAdd → `WM_HOTKEY volumeUp` → `executed` → volume 16→21; NumpadSub → 21→16.
 
+## ⚠ Conflito 1409 — outro programa segurou a tecla (2026-09-21)
+
+Sintoma: `ERROR <ação>: código 1409` no log; setas registram, mas F1/F2/Numpad falham.
+Causa real aqui: **BnS-Multi-Tool** registra F1/F2/NumpadAdd/NumpadSub (provavelmente ao entrar em partida).
+Soluções, nesta ordem:
+1. Feche ou reconfigure o outro programa (libere F1/F2/Numpad nele) → Apply de novo.
+2. Ou troque nossos gestos para combos livres (ex: `Ctrl+F1`) na tela Shortcuts.
+3. Note que o AHK antigo funcionava junto porque hook não compete por registro — mas suprimia as teclas no jogo.
+
 ## ⚠ Jogo elevado (BNSR) — rode como administrador
 
 Sintoma: funciona com o app focado, mas **nada chega** (`WM_HOTKEY` some do log) com o jogo em foco.
