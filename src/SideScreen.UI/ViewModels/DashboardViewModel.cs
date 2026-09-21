@@ -23,17 +23,17 @@ public sealed class DashboardViewModel : ObservableObject
         PlayPauseCommand = new RelayCommand(() =>
         {
             _player.PlayPause();
-            RefreshStatus("Play/Pause enviado via WM_COMMAND 10014");
+            RefreshStatus("Play/Pause enviado via APPCOMMAND PLAY_PAUSE (igual ao AHK)");
         });
         NextCommand = new RelayCommand(() =>
         {
             _player.Next();
-            RefreshStatus("Next enviado via WM_COMMAND 10124");
+            RefreshStatus("Next enviado via APPCOMMAND NEXT (igual ao AHK)");
         });
         PreviousCommand = new RelayCommand(() =>
         {
             _player.Previous();
-            RefreshStatus("Previous enviado via WM_COMMAND 10123");
+            RefreshStatus("Previous enviado via APPCOMMAND PREV (igual ao AHK)");
         });
         RefreshCommand = new RelayCommand(() => RefreshStatus("Refresh manual"));
 

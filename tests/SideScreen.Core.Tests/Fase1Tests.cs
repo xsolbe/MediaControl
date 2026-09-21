@@ -28,15 +28,17 @@ public class Fase1Tests
     [Fact]
     public void AppConfig_Defaults_MatchUserCommands()
     {
-        // Padrões do usuário (script MusicControl/AutoHotkey): Volume+/-, F2, F1, F1 x2.
+        // Padrões do usuário (MusicControl/AutoHotkey, confirmado no .exe):
+        // Numpad+/- volume, F2 play/pause, F1 próximo, F1 x2 anterior.
         var config = AppConfig.Default();
 
-        Assert.Equal("VolumeUp", config.Shortcuts["volumeUp"]);
-        Assert.Equal("VolumeDown", config.Shortcuts["volumeDown"]);
+        Assert.Equal("NumpadAdd", config.Shortcuts["volumeUp"]);
+        Assert.Equal("NumpadSub", config.Shortcuts["volumeDown"]);
         Assert.Equal("F2", config.Shortcuts["playPause"]);
         Assert.Equal("F1", config.Shortcuts["next"]);
         Assert.Equal("F1", config.Shortcuts["previous"]);
         Assert.True(config.DoublePressEnabled); // F1 x2 = anterior
+        Assert.Equal("Always", config.GuardMode); // uso real é com jogo fullscreen (BNSR)
         Assert.Equal("potplayer", config.SelectedPlayerId);
         Assert.False(config.EnableGlobalHotkeys); // opt-in: não registra nada sozinho
     }

@@ -17,6 +17,15 @@ public static class PotPlayerCommandIds
     public const int CmdVolumeUp = 10035;
     public const int CmdVolumeDown = 10036;
 
+    // WM_APPCOMMAND (0x0319) — caminho PROVADO pelo MusicControl.ahk original:
+    // NextTrack() usava PostMessage 0x0319, 0, 0xB0000 (MEDIA_NEXTTRACK),
+    // PauseTrack() usava PostMessage 0x0319, 0, 0xE0000 (MEDIA_PLAY_PAUSE).
+    // lParam = APPCOMMAND_ID << 16.
+    public const int WmAppCommand = 0x0319;
+    public const int AppCommandMediaNext = 0xB0000;      // 11 << 16
+    public const int AppCommandMediaPrevious = 0xC0000;  // 12 << 16
+    public const int AppCommandMediaPlayPause = 0xE0000; // 14 << 16
+
     // Shuffle/Repeat: sem ID oficial no SDK. Candidatos a validar com Spy++.
     // O PotPlayer expõe shuffle na playlist; se nenhum WM_COMMAND funcionar,
     // Fase 3 documenta fallback (não simula tecla silenciosamente).

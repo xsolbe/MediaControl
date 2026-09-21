@@ -24,6 +24,19 @@ public sealed record HotkeyGesture(bool Ctrl, bool Alt, bool Shift, bool Win, st
         if (string.IsNullOrWhiteSpace(text))
             return false;
 
+        // "+" e "-" sozinhos seriam destruídos pelo Split — o usuário quis dizer NumpadAdd/Sub.
+        var trimmed = text.Trim();
+        if (trimmed is "+")
+        {
+            gesture = new(false, false, false, false, "NumpadAdd");
+            return true;
+        }
+        if (trimmed is "-")
+        {
+            gesture = new(false, false, false, false, "NumpadSub");
+            return true;
+        }
+
         bool ctrl = false, alt = false, shift = false, win = false;
         string? key = null;
 
@@ -99,6 +112,10 @@ public sealed record HotkeyGesture(bool Ctrl, bool Alt, bool Shift, bool Win, st
             "right" or "arrowright" => "Right",
             "space" or "spacebar" => "Space",
             "esc" or "escape" => "Esc",
+            "+" or "num+" or "numadd" or "numpadadd" or "add" => "NumpadAdd",
+            "-" or "num-" or "numsub" or "numpadsub" or "subtract" => "NumpadSub",
+            "*" or "nummult" or "numpadmult" or "multiply" => "NumpadMult",
+            "/" or "numdiv" or "numpaddiv" or "divide" => "NumpadDiv",
             "volumeup" or "volup" => "VolumeUp",
             "volumedown" or "voldown" => "VolumeDown",
             "volumemute" or "mute" => "VolumeMute",

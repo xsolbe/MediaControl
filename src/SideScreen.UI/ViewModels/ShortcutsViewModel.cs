@@ -45,8 +45,8 @@ public sealed class ShortcutsViewModel : ObservableObject
 {
     private static readonly (string Key, string Label, string Description)[] Order =
     [
-        ("volumeUp", "Aumentar volume", "Sobe o volume do PotPlayer (tecla de mídia — não conflita com jogos)"),
-        ("volumeDown", "Diminuir volume", "Desce o volume do PotPlayer (tecla de mídia)"),
+        ("volumeUp", "Aumentar volume", "Sobe o volume do PotPlayer (Numpad +)"),
+        ("volumeDown", "Diminuir volume", "Desce o volume do PotPlayer (Numpad -)"),
         ("playPause", "Play / Pause", "Pausa ou retoma o vídeo (F2 — mostra aviso gamer; guard pausa em fullscreen)"),
         ("next", "Próximo vídeo", "Avança para o próximo vídeo da playlist/pasta (F1)"),
         ("previous", "Vídeo anterior", "Volta ao vídeo anterior (F1 pressionado 2x — double-press)"),
@@ -56,7 +56,7 @@ public sealed class ShortcutsViewModel : ObservableObject
     private readonly HotkeyService _service;
     private nint _hWnd;
     private bool _enableGlobal;
-    private string _guardMode = Core.Hotkeys.GuardModes.PauseWhenFullscreen;
+    private string _guardMode = Core.Hotkeys.GuardModes.Always;
     private bool _doublePress;
     private int _doubleWindow = 350;
     private string _status = "";

@@ -10,7 +10,20 @@
 3. Fallback: processos `PotPlayerMini64`/`PotPlayerMini`/`PotPlayer` → 1º `MainWindowHandle != 0`
 - Se `HWND == 0`: player fechado → UI mostra Offline, comandos viram no-op, sem exceção.
 
-## Família 1 — WM_COMMAND (0x0111)
+## Família 1b — WM_APPCOMMAND (0x0319) — caminho do MusicControl.ahk original ⭐
+
+Extraído do `MusicControl.exe` (strings do binário, 2026-09-21) e adotado como padrão:
+
+| Comando | lParam | Origem AHK |
+|---|---|---|
+| Play/Pause | `0xE0000` (14 << 16) | `PauseTrack()`: `PostMessage 0x0319, 0, 0xE0000` |
+| Next | `0xB0000` (11 << 16) | `NextTrack()`: `PostMessage 0x0319, 0, 0xB0000` |
+| Previous | `0xC0000` (12 << 16) | análogo (MEDIA_PREVTRACK) |
+
+Volume no AHK era `WM_COMMAND 10035/10036` (passos) — também adotado para `VolumeUp/Down`.
+Slider usa `POT_SET_VOLUME` (roundtrip validado live: 16→16→18→16).
+
+## Família 1 — WM_COMMAND (0x0111) — alternativa documentada
 
 `SendMessage(hWnd, 0x0111, CMD_ID, 0)` — sem precisar de foco.
 

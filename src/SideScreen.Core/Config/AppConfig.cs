@@ -6,7 +6,7 @@ namespace SideScreen.Core.Config;
 /// </summary>
 public sealed class AppConfig
 {
-    public int Version { get; set; } = 2;
+    public int Version { get; set; } = 3;
 
     public string SelectedPlayerId { get; set; } = "potplayer";
 
@@ -17,15 +17,14 @@ public sealed class AppConfig
     public bool LockPlayerToMonitor { get; set; } = false;
 
     /// <summary>
-    /// Comandos padrão do usuário (vindos do script MusicControl/AutoHotkey):
-    /// Volume+ / Volume- (teclas de mídia — seguras, não conflitam com jogos),
-    /// F2 = Play/Pause, F1 = próximo, F1 x2 = anterior (double-press, compartilha o F1).
-    /// F1/F2 sozinhos exibem aviso gamer na UI e respeitam o guard (pausa em fullscreen).
+    /// Comandos do usuário (script MusicControl/AutoHotkey, confirmado via strings do .exe):
+    /// NumpadAdd/NumpadSub = volume, F2 = Play/Pause, F1 = próximo, F1 x2 = anterior.
+    /// F1/F2 exibem aviso gamer na UI e respeitam o guard.
     /// </summary>
     public Dictionary<string, string> Shortcuts { get; set; } = new()
     {
-        ["volumeUp"] = "VolumeUp",
-        ["volumeDown"] = "VolumeDown",
+        ["volumeUp"] = "NumpadAdd",
+        ["volumeDown"] = "NumpadSub",
         ["playPause"] = "F2",
         ["next"] = "F1",
         ["previous"] = "F1",
@@ -34,8 +33,12 @@ public sealed class AppConfig
     /// <summary>Globais desligadas por padrão — usuário opt-in (requisito: não interferir em jogos).</summary>
     public bool EnableGlobalHotkeys { get; set; } = false;
 
-    /// <summary>Always | PauseWhenFullscreen (default) | OnlyWhenPlayerFocused</summary>
-    public string GuardMode { get; set; } = "PauseWhenFullscreen";
+    /// <summary>
+    /// Always | PauseWhenFullscreen | OnlyWhenPlayerFocused.
+    /// Default Always: o app existe para controlar o vídeo ENQUANTO joga (uso confirmado no BNSR).
+    /// Quem preferir segurança total pode trocar para PauseWhenFullscreen.
+    /// </summary>
+    public string GuardMode { get; set; } = "Always";
 
     /// <summary>F1 x2 = vídeo anterior. Ligado por padrão (pedido do usuário); tem delay de ~350ms no Next.</summary>
     public bool DoublePressEnabled { get; set; } = true;

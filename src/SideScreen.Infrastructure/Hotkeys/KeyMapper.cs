@@ -42,6 +42,11 @@ public static class KeyMapper
             "end" => 0x23,
             "pageup" or "pgup" => 0x21,
             "pagedown" or "pgdn" => 0x22,
+            // Numpad (VK_ADD 0x6B etc.) — os botões que o usuário usa no AutoHotkey.
+            "numpadadd" or "numadd" => 0x6B,
+            "numpadsub" or "numsub" => 0x6D,
+            "numpadmult" or "nummult" => 0x6A,
+            "numpaddiv" or "numdiv" => 0x6F,
             // Teclas de mídia — ideais para volume: o Windows as trata sem roubar foco de jogos.
             "volumeup" or "volup" => 0xAF,
             "volumedown" or "voldown" => 0xAE,

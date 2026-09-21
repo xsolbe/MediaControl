@@ -7,13 +7,11 @@
 ## Estratégia SideScreen (Fase 4)
 
 1. **Default: zero hotkey global.** Controle por botão + `SendMessage` sem foco já resolve 80%.
-2. **Padrões do usuário (script MusicControl):** `VolumeUp`/`VolumeDown` (teclas de mídia — seguras, o Windows lida sem roubar foco), `F2` = Play/Pause, `F1` = próximo, `F1 x2` = anterior (double-press compartilha o F1; `previous` nem é registrado separadamente).
-3. **ForegroundGuard:** antes de executar, `GetForegroundWindow()`. Modos:
-   - `Always` — executa sempre (explicitamente escolhido)
-   - `PauseWhenFullscreen` (default) — se janela em foco ocupa tela toda, ignora
-   - `OnlyWhenPlayerFocused` — mais restritivo
+2. **Padrões do usuário (script MusicControl):** `NumpadAdd`/`NumpadSub` (volume), `F2` = Play/Pause, `F1` = próximo, `F1 x2` = anterior (double-press compartilha o F1; `previous` nem é registrado separadamente).
+3. **Guard default = `Always`:** o app existe para controlar o vídeo ENQUANTO joga (uso confirmado no BNSR fullscreen). Quem preferir segurança total pode trocar para `PauseWhenFullscreen` na tela — foi esse guard que bloqueou tudo no primeiro teste em jogo.
 4. **Double-press (`F1 x2 = anterior`):** ligado por padrão a pedido do usuário, janela 350ms. Custo honesto: o `Next` simples atrasa ~350ms (espera o possível 2º toque). Se o delay incomodar, desligue e use `Shift+F1` para anterior (sem delay).
 5. **Implementação:** `RegisterHotKey` (não bloqueia outras teclas) > `WH_KEYBOARD_LL` (só se necessário, com aviso).
+6. **Diferença real vs AHK:** o `F1::` do AutoHotkey SUPRIME a tecla (o jogo nunca recebe F1). O `RegisterHotKey` NÃO suprime — com guard `Always`, o BNSR também recebe F1/F2/Numpad. Verifique os binds do jogo (F1/F2 podem disparar algo lá também); Numpad +/- normalmente é seguro. Se precisar de supressão real, o caminho seria hook low-level — evitado por causa de anticheat (BNS usa XignCode).
 
 ## Tela Shortcuts (Fase 4 — implementado)
 

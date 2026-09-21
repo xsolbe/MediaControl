@@ -24,20 +24,33 @@ public sealed class JsonSettingsStore
             var cfg = JsonSerializer.Deserialize<AppConfig>(json, JsonOpts);
             if (cfg is null)
                 return AppConfig.Default();
-            // Migração v1 → v2: padrões viraram os comandos do usuário (Volume+/-, F2, F1, F1 x2).
-            // Quem já salvou na v1 recebe os novos padrões; personalizações manuais são refeitas na tela.
-            if (cfg.Version < 2)
+            // Migração v1/v2 → v3 (diagnóstico 2026-09-21 via MusicControl.exe):
+            // volume virou NumpadAdd/NumpadSub (o usuário usa o teclado numérico, não teclas de mídia),
+            // guard virou Always (o uso real é com jogo fullscreen — BNSR).
+            // Só migra o que ainda está com valor de default/antigo inválido; resto é preservado.
+            if (cfg.Version < 3)
             {
                 var d = AppConfig.Default();
-                cfg.Shortcuts = d.Shortcuts;
-                cfg.DoublePressEnabled = d.DoublePressEnabled;
-                cfg.DoublePressWindowMs = d.DoublePressWindowMs;
-                cfg.Version = 2;
+                if (IsOldVolume(cfg.Shortcuts.GetValueOrDefault("volumeUp")))
+                    cfg.Shortcuts["volumeUp"] = d.Shortcuts["volumeUp"];
+                if (IsOldVolume(cfg.Shortcuts.GetValueOrDefault("volumeDown")))
+                    cfg.Shortcuts["volumeDown"] = d.Shortcuts["volumeDown"];
+                if (cfg.GuardMode == "PauseWhenFullscreen")
+                    cfg.GuardMode = d.GuardMode;
+                cfg.Version = 3;
             }
             return cfg;
         }
         catch { return AppConfig.Default(); }
     }
+
+    private static bool IsOldVolume(string? g) =>
+        string.IsNullOrWhiteSpace(g)
+        || g is "+" or "-" // captura manual inválida da caixa de texto (sem suporte a numpad)
+        || string.Equals(g, "VolumeUp", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(g, "VolumeDown", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(g, "Ctrl+Alt+Up", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(g, "Ctrl+Alt+Down", StringComparison.OrdinalIgnoreCase);
 
     public string? Save(AppConfig config)
     {

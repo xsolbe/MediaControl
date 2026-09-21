@@ -10,6 +10,9 @@ public class Fase4Tests
     [InlineData("ctrl+alt+right", true, true, false, "Right")]
     [InlineData("F1", false, false, false, "F1")]
     [InlineData("Shift+F2", false, false, true, "F2")]
+    [InlineData("NumpadAdd", false, false, false, "NumpadAdd")]
+    [InlineData("+", false, false, false, "NumpadAdd")]
+    [InlineData("-", false, false, false, "NumpadSub")]
     public void Parse_NormalizesModifiersAndKeys(string text, bool ctrl, bool alt, bool shift, string key)
     {
         Assert.True(HotkeyGesture.TryParse(text, out var g));
@@ -63,6 +66,8 @@ public class Fase4Tests
         Assert.True(KeyMapper.TryGetVk("Up", out uint up) && up == 0x26);
         Assert.True(KeyMapper.TryGetVk("VolumeUp", out uint vu) && vu == 0xAF);
         Assert.True(KeyMapper.TryGetVk("VolumeDown", out uint vd) && vd == 0xAE);
+        Assert.True(KeyMapper.TryGetVk("NumpadAdd", out uint na) && na == 0x6B);
+        Assert.True(KeyMapper.TryGetVk("NumpadSub", out uint ns) && ns == 0x6D);
         Assert.False(KeyMapper.TryGetVk("MediaPlay", out _)); // fora da tabela mínima
     }
 

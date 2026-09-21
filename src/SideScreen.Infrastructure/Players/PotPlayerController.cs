@@ -42,26 +42,13 @@ public sealed class PotPlayerController : IPlayerController
         return new(true, state, volume, null, DateTime.UtcNow);
     }
 
-    public void PlayPause() => SendWmCommand(PotPlayerCommandIds.CmdPlayPause);
-    public void Next() => SendWmCommand(PotPlayerCommandIds.CmdNext);
-    public void Previous() => SendWmCommand(PotPlayerCommandIds.CmdPrevious);
+    public void PlayPause() => SendAppCommand(PotPlayerCommandIds.AppCommandMediaPlayPause);
+    public void Next() => SendAppCommand(PotPlayerCommandIds.AppCommandMediaNext);
+    public void Previous() => SendAppCommand(PotPlayerCommandIds.AppCommandMediaPrevious);
 
-    public void VolumeUp(int step = 2)
-    {
-        var h = GetWindowHandle();
-        if (h == nint.Zero) return;
-        // Preferível: passo preciso via SET_VOLUME (evita step interno desconhecido).
-        int current = TryGetVolume(h);
-        SetVolume(current + step);
-    }
+    public void VolumeUp(int step = 2) => SendWmCommand(PotPlayerCommandIds.CmdVolumeUp);
 
-    public void VolumeDown(int step = 2)
-    {
-        var h = GetWindowHandle();
-        if (h == nint.Zero) return;
-        int current = TryGetVolume(h);
-        SetVolume(current - step);
-    }
+    public void VolumeDown(int step = 2) => SendWmCommand(PotPlayerCommandIds.CmdVolumeDown);
 
     public void SetVolume(int volume)
     {
@@ -94,6 +81,14 @@ public sealed class PotPlayerController : IPlayerController
         var h = GetWindowHandle();
         if (h == nint.Zero) return;
         try { NativeMethods.SendMessage(h, PotPlayerCommandIds.WmCommand, cmdId, 0); }
+        catch { }
+    }
+
+    private void SendAppCommand(int appCommand)
+    {
+        var h = GetWindowHandle();
+        if (h == nint.Zero) return;
+        try { NativeMethods.SendMessage(h, PotPlayerCommandIds.WmAppCommand, 0, appCommand); }
         catch { }
     }
 
