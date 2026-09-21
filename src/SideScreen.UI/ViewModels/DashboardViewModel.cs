@@ -10,15 +10,17 @@ namespace SideScreen.UI.ViewModels;
 public sealed class DashboardViewModel : ObservableObject
 {
     private readonly IPlayerController _player;
+    private readonly Action<bool>? _onShuffleChanged;
     private string _statusLine = "";
     private int _volume;
     private bool _shuffle;
 
-    public DashboardViewModel() : this(new PotPlayerController(), AppConfig.Default()) { }
+    public DashboardViewModel() : this(new PotPlayerController(), AppConfig.Default(), null) { }
 
-    public DashboardViewModel(IPlayerController player, AppConfig config)
+    public DashboardViewModel(IPlayerController player, AppConfig config, Action<bool>? onShuffleChanged)
     {
         _player = player;
+        _onShuffleChanged = onShuffleChanged;
 
         PlayPauseCommand = new RelayCommand(() =>
         {
@@ -86,7 +88,8 @@ public sealed class DashboardViewModel : ObservableObject
             if (Set(ref _shuffle, value))
             {
                 _player.SetShuffle(value);
-                RefreshStatus($"Shuffle {(value ? "ON" : "OFF")} — ID candidato, a validar com Spy++ (ver docs)", skipVolumeRead: false);
+                try { _onShuffleChanged?.Invoke(value); } catch { }
+                RefreshStatus($"Shuffle {(value ? "ON" : "OFF")} — salvo no config (ID candidato, a validar com Spy++ - ver docs)", skipVolumeRead: false);
             }
         }
     }

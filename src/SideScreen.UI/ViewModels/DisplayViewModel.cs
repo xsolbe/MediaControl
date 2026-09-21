@@ -1,26 +1,23 @@
 using SideScreen.Core.Config;
-using SideScreen.Infrastructure.Config;
 using SideScreen.Infrastructure.Display;
 
 namespace SideScreen.UI.ViewModels;
 
 /// <summary>
-/// Display — somente informação de monitores.
-/// A trava de posição foi REMOVIDA (2026-09-21, pedido do usuário): Jerry-built não colou —
-/// os frames do PotPlayer são layered (skins gerenciam o estilo e vencem a corrida),
-/// resultado prático era controles mortos + arrasto livre (o inverso do desejado).
-/// Ver docs/monitors.md (post-mortem).
+/// Display — somente informação de monitores (trava REMOVIDA — ver docs/monitors.md).
+/// Persistência via config central (dono: MainViewModel).
 /// </summary>
 public sealed class DisplayViewModel : ObservableObject
 {
-    private readonly JsonSettingsStore _store = new();
+    private readonly Action<Action<AppConfig>> _update;
     private DisplayMonitor? _selected;
 
-    public DisplayViewModel()
+    public DisplayViewModel(Func<AppConfig> getConfig, Action<Action<AppConfig>> update)
     {
+        _update = update;
         Monitors = MonitorService.List();
-        var cfg = _store.Load();
-        _selected = Monitors.FirstOrDefault(m => m.DeviceKey == cfg.SelectedMonitorDevice)
+        var initial = getConfig().SelectedMonitorDevice;
+        _selected = Monitors.FirstOrDefault(m => m.DeviceKey == initial)
             ?? Monitors.FirstOrDefault(m => m.IsPrimary)
             ?? Monitors.FirstOrDefault();
     }
@@ -34,9 +31,7 @@ public sealed class DisplayViewModel : ObservableObject
         {
             if (Set(ref _selected, value))
             {
-                var cfg = _store.Load();
-                cfg.SelectedMonitorDevice = _selected?.DeviceKey ?? "";
-                _store.Save(cfg);
+                try { _update(c => c.SelectedMonitorDevice = _selected?.DeviceKey ?? ""); } catch { }
             }
         }
     }

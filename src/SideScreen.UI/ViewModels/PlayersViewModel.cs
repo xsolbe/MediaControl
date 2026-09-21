@@ -1,23 +1,30 @@
+using SideScreen.Core.Config;
+
 namespace SideScreen.UI.ViewModels;
 
 public sealed record PlayerOption(string Id, string Name, string Status, bool IsFuture);
 
 /// <summary>
-/// Players — Fase 2: lista estática. Futuro: MPC-HC via novo IPlayerController.
+/// Players — seleção persistida no config. O controle real ainda mira o PotPlayer
+/// (fábrica de controllers entra na fase pós-v1 com MPC-HC).
 /// </summary>
 public sealed class PlayersViewModel : ObservableObject
 {
+    private readonly Action<string>? _onSelected;
     private PlayerOption? _selected;
 
-    public PlayersViewModel()
+    public PlayersViewModel() : this(AppConfig.Default().SelectedPlayerId, null) { }
+
+    public PlayersViewModel(string selectedId, Action<string>? onSelected)
     {
+        _onSelected = onSelected;
         Available =
         [
-            new PlayerOption("potplayer", "PotPlayer", "Suportado — stub Fase 2", false),
+            new PlayerOption("potplayer", "PotPlayer", "Suportado — controle real via SendMessage", false),
             new PlayerOption("mpc-hc", "MPC-HC", "Futuro — Fase pós-v1", true),
             new PlayerOption("vlc", "VLC", "Futuro — ideia", true),
         ];
-        _selected = Available[0];
+        _selected = Available.FirstOrDefault(o => o.Id == selectedId) ?? Available[0];
     }
 
     public List<PlayerOption> Available { get; }
@@ -25,6 +32,12 @@ public sealed class PlayersViewModel : ObservableObject
     public PlayerOption? Selected
     {
         get => _selected;
-        set => Set(ref _selected, value);
+        set
+        {
+            if (Set(ref _selected, value) && value is not null)
+            {
+                try { _onSelected?.Invoke(value.Id); } catch { }
+            }
+        }
     }
 }

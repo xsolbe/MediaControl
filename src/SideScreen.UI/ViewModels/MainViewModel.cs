@@ -6,9 +6,9 @@ using SideScreen.Infrastructure.Players;
 namespace SideScreen.UI.ViewModels;
 
 /// <summary>
-/// Shell — navegação lateral + dono dos hotkeys globais.
-/// Os hotkeys são registrados no startup (AttachHwnd), NÃO ao visitar a tela Shortcuts —
-/// antes eles só registravam se o usuário abrisse a tela, e nada disparava.
+/// Shell — navegação lateral + DONO da persistência e dos hotkeys globais.
+/// Persistência central: UpdateConfig() é o único caminho de escrita (uma VM nunca salva direto).
+/// Hotkeys registrados no startup (AttachHwnd), NÃO ao visitar a tela Shortcuts.
 /// </summary>
 public sealed class MainViewModel : ObservableObject
 {
@@ -27,15 +27,31 @@ public sealed class MainViewModel : ObservableObject
         _service = new HotkeyService(new PotPlayerController());
         _service.Triggered += _ => RefreshSummary();
 
-        Dashboard = new DashboardViewModel();
-        Players = new PlayersViewModel();
+        Dashboard = new DashboardViewModel(new PotPlayerController(), _config, shuffle => UpdateConfig(c => c.ShuffleEnabled = shuffle));
+        Players = new PlayersViewModel(_config.SelectedPlayerId, id => UpdateConfig(c => c.SelectedPlayerId = id));
         Shortcuts = new ShortcutsViewModel(_service, _store, ReloadHotkeys);
-        Display = new DisplayViewModel();
+        Display = new DisplayViewModel(() => _config, UpdateConfig);
         Settings = new SettingsViewModel();
 
         _current = Dashboard;
         NavigateCommand = new RelayCommand(nav => Navigate(nav as string ?? "Dashboard"));
         RefreshSummary();
+    }
+
+    /// <summary>ÚNICO caminho de escrita do config. Aplica a mutação em memória + salva no disco.</summary>
+    public void UpdateConfig(Action<AppConfig> mutate)
+    {
+        mutate(_config);
+        _store.Save(_config);
+    }
+
+    public void RefreshSummary() => RefreshSummaryImpl();
+
+    private void RefreshSummaryImpl()
+    {
+        HotkeySummary = _config.EnableGlobalHotkeys
+            ? $"Hotkeys: ON · {_service.Registered.Count}"
+            : "Hotkeys: OFF";
     }
 
     public DashboardViewModel Dashboard { get; }
@@ -104,13 +120,6 @@ public sealed class MainViewModel : ObservableObject
         _service.AllowedProcesses = [.. _config.AllowedProcesses];
         _service.Start(_hWnd, new Dictionary<string, string>(_config.Shortcuts));
         RefreshSummary();
-    }
-
-    private void RefreshSummary()
-    {
-        HotkeySummary = _config.EnableGlobalHotkeys
-            ? $"Hotkeys: ON · {_service.Registered.Count}"
-            : "Hotkeys: OFF";
     }
 
     private void Navigate(string nav)

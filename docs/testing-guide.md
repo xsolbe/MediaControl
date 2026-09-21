@@ -45,10 +45,18 @@ Pré-requisito: PotPlayer aberto + SideScreen aberto.
 
 ## Fase 5 (Monitores)
 
-Ver `monitors.md`.
+Ver `monitors.md` (trava removida; tela informativa).
+
+## Fase 6 (Persistência — implementado)
+
+Dono único: `MainViewModel.UpdateConfig()` (único caminho de escrita). Arquivo versionado com migrações.
+
+- [ ] Mude shuffle (Dashboard), player (Players), monitor (Display), atalhos (Shortcuts) → feche e reabra → tudo igual.
+- [ ] Corrompa o config (apague metade no Bloco de Notas) → app abre com padrões e cria `config.corrupt-*.json`.
+- [ ] `dotnet test` cobre roundtrip, corrupt+backup e migração v1→v4.
 
 ## Debug
 
 - Spy++ (`Find Window`) para confirmar classe `PotPlayer64`.
-- `%AppData%\SideScreen\logs\` (Fase 6+).
+- `%AppData%\SideScreen\hotkeys.log` (hotkeys) e `config.json` (+ `config.corrupt-*`).
 - `dotnet --version` deve ser 10.x.

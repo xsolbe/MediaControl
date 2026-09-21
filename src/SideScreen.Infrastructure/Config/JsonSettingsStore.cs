@@ -4,15 +4,25 @@ using SideScreen.Core.Config;
 namespace SideScreen.Infrastructure.Config;
 
 /// <summary>
-/// Persistência mínima em %AppData%\SideScreen\config.json (Fase 4: só atalhos/hotkeys; Fase 6: tudo + migração).
-/// Nunca lança para a UI — retorna Default em erro.
+/// Persistência em config.json (dono único: MainViewModel).
+/// - Load: defaults → migrações por versão → backup se corrompido.
+/// - Nunca lança para a UI.
 /// </summary>
 public sealed class JsonSettingsStore
 {
     private static readonly JsonSerializerOptions JsonOpts = new() { WriteIndented = true };
 
-    public static string ConfigDir => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SideScreen");
-    public static string ConfigPath => Path.Combine(ConfigDir, "config.json");
+    public static string DefaultDir => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SideScreen");
+    public static string DefaultPath => Path.Combine(DefaultDir, "config.json");
+
+    public JsonSettingsStore(string? dir = null)
+    {
+        DirPath = dir ?? DefaultDir;
+        ConfigPath = Path.Combine(DirPath, "config.json");
+    }
+
+    public string DirPath { get; }
+    public string ConfigPath { get; }
 
     public AppConfig Load()
     {
@@ -21,7 +31,16 @@ public sealed class JsonSettingsStore
             if (!File.Exists(ConfigPath))
                 return AppConfig.Default();
             var json = File.ReadAllText(ConfigPath);
-            var cfg = JsonSerializer.Deserialize<AppConfig>(json, JsonOpts);
+            AppConfig? cfg;
+            try
+            {
+                cfg = JsonSerializer.Deserialize<AppConfig>(json, JsonOpts);
+            }
+            catch
+            {
+                BackupCorrupt();
+                return AppConfig.Default();
+            }
             if (cfg is null)
                 return AppConfig.Default();
             // Migração v1/v2 → v3 (diagnóstico 2026-09-21 via MusicControl.exe):
@@ -66,11 +85,21 @@ public sealed class JsonSettingsStore
     {
         try
         {
-            Directory.CreateDirectory(ConfigDir);
+            Directory.CreateDirectory(DirPath);
             var json = JsonSerializer.Serialize(config, JsonOpts);
             File.WriteAllText(ConfigPath, json);
             return null;
         }
         catch (Exception ex) { return ex.Message; }
+    }
+
+    private void BackupCorrupt()
+    {
+        try
+        {
+            var backup = Path.Combine(DirPath, $"config.corrupt-{DateTime.Now:yyyyMMdd-HHmmss}.json");
+            File.Copy(ConfigPath, backup, overwrite: false);
+        }
+        catch { }
     }
 }

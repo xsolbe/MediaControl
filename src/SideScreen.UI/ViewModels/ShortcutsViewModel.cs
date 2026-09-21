@@ -162,7 +162,7 @@ public sealed class ShortcutsViewModel : ObservableObject
         set => Set(ref _status, value);
     }
 
-    public string ConfigPath => JsonSettingsStore.ConfigPath;
+    public string ConfigPath => _store.ConfigPath;
 
     public RelayCommand ApplyCommand { get; }
     public RelayCommand RestoreDefaultsCommand { get; }
