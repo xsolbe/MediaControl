@@ -48,4 +48,32 @@ public class Fase5Tests
         Assert.Equal(1920, x);
         Assert.Equal(0, y);
     }
+
+    [Fact]
+    public void MonitorMover_Resolve_WithSaved_ReturnsExactSpot()
+    {
+        var target = new DisplayMonitor("D2", "Monitor 2", 0, 0, 2560, 1440, true);
+        var (x, y) = MonitorMover.Resolve(new MonitorMover.Rect(100, 100, 800, 600), target, (200, 150, 800, 600));
+        Assert.Equal(200, x);
+        Assert.Equal(150, y);
+    }
+
+    [Fact]
+    public void MonitorMover_Resolve_WithoutSaved_Centers()
+    {
+        var target = new DisplayMonitor("D2", "Monitor 2", 0, 0, 2560, 1440, true);
+        var (x, y) = MonitorMover.Resolve(new MonitorMover.Rect(100, 100, 800, 600), target, null);
+        Assert.Equal((2560 - 800) / 2, x);
+        Assert.Equal((1440 - 600) / 2, y);
+    }
+
+    [Fact]
+    public void MonitorMover_Resolve_SavedOutside_ClampsInside()
+    {
+        // Resolução mudou depois de salvo: prende dentro dos limites atuais.
+        var target = new DisplayMonitor("D2", "Monitor 2", 0, 0, 1920, 1080, true);
+        var (x, y) = MonitorMover.Resolve(new MonitorMover.Rect(0, 0, 800, 600), target, (5000, 5000, 800, 600));
+        Assert.Equal(1920 - 800, x);
+        Assert.Equal(1080 - 600, y);
+    }
 }
