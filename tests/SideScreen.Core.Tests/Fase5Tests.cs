@@ -83,4 +83,16 @@ public class Fase5Tests
     {
         Assert.Equal(expected, MonitorLockService.Decide(onTarget, blocked, dragging));
     }
+
+    [Fact]
+    public void ClickThrough_BitMath()
+    {
+        const long transparent = 0x20L;
+        Assert.True(WindowInteraction.HasFlag(WindowInteraction.WithFlag(0, transparent), transparent));
+        Assert.False(WindowInteraction.HasFlag(WindowInteraction.WithoutFlag(transparent, transparent), transparent));
+        // Preserva os outros bits ao ligar/desligar.
+        long exo = 0x40000L;
+        Assert.Equal(exo | transparent, WindowInteraction.WithFlag(exo, transparent));
+        Assert.Equal(exo, WindowInteraction.WithoutFlag(exo | transparent, transparent));
+    }
 }

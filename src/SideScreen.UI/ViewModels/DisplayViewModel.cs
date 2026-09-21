@@ -24,6 +24,8 @@ public sealed class DisplayViewModel : ObservableObject
     {
         _lock = lockService;
         _lock.StatusChanged += () => App.Current?.Dispatcher.Invoke(() => Status = _lock.Status);
+        if (App.Current is not null)
+            App.Current.Exit += (_, _) => _lock.Stop(); // garante: solta o mouse ao fechar o app
 
         Monitors = MonitorService.List();
         var cfg = _store.Load();
@@ -66,7 +68,7 @@ public sealed class DisplayViewModel : ObservableObject
         set => Set(ref _status, value);
     }
 
-    public string Note => "Parede magnética (100ms): arrastando, desliza na borda sem sair; soltou fora, volta ao ponto travado. Nunca rouba foco; ignora maximizado/fullscreen.";
+    public string Note => "Lock = blindagem (o mouse atravessa a janela, impossível agarrar) + restaura a posição se algo mover via teclado. Clique no player não funciona travado — use os botões/atalhos. Nunca rouba foco; ignora maximizado/fullscreen.";
 
     private void ApplyChoice()
     {

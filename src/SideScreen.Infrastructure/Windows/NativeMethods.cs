@@ -59,7 +59,18 @@ internal static partial class NativeMethods
     [return: MarshalAs(UnmanagedType.Bool)]
     public static partial bool CloseHandle(nint hObject);
 
-    // ---- Fase 5 (parede magnética): arrasto em curso? ----
+    // ---- Fase 5 (click-through): estilos estendidos da janela ----
+    public const int GwlpExStyle = -20;
+    public const long WsExTransparent = 0x20L;
+    public const uint SwpFrameChanged = 0x0020;
+
+    [LibraryImport("user32.dll", EntryPoint = "GetWindowLongPtrW")]
+    public static partial nint GetWindowLongPtr(nint hWnd, int nIndex);
+
+    [LibraryImport("user32.dll", EntryPoint = "SetWindowLongPtrW")]
+    public static partial nint SetWindowLongPtr(nint hWnd, int nIndex, nint dwNewLong);
+
+    // Arrasto em curso? (parede magnética de reserva para movimentos via teclado)
     [LibraryImport("user32.dll", EntryPoint = "GetAsyncKeyState")]
     public static partial short GetAsyncKeyState(int vKey);
 

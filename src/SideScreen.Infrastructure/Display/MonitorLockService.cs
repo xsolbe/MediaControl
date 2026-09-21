@@ -27,6 +27,7 @@ public sealed class MonitorLockService : IDisposable
     private System.Threading.Timer? _timer;
     private string _targetDevice = "";
     private (int x, int y)? _anchor; // lugar exato no monitor alvo (atualizado enquanto estável por lá)
+    private bool _shielded; // click-through aplicado?
     private bool _disposed;
 
     public MonitorLockService(IPlayerController player) : this(player, MonitorService.List) { }
@@ -46,13 +47,15 @@ public sealed class MonitorLockService : IDisposable
         Stop();
         _targetDevice = targetDevice ?? "";
         _anchor = null; // reaprende a posição quando estabilizar no alvo
+        _shielded = false;
         IsRunning = true;
-        SetStatus($"Vigiando {targetDevice} (parede magnética).");
+        SetStatus($"Vigiando {targetDevice} (blindado + posição travada).");
         _timer = new System.Threading.Timer(_ => Tick(), null, 0, 100);
     }
 
     public void Stop()
     {
+        RemoveShield();
         _timer?.Dispose();
         _timer = null;
         IsRunning = false;
@@ -76,6 +79,17 @@ public sealed class MonitorLockService : IDisposable
                 _anchor = null;
                 SetStatus("Player fechado (Offline) — aguardando abrir.");
                 return;
+            }
+
+            // Blindagem: sem ela o mouse agarra a janela. Tenta até aplicar.
+            if (!_shielded)
+            {
+                _shielded = WindowInteraction.SetClickThrough(h, true);
+                if (!_shielded)
+                {
+                    SetStatus("Ativando blindagem do mouse...");
+                    return;
+                }
             }
 
             var monitors = _listMonitors();
@@ -106,7 +120,7 @@ public sealed class MonitorLockService : IDisposable
             {
                 case LockAction.UpdateAnchor:
                     _anchor = (rc.Left, rc.Top); // memoriza o lugar exato enquanto estável no alvo
-                    SetStatus($"Preso no {target.Label.Split('—')[0].Trim()} (posição travada).");
+                    SetStatus($"Blindado no {target.Label.Split('—')[0].Trim()} (mouse atravessa; posição travada).");
                     return;
 
                 case LockAction.Skip:
@@ -155,6 +169,19 @@ public sealed class MonitorLockService : IDisposable
     {
         try { return (NativeMethods.GetAsyncKeyState(VkLButton) & 0x8000) != 0; }
         catch { return false; }
+    }
+
+    private void RemoveShield()
+    {
+        if (!_shielded) return;
+        _shielded = false;
+        try
+        {
+            var h = _player.GetWindowHandle();
+            if (h != nint.Zero)
+                WindowInteraction.SetClickThrough(h, false);
+        }
+        catch { }
     }
 
     private static bool IsOnMonitor(nint hWnd, DisplayMonitor m)
