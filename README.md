@@ -2,7 +2,7 @@
 
 Controle minimalista do player de vídeo no segundo monitor — sem interferir em jogos.
 
-**Stack:** C# + .NET 10 LTS + WPF (MVVM) · **Player v1:** PotPlayer via `SendMessage` (sem simular teclas) · **Status:** Fase 6 — Persistência central (32 testes)
+**Stack:** C# + .NET 10 LTS + WPF (MVVM) · **Player v1:** PotPlayer via `SendMessage` (sem simular teclas) · **Status:** Fase 7 — Aceitação (38 testes)
 
 ## Por que este stack?
 
