@@ -8,7 +8,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>MediaControl</AssemblyName>
     <RootNamespace>MediaControl</RootNamespace>
-    <Version>2.0.1</Version>
+    <Version>2.1.0</Version>
     <Product>MediaControl</Product>
     <Description>Compact PotPlayer controller with configurable hotkeys and a program allowlist.</Description>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
