@@ -13,6 +13,7 @@ internal static class ControlActions
     public const string VolumeDown = "volumeDown";
     public const string SeekBackward = "seekBackward";
     public const string SeekForward = "seekForward";
+    public const string PauseHotkeys = "pauseHotkeys";
 
     public static readonly (string Id, string Label)[] All =
     [
@@ -22,6 +23,12 @@ internal static class ControlActions
         (VolumeDown, "Volume -"),
         (SeekBackward, "Voltar 5s"),
         (SeekForward, "Avançar 5s"),
+    ];
+
+    public static readonly (string Id, string Label)[] Configurable =
+    [
+        .. All,
+        (PauseHotkeys, "Pausar / reativar atalhos"),
     ];
 }
 
@@ -91,7 +98,7 @@ internal sealed class HotkeyGesture
 
 internal sealed class AppSettings
 {
-    public int Version { get; set; } = 5;
+    public int Version { get; set; } = 6;
     public Dictionary<string, HotkeyGesture> Bindings { get; set; } = new();
     public bool OnlyListedPrograms { get; set; }
     public List<string> AllowedExecutables { get; set; } = [];
@@ -100,7 +107,7 @@ internal sealed class AppSettings
 
     public AppSettings Copy() => new()
     {
-        Version = 5,
+        Version = 6,
         Bindings = Bindings.ToDictionary(pair => pair.Key, pair => pair.Value.Copy()),
         OnlyListedPrograms = OnlyListedPrograms,
         AllowedExecutables = [.. AllowedExecutables],
@@ -118,6 +125,7 @@ internal sealed class AppSettings
             [ControlActions.VolumeDown] = new(0, 0x6D),
             [ControlActions.SeekBackward] = new(0, 0x25),
             [ControlActions.SeekForward] = new(0, 0x27),
+            [ControlActions.PauseHotkeys] = new(0, 0x78),
         },
     };
 }
@@ -137,17 +145,19 @@ internal static class SettingsStore
                 return settings;
 
             var saved = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(FilePath));
-            if (saved?.Version is not (2 or 3 or 4 or 5) || saved.Bindings is null)
+            if (saved?.Version is not (2 or 3 or 4 or 5 or 6) || saved.Bindings is null)
                 return settings;
 
-            foreach (var (id, _) in ControlActions.All)
+            foreach (var (id, _) in ControlActions.Configurable)
             {
+                if (id == ControlActions.PauseHotkeys && saved.Version < 6)
+                    continue;
                 if (saved.Bindings.TryGetValue(id, out var binding) && binding?.IsValid == true
-                    && (binding.Modifiers != 0 || binding.VirtualKey != 0x78))
+                    && (saved.Version >= 6 || binding.Modifiers != 0 || binding.VirtualKey != 0x78))
                     settings.Bindings[id] = binding.Copy();
             }
             if (settings.Bindings.Values.Select(binding => (binding.Modifiers, binding.VirtualKey)).Distinct().Count()
-                != ControlActions.All.Length)
+                != ControlActions.Configurable.Length)
                 settings.Bindings = AppSettings.CreateDefault().Bindings;
             if (saved.Version >= 3)
             {

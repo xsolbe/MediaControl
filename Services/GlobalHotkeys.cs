@@ -10,7 +10,6 @@ namespace MediaControl.Services;
 internal sealed class GlobalHotkeys : IDisposable
 {
     private const int PauseHotkeyId = 100;
-    private const uint F9VirtualKey = 0x78;
     private const uint ModNoRepeat = 0x4000;
     private readonly IntPtr _window;
     private readonly HwndSource _source;
@@ -20,7 +19,7 @@ internal sealed class GlobalHotkeys : IDisposable
     private Dictionary<string, HotkeyGesture> _active = new();
     private bool _suspended;
     private bool _scopeEnabled;
-    private readonly bool _pauseHotkeyRegistered;
+    private bool _pauseHotkeyRegistered;
 
     public GlobalHotkeys(Window owner, Action<string> onAction, Action onTogglePause, bool scopeEnabled = true)
     {
@@ -31,40 +30,43 @@ internal sealed class GlobalHotkeys : IDisposable
         _onAction = onAction;
         _onTogglePause = onTogglePause;
         _scopeEnabled = scopeEnabled;
-        _pauseHotkeyRegistered = NativeMethods.RegisterHotKey(_window, PauseHotkeyId, ModNoRepeat, F9VirtualKey);
-        PauseHotkeyError = _pauseHotkeyRegistered ? "" :
-            $"{UiText.T("Não foi possível registrar F9. Código Windows: ")}{Marshal.GetLastWin32Error()}.";
     }
 
     public int RegisteredCount => _registered.Count;
-    public string PauseHotkeyError { get; }
 
     public bool TryApply(IReadOnlyDictionary<string, HotkeyGesture> bindings, out string error)
     {
         if (!Validate(bindings, out error))
             return false;
 
-        if (!_scopeEnabled || _suspended)
+        var previous = Copy(_active);
+        UnregisterAll();
+        UnregisterPause();
+
+        if (_suspended ||
+            (RegisterPause(bindings[ControlActions.PauseHotkeys], out error) &&
+             (!_scopeEnabled || Register(bindings, out error))))
         {
             _active = Copy(bindings);
             error = "";
             return true;
         }
 
-        var previous = Copy(_active);
         UnregisterAll();
-        _suspended = false;
-
-        if (Register(bindings, out error))
-        {
-            _active = Copy(bindings);
-            return true;
-        }
-
-        UnregisterAll();
+        UnregisterPause();
         _active = previous;
-        if (previous.Count != 0 && !Register(previous, out string rollbackError))
+        if (previous.Count != 0 &&
+            (!RegisterPause(previous[ControlActions.PauseHotkeys], out string rollbackError) ||
+             (_scopeEnabled && !Register(previous, out rollbackError))))
+        {
+            UnregisterAll();
             error += $" {UiText.T("Também falhou a restauração: ")}{rollbackError}";
+        }
+        else if (previous.Count == 0)
+        {
+            // Keep the pause key available if another playback key fails at startup.
+            RegisterPause(bindings[ControlActions.PauseHotkeys], out _);
+        }
         return false;
     }
 
@@ -73,6 +75,7 @@ internal sealed class GlobalHotkeys : IDisposable
         if (_suspended)
             return;
         UnregisterAll();
+        UnregisterPause();
         _suspended = true;
     }
 
@@ -82,7 +85,14 @@ internal sealed class GlobalHotkeys : IDisposable
         if (!_suspended)
             return true;
         _suspended = false;
-        if (!_scopeEnabled || _active.Count == 0)
+        if (_active.Count == 0)
+            return true;
+        if (!RegisterPause(_active[ControlActions.PauseHotkeys], out error))
+        {
+            _suspended = true;
+            return false;
+        }
+        if (!_scopeEnabled)
             return true;
         if (Register(_active, out error))
             return true;
@@ -122,16 +132,11 @@ internal sealed class GlobalHotkeys : IDisposable
     private static bool Validate(IReadOnlyDictionary<string, HotkeyGesture> bindings, out string error)
     {
         var used = new HashSet<(uint, uint)>();
-        foreach (var (id, label) in ControlActions.All)
+        foreach (var (id, label) in ControlActions.Configurable)
         {
             if (!bindings.TryGetValue(id, out var gesture) || !gesture.IsValid)
             {
                 error = $"{UiText.T("Atalho inválido para ")}{UiText.T(label)}.";
-                return false;
-            }
-            if (gesture.Modifiers == 0 && gesture.VirtualKey == F9VirtualKey)
-            {
-                error = UiText.T("F9 está reservado para pausar os atalhos.");
                 return false;
             }
             if (!used.Add((gesture.Modifiers, gesture.VirtualKey)))
@@ -162,6 +167,28 @@ internal sealed class GlobalHotkeys : IDisposable
         return true;
     }
 
+    private bool RegisterPause(HotkeyGesture gesture, out string error)
+    {
+        if (!NativeMethods.RegisterHotKey(_window, PauseHotkeyId,
+            gesture.Modifiers | ModNoRepeat, gesture.VirtualKey))
+        {
+            int code = Marshal.GetLastWin32Error();
+            error = $"{UiText.T("Pausar / reativar atalhos")} ({gesture.Display}) {UiText.T("não pôde ser registrado. Código Windows: ")}{code}.";
+            return false;
+        }
+        _pauseHotkeyRegistered = true;
+        error = "";
+        return true;
+    }
+
+    private void UnregisterPause()
+    {
+        if (!_pauseHotkeyRegistered)
+            return;
+        NativeMethods.UnregisterHotKey(_window, PauseHotkeyId);
+        _pauseHotkeyRegistered = false;
+    }
+
     private IntPtr WndProc(IntPtr window, int message, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
         if (message == NativeMethods.WmHotkey && wParam.ToInt32() == PauseHotkeyId)
@@ -188,8 +215,7 @@ internal sealed class GlobalHotkeys : IDisposable
     public void Dispose()
     {
         UnregisterAll();
-        if (_pauseHotkeyRegistered)
-            NativeMethods.UnregisterHotKey(_window, PauseHotkeyId);
+        UnregisterPause();
         _source.RemoveHook(WndProc);
     }
 }

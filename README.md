@@ -25,7 +25,7 @@ The interface supports **English (default)** and **Português**. Change it anyti
 3. In **Programs**, add a running window or choose an executable. Adding a program switches to **Listed only** automatically. MediaControl then responds to hotkeys only while a listed program is in the foreground. Outside the list, those keys remain available to the active app.
 4. Use **Hotkeys** to change a binding, then click **Apply**. Use **General** to change the interface language.
 
-Press **F9** to pause or resume MediaControl's hotkeys from any app, including a listed game. While paused, F1, F2, and the other media keys are released to the game. F9 stays active, even when MediaControl is in the system tray. The pause state is saved across restarts. You can also click the **ACTIVE / PAUSED** badge or use the tray menu. Mouse controls in the app remain available.
+Press **F9** to pause or resume MediaControl's hotkeys from any app, including a listed game. F9 is the default; you can change the **Pause / resume hotkeys** binding in **Hotkeys**. While paused, F1, F2, and the other media keys are released to the game. The configured pause key stays active, even when MediaControl is in the system tray. The pause state is saved across restarts. You can also click the **ACTIVE / PAUSED** badge or use the tray menu. Mouse controls in the app remain available.
 
 The **−** button sends MediaControl to the system tray. Click the tray icon to reopen it, or right-click for **Open MediaControl** and **Exit**. The **×** button exits. Settings are saved in `%AppData%\MediaControl\settings.json`.
 
@@ -41,7 +41,7 @@ If you previously used the portable app, exit it from its tray menu before openi
 | Numpad − | Decrease volume |
 | ← | Seek backward |
 | → | Seek forward |
-| F9 | Pause / resume MediaControl hotkeys (always available) |
+| F9 (configurable) | Pause / resume MediaControl hotkeys (always available) |
 
 The playback panel also has a previous-track button, a timeline, and volume and mute controls. The default commands use the same PotPlayer messages as the original AHK script. The icons are from [Lucide](https://lucide.dev/); its license is included in [`Assets/Lucide/LUCIDE-LICENSE.txt`](Assets/Lucide/LUCIDE-LICENSE.txt).
 
@@ -53,7 +53,7 @@ Baixe o `MediaControl-Setup-...-win-x64.exe` na [página de releases](https://gi
 
 Em **Programas**, adicione um jogo pela janela aberta ou pelo arquivo executável. Isso ativa **Somente lista**: os atalhos controlam o PotPlayer apenas quando um programa cadastrado está em primeiro plano. Fora da lista, as teclas continuam disponíveis para o programa ativo. Na aba **Geral**, selecione **Português**. O botão **−** envia o app para a bandeja; **×** fecha o app.
 
-Pressione **F9** para pausar ou reativar os atalhos de qualquer programa. Durante a pausa, F1, F2 e as demais teclas ficam livres para o jogo; F9 continua ativo. O estado de pausa é salvo ao fechar o app. O indicador **ATIVO / PAUSADO** e o menu da bandeja também permitem alternar.
+Pressione **F9** para pausar ou reativar os atalhos de qualquer programa. F9 é o padrão; você pode alterá-lo em **Atalhos**, na ação **Pausar / reativar atalhos**. Durante a pausa, F1, F2 e as demais teclas ficam livres para o jogo; a tecla escolhida para a pausa continua ativa. O estado de pausa é salvo ao fechar o app. O indicador **ATIVO / PAUSADO** e o menu da bandeja também permitem alternar.
 
 ## Build
 

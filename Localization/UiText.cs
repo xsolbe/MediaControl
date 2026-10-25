@@ -18,6 +18,7 @@ internal static class UiText
     [
         "TrackTitle", "PlaybackBadge", "PlayPauseCaption", "NextTrackButtonLabel",
         "VolumeHotkeyHint", "ProgramStatusText", "HintText", "CountText", "PauseHotkeysButton",
+        "PauseHotkeyHelpText",
     ];
 
     private static readonly Dictionary<string, string> English = new(StringComparer.Ordinal)
@@ -61,6 +62,7 @@ internal static class UiText
         ["Escolher arquivo"] = "Browse file",
         ["Remover"] = "Remove",
         ["Pausar / continuar"] = "Play / pause",
+        ["Pausar / reativar atalhos"] = "Pause / resume hotkeys",
         ["Voltar 5s"] = "Back 5s",
         ["Avançar 5s"] = "Forward 5s",
         ["Padrão"] = "Defaults",
@@ -78,15 +80,13 @@ internal static class UiText
         ["Idioma"] = "Language",
         ["Escolha o idioma da interface"] = "Choose the interface language",
         ["A alteração é aplicada imediatamente."] = "Changes apply immediately.",
-        ["F9 pausa ou reativa os atalhos em qualquer programa."] = "F9 pauses or resumes hotkeys in any app.",
+        ["{0} pausa ou reativa os atalhos em qualquer programa."] = "{0} pauses or resumes hotkeys in any app.",
         ["ATIVO"] = "ACTIVE",
-        ["F9 · Pausar atalhos"] = "F9 · Pause hotkeys",
-        ["F9 · Reativar atalhos"] = "F9 · Resume hotkeys",
-        ["Atalhos pausados · F9 para reativar"] = "Hotkeys paused · F9 to resume",
-        ["Pausar atalhos (F9)"] = "Pause hotkeys (F9)",
-        ["Reativar atalhos (F9)"] = "Resume hotkeys (F9)",
-        ["Não foi possível registrar F9. Código Windows: "] = "Could not register F9. Windows code: ",
-        ["F9 está reservado para pausar os atalhos."] = "F9 is reserved for pausing hotkeys.",
+        ["{0} · Pausar atalhos"] = "{0} · Pause hotkeys",
+        ["{0} · Reativar atalhos"] = "{0} · Resume hotkeys",
+        ["Atalhos pausados · {0} para reativar"] = "Hotkeys paused · {0} to resume",
+        ["Pausar atalhos ({0})"] = "Pause hotkeys ({0})",
+        ["Reativar atalhos ({0})"] = "Resume hotkeys ({0})",
         ["Não foi possível salvar o estado dos atalhos: "] = "Could not save hotkey state: ",
         ["Atalhos indisponíveis: abra Atalhos"] = "Hotkeys unavailable: open Hotkeys",
         ["Atalhos ativos em todos os programas"] = "Hotkeys active in all apps",

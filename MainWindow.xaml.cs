@@ -69,11 +69,6 @@ public partial class MainWindow : Window
 
         _hotkeys = new GlobalHotkeys(this, ExecuteHotkeyAction, ToggleHotkeys,
             scopeEnabled: !_settings.OnlyListedPrograms && !_settings.HotkeysPaused);
-        if (_hotkeys.PauseHotkeyError.Length != 0)
-        {
-            PauseHotkeysButton.ToolTip = _hotkeys.PauseHotkeyError;
-            ShowMessage(_hotkeys.PauseHotkeyError);
-        }
         if (!_hotkeys.TryApply(_settings.Bindings, out string error))
         {
             ShowMessage(error);
@@ -219,6 +214,7 @@ public partial class MainWindow : Window
             (ControlActions.VolumeDown, VolumeDownBinding),
             (ControlActions.SeekBackward, SeekBackBinding),
             (ControlActions.SeekForward, SeekForwardBinding),
+            (ControlActions.PauseHotkeys, PauseHotkeysBinding),
         ];
         foreach (var (id, button) in items)
         {
@@ -253,9 +249,9 @@ public partial class MainWindow : Window
         }
         _lastScopeError = null;
         ProgramStatusText.ToolTip = null;
-        ProgramStatusText.Text = UiText.T(_settings.HotkeysPaused
-            ? "Atalhos pausados · F9 para reativar"
-            : !_settings.OnlyListedPrograms
+        ProgramStatusText.Text = _settings.HotkeysPaused
+            ? string.Format(UiText.T("Atalhos pausados · {0} para reativar"), PauseHotkeyDisplay)
+            : UiText.T(!_settings.OnlyListedPrograms
             ? "Atalhos ativos em todos os programas"
             : _settings.AllowedExecutables.Count == 0
                 ? "Lista vazia: atalhos desativados"
@@ -485,17 +481,22 @@ public partial class MainWindow : Window
     private void RenderPauseState()
     {
         bool paused = _settings.HotkeysPaused;
+        string hotkey = PauseHotkeyDisplay;
         PauseHotkeysButton.Content = UiText.T(paused ? "PAUSADO" : "ATIVO");
         PauseHotkeysButton.Background = new SolidColorBrush(paused
             ? Color.FromRgb(143, 91, 29) : Color.FromRgb(18, 102, 159));
-        PauseHotkeysButton.ToolTip = _hotkeys is { PauseHotkeyError.Length: > 0 }
-            ? _hotkeys.PauseHotkeyError
-            : UiText.T(paused ? "F9 · Reativar atalhos" : "F9 · Pausar atalhos");
+        PauseHotkeysButton.ToolTip = string.Format(
+            UiText.T(paused ? "{0} · Reativar atalhos" : "{0} · Pausar atalhos"), hotkey);
+        PauseHotkeyHelpText.Text = string.Format(
+            UiText.T("{0} pausa ou reativa os atalhos em qualquer programa."), hotkey);
         if (_trayMenu is { Items.Count: >= 3 })
-            _trayMenu.Items[1].Text = UiText.T(paused ? "Reativar atalhos (F9)" : "Pausar atalhos (F9)");
+            _trayMenu.Items[1].Text = string.Format(
+                UiText.T(paused ? "Reativar atalhos ({0})" : "Pausar atalhos ({0})"), hotkey);
         if (_trayIcon is not null)
             _trayIcon.Text = paused ? $"MediaControl · {UiText.T("PAUSADO")}" : "MediaControl";
     }
+
+    private string PauseHotkeyDisplay => _settings.Bindings[ControlActions.PauseHotkeys].Display;
     private void Minimize_Click(object sender, RoutedEventArgs e)
     {
         if (_preview)
@@ -522,7 +523,9 @@ public partial class MainWindow : Window
         _trayImage ??= (System.Drawing.Icon)System.Drawing.SystemIcons.Application.Clone();
         _trayMenu = new Forms.ContextMenuStrip();
         _trayMenu.Items.Add(UiText.T("Abrir MediaControl"), null, (_, _) => Dispatcher.BeginInvoke(RestoreFromTray));
-        _trayMenu.Items.Add(UiText.T(_settings.HotkeysPaused ? "Reativar atalhos (F9)" : "Pausar atalhos (F9)"),
+        _trayMenu.Items.Add(string.Format(
+                UiText.T(_settings.HotkeysPaused ? "Reativar atalhos ({0})" : "Pausar atalhos ({0})"),
+                PauseHotkeyDisplay),
             null, (_, _) => Dispatcher.BeginInvoke(ToggleHotkeys));
         _trayMenu.Items.Add(UiText.T("Sair"), null, (_, _) => Dispatcher.BeginInvoke(Close));
         _trayIcon = new Forms.NotifyIcon
@@ -637,6 +640,7 @@ public partial class MainWindow : Window
             nameof(VolumeDownBinding) => ControlActions.VolumeDown,
             nameof(SeekBackBinding) => ControlActions.SeekBackward,
             nameof(SeekForwardBinding) => ControlActions.SeekForward,
+            nameof(PauseHotkeysBinding) => ControlActions.PauseHotkeys,
             _ => null,
         };
         if (action is null)
@@ -707,6 +711,8 @@ public partial class MainWindow : Window
         {
             SettingsStore.Save(_pending);
             _settings = _pending.Copy();
+            RenderPauseState();
+            UpdateHotkeyScope(ForegroundProgramMonitor.GetForegroundExecutablePath());
             HintText.Text = UiText.T("Atalhos salvos");
             ShowMessage(UiText.T("Atalhos salvos"), error: false);
         }
