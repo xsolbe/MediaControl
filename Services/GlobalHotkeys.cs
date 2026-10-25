@@ -9,25 +9,35 @@ namespace MediaControl.Services;
 
 internal sealed class GlobalHotkeys : IDisposable
 {
+    private const int PauseHotkeyId = 100;
+    private const uint F9VirtualKey = 0x78;
+    private const uint ModNoRepeat = 0x4000;
     private readonly IntPtr _window;
     private readonly HwndSource _source;
     private readonly Action<string> _onAction;
+    private readonly Action _onTogglePause;
     private readonly Dictionary<int, string> _registered = new();
     private Dictionary<string, HotkeyGesture> _active = new();
     private bool _suspended;
     private bool _scopeEnabled;
+    private readonly bool _pauseHotkeyRegistered;
 
-    public GlobalHotkeys(Window owner, Action<string> onAction, bool scopeEnabled = true)
+    public GlobalHotkeys(Window owner, Action<string> onAction, Action onTogglePause, bool scopeEnabled = true)
     {
         _window = new WindowInteropHelper(owner).EnsureHandle();
         _source = HwndSource.FromHwnd(_window)
             ?? throw new InvalidOperationException(UiText.T("Janela do MediaControl indisponível."));
         _source.AddHook(WndProc);
         _onAction = onAction;
+        _onTogglePause = onTogglePause;
         _scopeEnabled = scopeEnabled;
+        _pauseHotkeyRegistered = NativeMethods.RegisterHotKey(_window, PauseHotkeyId, ModNoRepeat, F9VirtualKey);
+        PauseHotkeyError = _pauseHotkeyRegistered ? "" :
+            $"{UiText.T("Não foi possível registrar F9. Código Windows: ")}{Marshal.GetLastWin32Error()}.";
     }
 
     public int RegisteredCount => _registered.Count;
+    public string PauseHotkeyError { get; }
 
     public bool TryApply(IReadOnlyDictionary<string, HotkeyGesture> bindings, out string error)
     {
@@ -119,6 +129,11 @@ internal sealed class GlobalHotkeys : IDisposable
                 error = $"{UiText.T("Atalho inválido para ")}{UiText.T(label)}.";
                 return false;
             }
+            if (gesture.Modifiers == 0 && gesture.VirtualKey == F9VirtualKey)
+            {
+                error = UiText.T("F9 está reservado para pausar os atalhos.");
+                return false;
+            }
             if (!used.Add((gesture.Modifiers, gesture.VirtualKey)))
             {
                 error = $"{UiText.T("A tecla ")}{gesture.Display}{UiText.T(" aparece em duas ações.")}";
@@ -149,6 +164,12 @@ internal sealed class GlobalHotkeys : IDisposable
 
     private IntPtr WndProc(IntPtr window, int message, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
+        if (message == NativeMethods.WmHotkey && wParam.ToInt32() == PauseHotkeyId)
+        {
+            handled = true;
+            _onTogglePause();
+            return IntPtr.Zero;
+        }
         if (message == NativeMethods.WmHotkey && _registered.TryGetValue(wParam.ToInt32(), out string? action))
         {
             handled = true;
@@ -167,6 +188,8 @@ internal sealed class GlobalHotkeys : IDisposable
     public void Dispose()
     {
         UnregisterAll();
+        if (_pauseHotkeyRegistered)
+            NativeMethods.UnregisterHotKey(_window, PauseHotkeyId);
         _source.RemoveHook(WndProc);
     }
 }

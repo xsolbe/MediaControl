@@ -49,6 +49,7 @@ public partial class MainWindow : Window
         RenderBindings();
         RenderProgramSettings();
         RenderLanguageButtons();
+        RenderPauseState();
         TrackTitle.Text = UiText.T("Faixa atual");
         TrackTitle.ToolTip = TrackTitle.Text;
         PlaybackBadge.Text = UiText.T("TOCANDO");
@@ -66,7 +67,13 @@ public partial class MainWindow : Window
         if (_preview)
             return;
 
-        _hotkeys = new GlobalHotkeys(this, ExecuteAction, scopeEnabled: !_settings.OnlyListedPrograms);
+        _hotkeys = new GlobalHotkeys(this, ExecuteHotkeyAction, ToggleHotkeys,
+            scopeEnabled: !_settings.OnlyListedPrograms && !_settings.HotkeysPaused);
+        if (_hotkeys.PauseHotkeyError.Length != 0)
+        {
+            PauseHotkeysButton.ToolTip = _hotkeys.PauseHotkeyError;
+            ShowMessage(_hotkeys.PauseHotkeyError);
+        }
         if (!_hotkeys.TryApply(_settings.Bindings, out string error))
         {
             ShowMessage(error);
@@ -165,11 +172,17 @@ public partial class MainWindow : Window
         _messageUntil = DateTime.UtcNow.AddSeconds(5);
     }
 
+    private void ExecuteHotkeyAction(string action)
+    {
+        if (_settings.HotkeysPaused ||
+            (_settings.OnlyListedPrograms && !IsListed(ForegroundProgramMonitor.GetForegroundExecutablePath())))
+            return;
+        ExecuteAction(action);
+    }
+
     private void ExecuteAction(string action)
     {
         if (_preview)
-            return;
-        if (_settings.OnlyListedPrograms && !IsListed(ForegroundProgramMonitor.GetForegroundExecutablePath()))
             return;
         if (!PotPlayerController.TryExecute(action, out string error))
             ShowMessage(error);
@@ -227,7 +240,8 @@ public partial class MainWindow : Window
 
     private void UpdateHotkeyScope(string? foregroundPath)
     {
-        bool enabled = !_settings.OnlyListedPrograms || IsListed(foregroundPath);
+        bool inScope = !_settings.OnlyListedPrograms || IsListed(foregroundPath);
+        bool enabled = !_settings.HotkeysPaused && inScope;
         if (_hotkeys is not null && !_hotkeys.SetScopeEnabled(enabled, out string error))
         {
             ProgramStatusText.Text = UiText.T("Falha ao registrar atalhos neste programa");
@@ -239,11 +253,13 @@ public partial class MainWindow : Window
         }
         _lastScopeError = null;
         ProgramStatusText.ToolTip = null;
-        ProgramStatusText.Text = UiText.T(!_settings.OnlyListedPrograms
+        ProgramStatusText.Text = UiText.T(_settings.HotkeysPaused
+            ? "Atalhos pausados · F9 para reativar"
+            : !_settings.OnlyListedPrograms
             ? "Atalhos ativos em todos os programas"
             : _settings.AllowedExecutables.Count == 0
                 ? "Lista vazia: atalhos desativados"
-                : enabled ? "Atalhos ativos neste programa" : "Fora da lista: teclas livres");
+                : inScope ? "Atalhos ativos neste programa" : "Fora da lista: teclas livres");
     }
 
     private void RenderProgramSettings()
@@ -384,6 +400,15 @@ public partial class MainWindow : Window
             ChangeLanguage(language);
     }
 
+    internal void SetPreviewPaused(bool paused)
+    {
+        if (!_preview)
+            return;
+        _settings.HotkeysPaused = paused;
+        RenderPauseState();
+        UpdateHotkeyScope(null);
+    }
+
     private void NavPlayback_Click(object sender, RoutedEventArgs e) => SetPage(PlaybackPage, NavPlayback);
     private void NavTracks_Click(object sender, RoutedEventArgs e) => SetPage(TracksPage, NavTracks);
     private void NavVolume_Click(object sender, RoutedEventArgs e) => SetPage(VolumePage, NavVolume);
@@ -413,12 +438,13 @@ public partial class MainWindow : Window
         _pending.Language = language;
         UiText.SetLanguage(language);
         UiText.ApplyStaticText(this);
-        if (_trayMenu is { Items.Count: >= 2 })
+        if (_trayMenu is { Items.Count: >= 3 })
         {
             _trayMenu.Items[0].Text = UiText.T("Abrir MediaControl");
-            _trayMenu.Items[1].Text = UiText.T("Sair");
+            _trayMenu.Items[2].Text = UiText.T("Sair");
         }
         RenderLanguageButtons();
+        RenderPauseState();
         RenderBindings();
         RenderProgramSettings();
         HintText.Text = UiText.T("Clique na tecla para alterar");
@@ -432,6 +458,43 @@ public partial class MainWindow : Window
             ? Color.FromRgb(7, 139, 234) : Color.FromRgb(55, 56, 59));
         PortugueseButton.Background = new SolidColorBrush(_settings.Language == "pt-BR"
             ? Color.FromRgb(7, 139, 234) : Color.FromRgb(55, 56, 59));
+    }
+
+    private void PauseHotkeys_Click(object sender, RoutedEventArgs e) => ToggleHotkeys();
+
+    private void ToggleHotkeys()
+    {
+        var updated = _settings.Copy();
+        updated.HotkeysPaused = !updated.HotkeysPaused;
+        _settings = updated;
+        _pending.HotkeysPaused = updated.HotkeysPaused;
+        UpdateHotkeyScope(ForegroundProgramMonitor.GetForegroundExecutablePath());
+        RenderPauseState();
+        if (_preview)
+            return;
+        try
+        {
+            SettingsStore.Save(updated);
+        }
+        catch (Exception ex)
+        {
+            ShowMessage($"{UiText.T("Não foi possível salvar o estado dos atalhos: ")}{ex.Message}");
+        }
+    }
+
+    private void RenderPauseState()
+    {
+        bool paused = _settings.HotkeysPaused;
+        PauseHotkeysButton.Content = UiText.T(paused ? "PAUSADO" : "ATIVO");
+        PauseHotkeysButton.Background = new SolidColorBrush(paused
+            ? Color.FromRgb(143, 91, 29) : Color.FromRgb(18, 102, 159));
+        PauseHotkeysButton.ToolTip = _hotkeys is { PauseHotkeyError.Length: > 0 }
+            ? _hotkeys.PauseHotkeyError
+            : UiText.T(paused ? "F9 · Reativar atalhos" : "F9 · Pausar atalhos");
+        if (_trayMenu is { Items.Count: >= 3 })
+            _trayMenu.Items[1].Text = UiText.T(paused ? "Reativar atalhos (F9)" : "Pausar atalhos (F9)");
+        if (_trayIcon is not null)
+            _trayIcon.Text = paused ? $"MediaControl · {UiText.T("PAUSADO")}" : "MediaControl";
     }
     private void Minimize_Click(object sender, RoutedEventArgs e)
     {
@@ -459,11 +522,13 @@ public partial class MainWindow : Window
         _trayImage ??= (System.Drawing.Icon)System.Drawing.SystemIcons.Application.Clone();
         _trayMenu = new Forms.ContextMenuStrip();
         _trayMenu.Items.Add(UiText.T("Abrir MediaControl"), null, (_, _) => Dispatcher.BeginInvoke(RestoreFromTray));
+        _trayMenu.Items.Add(UiText.T(_settings.HotkeysPaused ? "Reativar atalhos (F9)" : "Pausar atalhos (F9)"),
+            null, (_, _) => Dispatcher.BeginInvoke(ToggleHotkeys));
         _trayMenu.Items.Add(UiText.T("Sair"), null, (_, _) => Dispatcher.BeginInvoke(Close));
         _trayIcon = new Forms.NotifyIcon
         {
             Icon = _trayImage,
-            Text = "MediaControl",
+            Text = _settings.HotkeysPaused ? $"MediaControl · {UiText.T("PAUSADO")}" : "MediaControl",
             ContextMenuStrip = _trayMenu,
             Visible = true,
         };

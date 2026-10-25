@@ -91,19 +91,21 @@ internal sealed class HotkeyGesture
 
 internal sealed class AppSettings
 {
-    public int Version { get; set; } = 4;
+    public int Version { get; set; } = 5;
     public Dictionary<string, HotkeyGesture> Bindings { get; set; } = new();
     public bool OnlyListedPrograms { get; set; }
     public List<string> AllowedExecutables { get; set; } = [];
     public string Language { get; set; } = "en";
+    public bool HotkeysPaused { get; set; }
 
     public AppSettings Copy() => new()
     {
-        Version = 4,
+        Version = 5,
         Bindings = Bindings.ToDictionary(pair => pair.Key, pair => pair.Value.Copy()),
         OnlyListedPrograms = OnlyListedPrograms,
         AllowedExecutables = [.. AllowedExecutables],
         Language = Language,
+        HotkeysPaused = HotkeysPaused,
     };
 
     public static AppSettings CreateDefault() => new()
@@ -135,17 +137,18 @@ internal static class SettingsStore
                 return settings;
 
             var saved = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(FilePath));
-            if (saved?.Version is not (2 or 3 or 4) || saved.Bindings is null)
+            if (saved?.Version is not (2 or 3 or 4 or 5) || saved.Bindings is null)
                 return settings;
 
             foreach (var (id, _) in ControlActions.All)
             {
-                if (saved.Bindings.TryGetValue(id, out var binding) && binding?.IsValid == true)
+                if (saved.Bindings.TryGetValue(id, out var binding) && binding?.IsValid == true
+                    && (binding.Modifiers != 0 || binding.VirtualKey != 0x78))
                     settings.Bindings[id] = binding.Copy();
             }
             if (settings.Bindings.Values.Select(binding => (binding.Modifiers, binding.VirtualKey)).Distinct().Count()
                 != ControlActions.All.Length)
-                return AppSettings.CreateDefault();
+                settings.Bindings = AppSettings.CreateDefault().Bindings;
             if (saved.Version >= 3)
             {
                 settings.OnlyListedPrograms = saved.OnlyListedPrograms;
@@ -155,6 +158,7 @@ internal static class SettingsStore
                     .ToList();
             }
             settings.Language = saved.Language == "pt-BR" ? "pt-BR" : "en";
+            settings.HotkeysPaused = saved.Version >= 5 && saved.HotkeysPaused;
         }
         catch (Exception)
         {

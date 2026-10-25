@@ -17,7 +17,7 @@ internal static class UiText
     private static readonly HashSet<string> DynamicNames =
     [
         "TrackTitle", "PlaybackBadge", "PlayPauseCaption", "NextTrackButtonLabel",
-        "VolumeHotkeyHint", "ProgramStatusText", "HintText", "CountText",
+        "VolumeHotkeyHint", "ProgramStatusText", "HintText", "CountText", "PauseHotkeysButton",
     ];
 
     private static readonly Dictionary<string, string> English = new(StringComparer.Ordinal)
@@ -78,6 +78,16 @@ internal static class UiText
         ["Idioma"] = "Language",
         ["Escolha o idioma da interface"] = "Choose the interface language",
         ["A alteração é aplicada imediatamente."] = "Changes apply immediately.",
+        ["F9 pausa ou reativa os atalhos em qualquer programa."] = "F9 pauses or resumes hotkeys in any app.",
+        ["ATIVO"] = "ACTIVE",
+        ["F9 · Pausar atalhos"] = "F9 · Pause hotkeys",
+        ["F9 · Reativar atalhos"] = "F9 · Resume hotkeys",
+        ["Atalhos pausados · F9 para reativar"] = "Hotkeys paused · F9 to resume",
+        ["Pausar atalhos (F9)"] = "Pause hotkeys (F9)",
+        ["Reativar atalhos (F9)"] = "Resume hotkeys (F9)",
+        ["Não foi possível registrar F9. Código Windows: "] = "Could not register F9. Windows code: ",
+        ["F9 está reservado para pausar os atalhos."] = "F9 is reserved for pausing hotkeys.",
+        ["Não foi possível salvar o estado dos atalhos: "] = "Could not save hotkey state: ",
         ["Atalhos indisponíveis: abra Atalhos"] = "Hotkeys unavailable: open Hotkeys",
         ["Atalhos ativos em todos os programas"] = "Hotkeys active in all apps",
         ["Lista vazia: atalhos desativados"] = "Empty list: hotkeys disabled",

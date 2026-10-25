@@ -32,7 +32,8 @@ public partial class App : Application
         if (e.Args.Length >= 2 && e.Args[0] == "--render-preview")
         {
             RenderPreview(e.Args[1], e.Args.Length >= 3 ? e.Args[2] : "reproducao",
-                e.Args.Length >= 4 ? e.Args[3] : "en");
+                e.Args.Length >= 4 ? e.Args[3] : "en",
+                e.Args.Length >= 5 && e.Args[4] == "paused");
             Shutdown();
             return;
         }
@@ -120,10 +121,11 @@ public partial class App : Application
         picker.Close();
     }
 
-    private static void RenderPreview(string outputPath, string page, string language)
+    private static void RenderPreview(string outputPath, string page, string language, bool paused)
     {
         var window = new MainWindow(preview: true);
         window.SetPreviewLanguage(language);
+        window.SetPreviewPaused(paused);
         window.ShowPreviewPage(page);
         if (window.Content is not FrameworkElement content)
             return;
