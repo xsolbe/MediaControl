@@ -1,64 +1,55 @@
 # MediaControl
 
-Controle o **PotPlayer no segundo monitor sem sair do jogo**.
+MediaControl is a compact Windows controller for [PotPlayer](https://potplayer.daum.net/). It lets you skip tracks, pause, seek, and change PotPlayer's volume while another app or game is in the foreground. It is based on the `MusicControl.ahk` workflow, with configurable hotkeys, a program allowlist, and a system tray icon.
 
-O MediaControl é um utilitário Windows que pilota o seu player de vídeo em segundo plano:
-pause, troque de vídeo, ajuste o volume ou pule 5 segundos com um toque no teclado —
-mesmo com o jogo em tela cheia no monitor principal.
+The interface supports **English (default)** and **Português**. Change it anytime in **General**.
 
-Ele nasceu para aposentar um script de AutoHotkey (`MusicControl`), virando um app
-standalone com interface própria, atalhos configuráveis e instalação simples.
+## Screenshots
 
-## Funcionalidades
+| Playback | Allowed programs |
+| --- | --- |
+| ![Playback controls](docs/screenshots/playback-en.png) | ![Program allowlist](docs/screenshots/programs-en.png) |
 
-| Recurso | Detalhe |
-|---|---|
-| Play / Pause | `F2` (padrão) |
-| Próximo vídeo | `F1` |
-| Vídeo anterior | `F1` duas vezes |
-| Volume | `Numpad +` / `Numpad -` e slider na tela |
-| Avançar / voltar 5s | Setas `→` / `←` e botões na tela |
-| Aleatório | Toggle do modo shuffle do player |
-| Atalhos globais | Todos reconfiguráveis, com detecção de conflito |
-| Modo jogo | `Guard`: dispara sempre, pausa em fullscreen, só no player ou só nos programas que você marcar |
-| Mover para o monitor | Escolha o monitor e o player vai para ele (posição lembrada por monitor) |
-| Status ao vivo | Tocando / Pausado / Parado, volume e janela detectados sem roubar foco |
-| Interface | Dark e Light, português (BR) e inglês |
+| Hotkeys | Language |
+| --- | --- |
+| ![Configurable hotkeys](docs/screenshots/hotkeys-en.png) | ![English and Portuguese settings](docs/screenshots/general-en.png) |
 
-## Como funciona
+[Open window picker](docs/screenshots/window-picker-en.png) · [Interface em português](docs/screenshots/general-pt-BR.png)
 
-Em vez de simular teclas, o app conversa direto com o PotPlayer via mensagens do Windows
-(`SendMessage`) — funciona minimizado, sem foco e sem interferir no que você está fazendo.
-Atalhos usam `RegisterHotKey` (sem hooks invasivos) e nada sai da sua máquina:
-sem conta, sem rede, sem telemetria. Config em `%AppData%\MediaControl\config.json`.
+## Download and use
 
-## Requisitos
+1. Download `MediaControl.exe` from the [latest release](https://github.com/xsolbe/MediaControl/releases/latest).
+2. Start PotPlayer, then run MediaControl. The app requests administrator permission so its hotkeys also work while an elevated game is active.
+3. In **Programs**, add a running window or choose an executable. Adding a program switches to **Listed only** automatically. MediaControl then responds to hotkeys only while a listed program is in the foreground. Outside the list, those keys remain available to the active app.
+4. Use **Hotkeys** to change a binding, then click **Apply**. Use **General** to change the interface language.
 
-- Windows 10/11 64-bit
-- [PotPlayer](https://potplayer.daum.net/) instalado (primeiro player suportado; MPC-HC no roadmap)
+The **−** button sends MediaControl to the system tray. Click the tray icon to reopen it, or right-click for **Open MediaControl** and **Exit**. The **×** button exits. Settings are saved in `%AppData%\MediaControl\settings.json`.
 
-## Instalação
+### Default hotkeys
 
-1. Baixe o `MediaControl.exe` na [**última release**](https://github.com/xsolbe/MediaControl/releases/latest).
-2. Coloque onde quiser e execute. Não precisa instalar nem ter .NET (já vai embutido).
-3. Abra o PotPlayer, depois o MediaControl.
+| Key | PotPlayer action |
+| --- | --- |
+| F1 | Next track |
+| F2 | Play / pause |
+| Numpad + | Increase volume |
+| Numpad − | Decrease volume |
+| ← | Seek backward |
+| → | Seek forward |
 
-## Uso rápido
+The playback panel also has a previous-track button, a timeline, and volume and mute controls. The default commands use the same PotPlayer messages as the original AHK script. The icons are from [Lucide](https://lucide.dev/); its license is included in [`Assets/Lucide/LUCIDE-LICENSE.txt`](Assets/Lucide/LUCIDE-LICENSE.txt).
 
-1. Na tela **Shortcuts**, marque *Enable global hotkeys* → **Apply** (rodapé mostra `Hotkeys: ON · 6`).
-2. Jogando: `F2` pausa, `F1` próximo, `Numpad +/-` volume, setas ±5s.
-3. Em **Display**, escolha o monitor para levar o player até ele.
-4. Feche e reabra quando quiser — tudo é salvo automaticamente.
+## Português
 
-> Se algum atalho não disparar no jogo: confira se outro programa o registrou (o app avisa
-> `código 1409`), ou rode como administrador caso o jogo seja elevado.
+O MediaControl controla músicas no PotPlayer enquanto você usa outro programa ou joga. F1 passa para a próxima faixa, F2 pausa ou continua, as teclas do teclado numérico ajustam o volume e as setas avançam ou voltam na música. Os atalhos podem ser alterados na aba **Atalhos**.
 
-## Roadmap
+Em **Programas**, adicione um jogo pela janela aberta ou pelo arquivo executável. Isso ativa **Somente lista**: os atalhos controlam o PotPlayer apenas quando um programa cadastrado está em primeiro plano. Fora da lista, as teclas continuam disponíveis para o programa ativo. Na aba **Geral**, selecione **Português**. O botão **−** envia o app para a bandeja; **×** fecha o app.
 
-- [ ] MPC-HC e outros players (arquitetura pronta: um controller por player)
-- [ ] Minimizar para a bandeja
-- [ ] Instalador com atalho no menu iniciar
+## Build
 
-## Licença
+Requires the .NET 10 SDK on Windows. The release executable is self-contained:
 
-MIT — ver [LICENSE](LICENSE).
+```powershell
+dotnet publish MediaControl.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o publish
+```
+
+The result is `publish\MediaControl.exe`.
